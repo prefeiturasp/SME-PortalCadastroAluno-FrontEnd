@@ -1,25 +1,17 @@
 import React from 'react';
 
 import "./assets/css/styles.scss"
-import Rotas from "./componentes/Rotas";
-import MenuPrincipal from "./componentes/Menu/MenuPrincipal";
+import {Rotas} from "./componentes/Rotas";
+import {MenuPrincipal} from "./componentes/Menu/MenuPrincipal";
 import MenuAcessibilidade from "./componentes/Menu/MenuAcessibilidade";
-import Rodape from "./componentes/Rodape/Rodape";
+import {Rodape} from "./componentes/Rodape/Rodape";
 
 class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            alterarFonte:
-                (localStorage.getItem("alterarFonte") &&
-                    localStorage.getItem("alterarFonte") === "true") ||
-                false,
-            alterarContraste:
-                (localStorage.getItem("alterarContraste") &&
-                    localStorage.getItem("alterarContraste") === "true") ||
-                false,
-
-            esconderLinkBuscaEscola:true
+            alterarFonte:(localStorage.getItem("alterarFonte") && localStorage.getItem("alterarFonte") === "true") || false,
+            alterarContraste: (localStorage.getItem("alterarContraste") &&  localStorage.getItem("alterarContraste") === "true") || false,
 
         };
         this.alterarFonte = this.alterarFonte.bind(this);
@@ -48,7 +40,10 @@ class App extends React.Component {
         const { alterarFonte, alterarContraste } = this.state;
         return (
             <section role="main" className={`${alterarFonte && "fonte-maior"} ${alterarContraste && "alto-contraste"}`}>
-                <MenuAcessibilidade alterarFonte={this.alterarFonte} alterarContraste={this.alterarContraste}/>
+                <MenuAcessibilidade
+                    alterarFonte={this.alterarFonte}
+                    alterarContraste={this.alterarContraste}
+                />
                 <MenuPrincipal  />
                 <Rotas/>
                 <Rodape/>

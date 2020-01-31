@@ -7,11 +7,8 @@ import "./menu-acessibilidade.scss";
 class MenuAcessibilidade extends React.Component {
 
     render() {
-        const {
-            alterarFonte,
-            alterarContraste,
-            focusBusca,
-        } = this.props;
+        const { alterarFonte, alterarContraste, focusBusca, } = this.props;
+
         return (
             <div>
                 <div className="header-acessibilidade">

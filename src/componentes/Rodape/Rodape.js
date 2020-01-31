@@ -2,7 +2,7 @@ import React from "react";
 import logoPrefeitura from "../../assets/img/logo_sp.png";
 import "./rodape.scss";
 
-function Rodape() {
+export const Rodape = () => {
 
     const selectHref = (value) => {
         window.location.href = value;
@@ -496,5 +496,3 @@ function Rodape() {
         </div>
     );
 }
-
-export default Rodape;

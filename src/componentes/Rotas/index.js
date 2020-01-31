@@ -1,10 +1,10 @@
 import React from "react";
 import {Route, Switch} from 'react-router-dom'
 
-import Home from "../../paginas/Home";
-import AtualizeCadastro from "../AtualizeCadastro";
+import {Home} from "../../paginas/Home";
+import {AtualizeCadastro} from "../../paginas/AtualizeCadastro";
 
-function Rotas() {
+export const Rotas = () => {
     return(
         <Switch>
             <Route path="/" exact component={Home}/>
@@ -12,5 +12,3 @@ function Rotas() {
         </Switch>
     )
 }
-
-export default Rotas;

@@ -1,12 +1,9 @@
 import React from "react";
 
-function AtualizeCadastro() {
+export const AtualizeCadastro = () => {
     return (
         <div>
             <h1>Atualize Cadastro</h1>
         </div>
     )
-
 }
-
-export default AtualizeCadastro
