@@ -1,0 +1,39 @@
+@import "../../assets/css/variaveis";
+h1 {
+  font-size: 40px;
+  font-weight: bold;
+  color: $corAzulPortal;
+}
+.banner-home {
+  background: linear-gradient(90deg,
+          rgba(255, 255, 255, 0.9) 0%,
+          rgba(255, 255, 255, 0.9) 33.83%,
+          rgba(255, 255, 255, 0.2) 64.77%,
+          rgba(255, 255, 255, 0.324) 92.11%),
+  url("../../assets/img/banner-home.png");
+
+  color: $corPretoPortal;
+  height: 490px;
+  background-repeat: no-repeat;
+  background-size: auto;
+  background-position: top right;
+
+  .conteudo {
+    margin: 0 auto;
+    z-index: 1;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+    h1{
+      color: $corPretoPortal;
+    }
+
+    p {
+      font-size: 20px;
+      line-height: 26px;
+      font-style: normal;
+      font-weight: bold;
+    }
+  }
+}
