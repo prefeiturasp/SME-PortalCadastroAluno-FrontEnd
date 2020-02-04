@@ -1,7 +1,18 @@
-import React from "react";
+import React, {useState} from "react";
 import "./formularios.scss"
 
 export const FormularioHomeInicial = () => {
+
+    const [inputCodigoEol, setInputCodigoEol] = useState('');
+    const [inputDtNascAluno, setInputDtNascAluno] = useState('');
+    const [collapse, setCollapse] = useState('');
+    const [btnDisable, setBtnDisable] = useState(false);
+
+    const handleBtnAbrirCadastro = (statusCollapse, statusBtnDisable)=>{
+        setCollapse(statusCollapse)
+        setBtnDisable(statusBtnDisable)
+    }
+
     return (
         <div className="w-100 formulario-inicial-home pt-5 pb-5 ">
             <div className="container">
@@ -10,23 +21,23 @@ export const FormularioHomeInicial = () => {
                     <div className="row">
                         <div className="col-lg-4 mt-4">
                             <label id="codigoEol">Código EOL</label>
-                            <input name="codigoEol" type="text" className="form-control" placeholder="Digite código EOL"/>
+                            <input onChange={(e) => setInputCodigoEol(e.target.value)} value={inputCodigoEol} name="codigoEol" type="text" className="form-control" />
                         </div>
                         <div className="col-lg-4 mt-4">
                             <label htmlFor='dtNascAluno'>Data de nascimento do estudante</label>
-                            <input id="dtNascAluno" type="text" className="form-control" placeholder="dd/mm/aaaa"/>
+                            <input onChange={(e) => setInputDtNascAluno(e.target.value)} value={inputDtNascAluno} id="dtNascAluno" type="date" className="form-control" />
                         </div>
                         <div className="col-lg-4 mt-4 mt-md-5 pl-5 pr-5 pl-md-0 pr-md-0">
-                            <button data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" type="button" className="btn btn-outline-primary btn-block btn-abrir-formulario mt-2">Abrir formulário</button>
+                            <button onClick={()=>handleBtnAbrirCadastro('show', true)} disabled={btnDisable === true || inputCodigoEol === '' || inputDtNascAluno === ''} type="button" className="btn btn-outline-primary btn-block btn-abrir-formulario mt-2">Abrir formulário</button>
                         </div>
                     </div>
 
                 </form>
-                <div className="collapse pt-5" id="collapseExample">
+                <div className= {`collapse ${collapse}  pt-5`} id="">
                     <h2 className="text-white mb-4">Solicitação do cartão </h2>
 
                     <div className='container-form-dados-responsável p-4 '>
-                        <p className="fonte-maior mb-4">
+                        <p className="mb-4">
                             <strong>Confirme ou altere os dados do responsável pelo(a) estudante</strong></p>
                         <form>
                             <div className="row">
@@ -119,7 +130,7 @@ export const FormularioHomeInicial = () => {
 
                             <div className="d-flex justify-content-end mt-4">
                                 <div className='p-2'>
-                                    <button type="submit" className="btn btn-outline-primary">Cancelar</button>
+                                    <button onClick={()=>handleBtnAbrirCadastro('', false)} type="buttom" className="btn btn-outline-primary">Cancelar</button>
                                 </div>
                                 <div className='p-2'>
                                     <button type="submit" className="btn btn-primary" required >Atualizar cadastro</button>
