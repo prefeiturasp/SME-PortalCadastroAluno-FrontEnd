@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import "./formularios.scss"
+import {BtnCustomizado} from "../BtnCustomizado";
 
 export const FormularioHomeInicial = () => {
 
@@ -7,6 +8,14 @@ export const FormularioHomeInicial = () => {
     const [inputDtNascAluno, setInputDtNascAluno] = useState('');
     const [collapse, setCollapse] = useState('');
     const [btnDisable, setBtnDisable] = useState(false);
+
+    const handleBtnAAbrirFormularioDisable = ()=>{
+        if (btnDisable === true || inputCodigoEol === '' || inputDtNascAluno === ''){
+            return true
+        }else{
+            return false
+        }
+    }
 
     const handleBtnAbrirCadastro = (statusCollapse, statusBtnDisable)=>{
         setCollapse(statusCollapse)
@@ -17,7 +26,7 @@ export const FormularioHomeInicial = () => {
         <div className="w-100 formulario-inicial-home pt-5 pb-5 ">
             <div className="container">
                 <h2 className="text-white mb-xs-5">Acesse o formulário para solicitar o cartão.</h2>
-                <form>
+                <form name="abrirFormulario">
                     <div className="row">
                         <div className="col-lg-4 mt-4">
                             <label id="codigoEol">Código EOL</label>
@@ -28,7 +37,15 @@ export const FormularioHomeInicial = () => {
                             <input onChange={(e) => setInputDtNascAluno(e.target.value)} value={inputDtNascAluno} id="dtNascAluno" type="date" className="form-control" />
                         </div>
                         <div className="col-lg-4 mt-4 mt-md-5 pl-5 pr-5 pl-md-0 pr-md-0">
-                            <button onClick={()=>handleBtnAbrirCadastro('show', true)} disabled={btnDisable === true || inputCodigoEol === '' || inputDtNascAluno === ''} type="button" className="btn btn-outline-primary btn-block btn-abrir-formulario mt-2">Abrir formulário</button>
+                            <BtnCustomizado
+                                onClick={()=>handleBtnAbrirCadastro('show', true)}
+                                disable={handleBtnAAbrirFormularioDisable()}
+                                type="button"
+                                classeCss="btn btn-outline-primary btn-block btn-abrir-formulario mt-2"
+                                texto="Abrir formulário"
+                            />
+                            {/*<button onClick={()=>handleBtnAbrirCadastro('show', true)} disabled={handleBtnAAbrirFormularioDisable()} type="button" className="btn btn-outline-primary btn-block btn-abrir-formulario mt-2">Abrir formulário</button>*/}
+
                         </div>
                     </div>
 
@@ -39,7 +56,7 @@ export const FormularioHomeInicial = () => {
                     <div className='container-form-dados-responsável p-4 '>
                         <p className="mb-4">
                             <strong>Confirme ou altere os dados do responsável pelo(a) estudante</strong></p>
-                        <form>
+                        <form name="atualizacaoCadastral">
                             <div className="row">
                                 <div className="col-12">
                                     <label htmlFor="nomeResponsavel"><strong>Nome completo do responsável (sem abreviações)*</strong></label>
@@ -130,10 +147,17 @@ export const FormularioHomeInicial = () => {
 
                             <div className="d-flex justify-content-end mt-4">
                                 <div className='p-2'>
-                                    <button onClick={()=>handleBtnAbrirCadastro('', false)} type="buttom" className="btn btn-outline-primary">Cancelar</button>
+                                    <BtnCustomizado
+                                        onClick={()=>handleBtnAbrirCadastro('', false)}
+                                        disable=""
+                                        type="button"
+                                        classeCss="btn btn-outline-primary"
+                                        texto="Cancelar"
+                                    />
+                                    {/*<button onClick={()=>handleBtnAbrirCadastro('', false)} type="button" className="btn btn-outline-primary">Cancelar</button>*/}
                                 </div>
                                 <div className='p-2'>
-                                    <button type="submit" className="btn btn-primary" required >Atualizar cadastro</button>
+                                    <button type="button" className="btn btn-primary" required >Atualizar cadastro</button>
                                 </div>
                             </div>
 
