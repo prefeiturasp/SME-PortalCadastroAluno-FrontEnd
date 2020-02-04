@@ -51,9 +51,18 @@ export const Home = () => {
                     <div className="row mt-5">
 
                         <div className="col-lg-6 col-sm-12 mb-lg-0 align-self-center">
-                            <h1>Quem recebe o uniforme escolar?</h1>
-                            <p>Quase todos os estudantes da Rede Municipal de Ensino (REM) recebem o uniforme escolar. Ou seja, devem fazer a solicitação os responsáveis por todas as crianças matriculadas nas escolas municipais, com exceção dos alunos dos Centros de Educação Infantil ("creches"), Ensino Médio e Educação de Jovens
-                                e Adultos.</p>
+                            <h1>E quais dados você deve fornecer?</h1>
+                            <p className='mb-1'>Os dados que o responsável deve ter em mãos para confirmar, editar e complementar suas informações de cadastro  são:</p>
+
+                            <ul className="lista-home ml-0 pl-0">
+                                <li>nome completo</li>
+                                <li>vínculo com o estudante</li>
+                                <li>telefone celular</li>
+                                <li>e-mail</li>
+                                <li>CPF</li>
+                                <li>data de nascimento</li>
+                                <li>nome da mãe (todos relativos ao próprio responsável).</li>
+                            </ul>
                         </div>
 
                         <div className="col-lg-6 col-sm-12">

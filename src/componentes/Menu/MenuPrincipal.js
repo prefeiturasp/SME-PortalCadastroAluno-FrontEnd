@@ -19,7 +19,7 @@ export const MenuPrincipal = () => {
                         </a>
                     </h1>
                 </div>
-                <div id="menu-principal" className="col-lg-9 col-sm-12 d-flex links-menu align-items-end justify-content-lg-end justify-content-center pr-lg-0 mb-xs-4">
+                <div id="menu-principal" className="col-lg-9 col-sm-12 links-menu d-flex flex-wrap  align-items-end justify-content-lg-end justify-content-start pr-lg-0 mb-xs-4">
                     <ul className="nav nav-tabs border-0">
 
                         <li className="nav-item">
@@ -40,4 +40,5 @@ export const MenuPrincipal = () => {
         </div>
     )
 }
+
 

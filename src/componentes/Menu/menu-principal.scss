@@ -13,4 +13,12 @@
       padding: 0.5rem 1rem;
     }
   }
+
+
+}
+
+#menu-principal{
+  @media(max-width: 992px) {
+    flex-basis: 100%;
+  }
 }
