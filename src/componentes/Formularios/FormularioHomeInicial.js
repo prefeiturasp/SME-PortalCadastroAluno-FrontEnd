@@ -23,7 +23,7 @@ export const FormularioHomeInicial = () => {
         checkbox_declaro: "",
     });
 
-    const setAtualizaCampos = (retorno_api)=>{
+    const setAtualizaCampos = (retorno_api) => {
         console.log("Ollyver setAtualizaCampos | ", retorno_api);
 
         setState({
@@ -40,10 +40,7 @@ export const FormularioHomeInicial = () => {
         });
     }
 
-    const handleChangeAtualizacaoCadastral = (name, value)=>{
-        console.log("Ollyver handleChangeAtualizacaoCadastral name | ", name)
-        console.log("Ollyver handleChangeAtualizacaoCadastral value | ", value)
-
+    const handleChangeAtualizacaoCadastral = (name, value) => {
         setState({
             ...state,
             [name]: value
@@ -65,13 +62,32 @@ export const FormularioHomeInicial = () => {
         }
     }
 
-   const handleBtnAAbrirFormularioDisable = () => {
+    const handleBtnAAbrirFormularioDisable = () => {
         if (btnDisable === true || inputCodigoEol === '' || inputDtNascAluno === '') {
             return true
         } else {
             return false
         }
     }
+
+    const handleSubmit = (e) => {
+        const formData = new FormData(e.target)
+        const campos = {}
+
+        e.preventDefault()
+
+        for (let entry of formData.entries()) {
+            campos[entry[0]] = entry[1]
+        }
+
+        console.log(campos); // reference by form input's `name` tag
+
+        /*fetch('/api/form-submit-url', {
+            method: 'POST',
+            body: data,
+        });*/
+    }
+
 
     return (
         <div className="w-100 formulario-inicial-home pt-5 pb-5 ">
@@ -104,17 +120,18 @@ export const FormularioHomeInicial = () => {
 
                     <div className='container-form-dados-responsável p-4 '>
                         <p className="mb-4">
-                            <strong>Confirme ou altere os dados do responsável pelo(a) estudante</strong></p>
-                        <form name="atualizacaoCadastral">
+                            <strong>Confirme ou altere os dados do responsável pelo(a) estudante</strong>
+                        </p>
+                        <form name="atualizacaoCadastral" onSubmit={handleSubmit}>
                             <div className="row">
                                 <div className="col-12">
                                     <label htmlFor="nm_responsavel"><strong>Nome completo do responsável (sem abreviações)*</strong></label>
-                                    <input onChange={(e)=>handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nm_responsavel} required type="text" className="form-control" name="nm_responsavel" id="nm_responsavel"/>
+                                    <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nm_responsavel} required type="text" className="form-control" name="nm_responsavel" id="nm_responsavel"/>
                                 </div>
 
                                 <div className="col-12 col-md-8 mt-5">
                                     <label htmlFor="email_responsavel"><strong>E-mail do responsável*</strong></label>
-                                    <input onChange={(e)=>handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.email_responsavel} required type="email" className="form-control" name="email_responsavel" id="email_responsavel"/>
+                                    <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.email_responsavel} required type="email" className="form-control" name="email_responsavel" id="email_responsavel"/>
                                 </div>
 
                                 <div className="col-12 col-md-4 mt-5">
@@ -124,10 +141,10 @@ export const FormularioHomeInicial = () => {
                                             <label><strong>Telefone celular do responsável*</strong></label>
                                         </div>
                                         <div className="col-3">
-                                            <input onChange={(e)=>handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_ddd_celular_responsavel} required type="text" className="form-control" name="cd_ddd_celular_responsavel" id="cd_ddd_celular_responsavel"/>
+                                            <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_ddd_celular_responsavel} required type="text" className="form-control" name="cd_ddd_celular_responsavel" id="cd_ddd_celular_responsavel"/>
                                         </div>
                                         <div className="col-9 pl-1">
-                                            <input onChange={(e)=>handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nr_celular_responsavel} required type="text" className="form-control" name="nr_celular_responsavel" id="nr_celular_responsavel"/>
+                                            <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nr_celular_responsavel} required type="text" className="form-control" name="nr_celular_responsavel" id="nr_celular_responsavel"/>
                                         </div>
                                     </div>
 
@@ -137,21 +154,21 @@ export const FormularioHomeInicial = () => {
                                     <label><strong>Vínculo com o(a) estudante (mãe/pai/outro)*</strong></label>
                                     <div className="d-flex flex-wrap justify-content-between">
                                         <div className="pl-4 container-radio">
-                                            <input onChange={(e)=>handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel === 1} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="mae" value="1"/>
+                                            <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '1'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="mae" value="1"/>
                                             <label className="form-check-label" htmlFor="mae"><strong>Mãe</strong></label>
                                         </div>
 
                                         <div className="pl-4 container-radio">
-                                            <input onChange={(e)=>handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel === 2} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="pai" value="2"/>
+                                            <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '2'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="pai" value="2"/>
                                             <label className="form-check-label" htmlFor="pai"><strong>Pai</strong></label>
                                         </div>
                                         <div className="pl-4 container-radio">
-                                            <input onChange={(e)=>handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel === 3} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="responsaveLegal" value="3"/>
+                                            <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '3'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="responsaveLegal" value="3"/>
                                             <label className="form-check-label" htmlFor="responsaveLegal"><strong>Responsável legal</strong></label>
                                         </div>
 
                                         <div className="pl-4 container-radio">
-                                            <input onChange={(e)=>handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel === 4} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="alunoMaiorDeIdade" value="4"/>
+                                            <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '4'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="alunoMaiorDeIdade" value="4"/>
                                             <label className="form-check-label" htmlFor="alunoMaiorDeIdade"><strong>Aluno maior de idade</strong></label>
                                         </div>
                                     </div>
@@ -169,12 +186,12 @@ export const FormularioHomeInicial = () => {
                                             <div className="row">
                                                 <div className='col-12 col-md-6'>
                                                     <label htmlFor="cd_cpf_responsavel"><strong>Cpf do responsável*</strong></label>
-                                                    <input onChange={(e)=>handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} required type="text" className="form-control" name="cd_cpf_responsavel" id="cd_cpf_responsavel"/>
+                                                    <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} required type="text" className="form-control" name="cd_cpf_responsavel" id="cd_cpf_responsavel"/>
                                                 </div>
 
                                                 <div className='col-12 col-md-6 mt-5 mt-md-0'>
                                                     <label htmlFor="dtNascResponsavel"><strong>Data de nascimento do responsável*</strong></label>
-                                                    <input onChange={(e)=>handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} required type="text" className="form-control" name="dtNascResponsavel" id="dtNascResponsavel"/>
+                                                    <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} required type="text" className="form-control" name="dtNascResponsavel" id="dtNascResponsavel"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -183,12 +200,12 @@ export const FormularioHomeInicial = () => {
 
                                 <div className="col-12 mt-5">
                                     <label htmlFor="nomeMaeResponsavel"><strong>Nome de mãe de responsável (sem abreviações)*</strong></label>
-                                    <input onChange={(e)=>handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} required type="text" className="form-control" name="nomeMaeResponsavel" id="nomeMaeResponsavel"/>
+                                    <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} required type="text" className="form-control" name="nomeMaeResponsavel" id="nomeMaeResponsavel"/>
                                 </div>
 
                                 <div className="col-12 mt-5">
                                     <div className="form-check form-check-inline">
-                                        <input onChange={(e)=>handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} className="form-check-input" type="checkbox" name="checkboxDeclaro" id="checkboxDeclaro" value="sim"/>
+                                        <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} className="form-check-input" type="checkbox" name="checkboxDeclaro" id="checkboxDeclaro" value="sim" required/>
                                         <label className="form-check-label" htmlFor="checkboxDeclaro">Declaro que as informações acima são verdadeiras</label>
                                     </div>
                                 </div>
@@ -205,7 +222,7 @@ export const FormularioHomeInicial = () => {
                                     />
                                 </div>
                                 <div className='p-2'>
-                                    <button type="button" className="btn btn-primary" required>Atualizar cadastro</button>
+                                    <button className="btn btn-primary">Atualizar cadastro</button>
                                 </div>
                             </div>
 

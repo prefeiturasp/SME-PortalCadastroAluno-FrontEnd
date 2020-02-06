@@ -23,6 +23,4 @@ export async function buscaDadosAlunoResponsavel(codigoEol, dtNascAluno) {
                 throw new Error("Não foi possível obter os dados");
             }
         })
-
-
 }
