@@ -1,10 +1,17 @@
-import React, {useState} from "react";
+import React, {useState, useRef} from "react";
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {buscaDadosAlunoResponsavel} from "../../services/ConectarApi"
 
+import {useForm} from 'react-hook-form'
+
 export const FormularioHomeInicial = () => {
 
+    const {register, handleSubmit, watch, errors, reset} = useForm()
+
+    //console.log(watch('example2')) // watch input value by passing the name of it
+
+    const myForm = useRef(null)
     const [inputCodigoEol, setInputCodigoEol] = useState('');
     const [inputDtNascAluno, setInputDtNascAluno] = useState('');
     const [collapse, setCollapse] = useState('');
@@ -48,6 +55,7 @@ export const FormularioHomeInicial = () => {
     };
 
     const handleBtnAbrirCadastro = (statusCollapse, statusBtnDisable, retornar_dados) => {
+
         setCollapse(statusCollapse)
         setBtnDisable(statusBtnDisable)
 
@@ -70,7 +78,7 @@ export const FormularioHomeInicial = () => {
         }
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit_local = (e) => {
         const formData = new FormData(e.target)
         const campos = {}
 
@@ -88,11 +96,37 @@ export const FormularioHomeInicial = () => {
         });*/
     }
 
+    const onSubmit = (data, e ) => {
+
+        console.log(data)
+
+        e.target.reset()
+
+        /*setState({
+            nm_responsavel: '',
+            email_responsavel: '',
+            cd_ddd_celular_responsavel: '',
+            nr_celular_responsavel: '',
+            tp_pessoa_responsavel: '',
+            cd_cpf_responsavel: '',
+            dt_nasc_responsavel: '',
+            nm_mae_responsavel: '',
+            checkbox_declaro: '',
+        });*/
+
+        /*fetch('/api/form-submit-url', {
+           method: 'POST',
+           body: data,
+       });*/
+
+    }
+
 
     return (
         <div className="w-100 formulario-inicial-home pt-5 pb-5 ">
             <div className="container">
                 <h2 className="text-white mb-xs-5">Acesse o formulário para solicitar o cartão.</h2>
+
                 <form name="abrirFormulario">
                     <div className="row">
                         <div className="col-lg-4 mt-4">
@@ -122,16 +156,36 @@ export const FormularioHomeInicial = () => {
                         <p className="mb-4">
                             <strong>Confirme ou altere os dados do responsável pelo(a) estudante</strong>
                         </p>
-                        <form name="atualizacaoCadastral" onSubmit={handleSubmit}>
+                        <form name="atualizacaoCadastral" onSubmit={handleSubmit(onSubmit)}>
                             <div className="row">
                                 <div className="col-12">
                                     <label htmlFor="nm_responsavel"><strong>Nome completo do responsável (sem abreviações)*</strong></label>
-                                    <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nm_responsavel} required type="text" className="form-control" name="nm_responsavel" id="nm_responsavel"/>
+                                    <input
+                                        ref={
+                                            register({
+                                                    required: true,
+                                                    pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ'\s]+$/,
+                                                    validate: {
+                                                        naoRepetirCaracteres: valor => !new RegExp(/([aA-zZ])\1\1/).test(valor),
+                                                    }
+                                                }
+                                            )
+                                        } onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nm_responsavel} type="text" className="form-control" name="nm_responsavel" id="nm_responsavel"/>
+                                    {errors.nm_responsavel && errors.nm_responsavel.type === "required" &&
+                                    <span className="span_erro mt-1">O campo Nome é obrigatório</span>}
+                                    {errors.nm_responsavel && errors.nm_responsavel.type === "naoRepetirCaracteres" &&
+                                    <span className="span_erro mt-1">Não é permitido repetir 03 ou mais caracteres seguidos</span>}
+                                    {errors.nm_responsavel && errors.nm_responsavel.type === "pattern" &&
+                                    <span className="span_erro mt-1">Não são permitidos números</span>}
+
                                 </div>
 
                                 <div className="col-12 col-md-8 mt-5">
                                     <label htmlFor="email_responsavel"><strong>E-mail do responsável*</strong></label>
-                                    <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.email_responsavel} required type="email" className="form-control" name="email_responsavel" id="email_responsavel"/>
+                                    <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.email_responsavel} type="email" className="form-control" name="email_responsavel" id="email_responsavel"/>
+                                    {errors.email_responsavel &&
+                                    <span className="span_erro mt-1">O campo Email é obrigatório</span>}
+
                                 </div>
 
                                 <div className="col-12 col-md-4 mt-5">
@@ -141,10 +195,15 @@ export const FormularioHomeInicial = () => {
                                             <label><strong>Telefone celular do responsável*</strong></label>
                                         </div>
                                         <div className="col-3">
-                                            <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_ddd_celular_responsavel} required type="text" className="form-control" name="cd_ddd_celular_responsavel" id="cd_ddd_celular_responsavel"/>
+                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_ddd_celular_responsavel} type="text" className="form-control" name="cd_ddd_celular_responsavel" id="cd_ddd_celular_responsavel"/>
+                                            {errors.cd_ddd_celular_responsavel &&
+                                            <span className="span_erro mt-1">O campo DDD é obrigatório</span>}
                                         </div>
                                         <div className="col-9 pl-1">
-                                            <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nr_celular_responsavel} required type="text" className="form-control" name="nr_celular_responsavel" id="nr_celular_responsavel"/>
+                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nr_celular_responsavel} type="text" className="form-control" name="nr_celular_responsavel" id="nr_celular_responsavel"/>
+                                            {errors.nr_celular_responsavel &&
+                                            <span className="span_erro mt-1">O campo Celular é obrigatório</span>}
+
                                         </div>
                                     </div>
 
@@ -154,22 +213,28 @@ export const FormularioHomeInicial = () => {
                                     <label><strong>Vínculo com o(a) estudante (mãe/pai/outro)*</strong></label>
                                     <div className="d-flex flex-wrap justify-content-between">
                                         <div className="pl-4 container-radio">
-                                            <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '1'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="mae" value="1"/>
+                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '1'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="mae" value="1"/>
                                             <label className="form-check-label" htmlFor="mae"><strong>Mãe</strong></label>
                                         </div>
 
                                         <div className="pl-4 container-radio">
-                                            <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '2'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="pai" value="2"/>
+                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '2'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="pai" value="2"/>
                                             <label className="form-check-label" htmlFor="pai"><strong>Pai</strong></label>
                                         </div>
                                         <div className="pl-4 container-radio">
-                                            <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '3'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="responsaveLegal" value="3"/>
+                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '3'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="responsaveLegal" value="3"/>
                                             <label className="form-check-label" htmlFor="responsaveLegal"><strong>Responsável legal</strong></label>
                                         </div>
 
                                         <div className="pl-4 container-radio">
-                                            <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '4'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="alunoMaiorDeIdade" value="4"/>
+                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '4'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="alunoMaiorDeIdade" value="4"/>
                                             <label className="form-check-label" htmlFor="alunoMaiorDeIdade"><strong>Aluno maior de idade</strong></label>
+                                        </div>
+                                    </div>
+                                    <div className='row'>
+                                        <div className="col-12">
+                                            {errors.tp_pessoa_responsavel &&
+                                            <span className="span_erro mt-1">O campo Vínculo com o(a) estudante é obrigatório</span>}
                                         </div>
                                     </div>
                                 </div>
@@ -186,12 +251,17 @@ export const FormularioHomeInicial = () => {
                                             <div className="row">
                                                 <div className='col-12 col-md-6'>
                                                     <label htmlFor="cd_cpf_responsavel"><strong>Cpf do responsável*</strong></label>
-                                                    <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} required type="text" className="form-control" name="cd_cpf_responsavel" id="cd_cpf_responsavel"/>
+                                                    <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} type="text" className="form-control" name="cd_cpf_responsavel" id="cd_cpf_responsavel"/>
+                                                    {errors.cd_cpf_responsavel &&
+                                                    <span className="span_erro mt-1">O campo Cpf do responsável é obrigatório</span>}
                                                 </div>
 
                                                 <div className='col-12 col-md-6 mt-5 mt-md-0'>
                                                     <label htmlFor="dtNascResponsavel"><strong>Data de nascimento do responsável*</strong></label>
-                                                    <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} required type="text" className="form-control" name="dtNascResponsavel" id="dtNascResponsavel"/>
+                                                    <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} type="text" className="form-control" name="dtNascResponsavel" id="dtNascResponsavel"/>
+                                                    {errors.dtNascResponsavel &&
+                                                    <span className="span_erro mt-1">O campo Data de nascimento do responsável é obrigatório</span>}
+
                                                 </div>
                                             </div>
                                         </div>
@@ -200,14 +270,23 @@ export const FormularioHomeInicial = () => {
 
                                 <div className="col-12 mt-5">
                                     <label htmlFor="nomeMaeResponsavel"><strong>Nome de mãe de responsável (sem abreviações)*</strong></label>
-                                    <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} required type="text" className="form-control" name="nomeMaeResponsavel" id="nomeMaeResponsavel"/>
+                                    <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} type="text" className="form-control" name="nomeMaeResponsavel" id="nomeMaeResponsavel"/>
+                                    {errors.dtNascResponsavel &&
+                                    <span className="span_erro mt-1">O campo Nome de mãe de responsável é obrigatório</span>}
+
                                 </div>
 
                                 <div className="col-12 mt-5">
                                     <div className="form-check form-check-inline">
-                                        <input onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} className="form-check-input" type="checkbox" name="checkboxDeclaro" id="checkboxDeclaro" value="sim" required/>
+                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} className="form-check-input" type="checkbox" name="checkboxDeclaro" id="checkboxDeclaro" value="sim"/>
                                         <label className="form-check-label" htmlFor="checkboxDeclaro">Declaro que as informações acima são verdadeiras</label>
                                     </div>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-12">
+                                    {errors.checkboxDeclaro &&
+                                    <span className="span_erro mt-1">Você precisa declarar que as informações são verdadeiras</span>}
                                 </div>
                             </div>
 
@@ -222,7 +301,7 @@ export const FormularioHomeInicial = () => {
                                     />
                                 </div>
                                 <div className='p-2'>
-                                    <button className="btn btn-primary">Atualizar cadastro</button>
+                                    <button type="submit" className="btn btn-primary">Atualizar cadastro</button>
                                 </div>
                             </div>
 
