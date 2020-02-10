@@ -6,7 +6,8 @@ export async function buscaDadosAlunoResponsavel(codigoEol, dtNascAluno) {
     const requestInfo = {
         method: "POST",
         body: JSON.stringify({
-            codigo_eol: codigoEol
+            codigo_eol: codigoEol,
+            data_nascimento: dtNascAluno,
         }),
         headers: {
             Authorization: TOKEN,

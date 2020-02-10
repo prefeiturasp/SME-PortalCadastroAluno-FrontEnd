@@ -7,15 +7,14 @@ import {useForm} from 'react-hook-form'
 
 export const FormularioHomeInicial = () => {
 
-    const {register, handleSubmit, watch, errors, reset} = useForm()
+    const {register, handleSubmit,  errors} = useForm()
 
-    //console.log(watch('example2')) // watch input value by passing the name of it
-
-    const myForm = useRef(null)
     const [inputCodigoEol, setInputCodigoEol] = useState('');
     const [inputDtNascAluno, setInputDtNascAluno] = useState('');
     const [collapse, setCollapse] = useState('');
     const [btnDisable, setBtnDisable] = useState(false);
+
+    const [msg, setMsg] = useState(false);
 
     // Campos Formulário de Atualização
     const [state, setState] = useState({
@@ -30,8 +29,67 @@ export const FormularioHomeInicial = () => {
         checkbox_declaro: "",
     });
 
+    const handleBtnAAbrirFormularioDisable = () => {
+
+        if (btnDisable === true || inputCodigoEol === '' || inputDtNascAluno === '') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    const handleChangeAtualizacaoCadastral = (name, value) => {
+        setState({
+            ...state,
+            [name]: value
+        });
+    };
+
+
+    const handleBtnCancelarAtualizacao = ()=> {
+        setCollapse('');
+        setBtnDisable(false);
+        limpaFormularios();
+
+    }
+
+    const onSubmitAbrirFormulario = (e)=>{
+        e.preventDefault()
+
+        buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno)
+            .then(retorno_api => {
+                setCollapse('show');
+                setBtnDisable(true);
+                setMsg(false);
+                setAtualizaCampos(retorno_api);
+            })
+            .catch(error => {
+                setMsg("Dados inválidos, tente novamente");
+                setCollapse('');
+                setBtnDisable(false);
+                console.log(error.message);
+                limpaFormularios();
+            });
+    }
+
+    const onSubmitAtualizacaoCadastral = (data, e ) => {
+
+        console.log(data);
+        setCollapse('')
+        setBtnDisable(false)
+
+        e.target.reset();
+
+        limpaFormularios();
+
+        /*fetch('/api/form-submit-url', {
+           method: 'POST',
+           body: data,
+       });*/
+
+    }
+
     const setAtualizaCampos = (retorno_api) => {
-        console.log("Ollyver setAtualizaCampos | ", retorno_api);
 
         setState({
             ...state,
@@ -47,108 +105,57 @@ export const FormularioHomeInicial = () => {
         });
     }
 
-    const handleChangeAtualizacaoCadastral = (name, value) => {
+    const limpaFormularios = () =>{
+        setInputCodigoEol('')
+        setInputDtNascAluno('')
+
         setState({
             ...state,
-            [name]: value
+            nm_responsavel: "",
+            email_responsavel: "",
+            cd_ddd_celular_responsavel: "",
+            nr_celular_responsavel: "",
+            tp_pessoa_responsavel: "",
+            cd_cpf_responsavel: "",
+            dt_nasc_responsavel: "",
+            nm_mae_responsavel: "",
+            checkbox_declaro: "",
         });
-    };
-
-    const handleBtnAbrirCadastro = (statusCollapse, statusBtnDisable, retornar_dados) => {
-
-        setCollapse(statusCollapse)
-        setBtnDisable(statusBtnDisable)
-
-        if (retornar_dados) {
-            buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno)
-                .then(retorno_api => {
-                    setAtualizaCampos(retorno_api);
-                })
-                .catch(error => {
-                    console.log(error.message);
-                });
-        }
-    }
-
-    const handleBtnAAbrirFormularioDisable = () => {
-        if (btnDisable === true || inputCodigoEol === '' || inputDtNascAluno === '') {
-            return true
-        } else {
-            return false
-        }
-    }
-
-    const handleSubmit_local = (e) => {
-        const formData = new FormData(e.target)
-        const campos = {}
-
-        e.preventDefault()
-
-        for (let entry of formData.entries()) {
-            campos[entry[0]] = entry[1]
-        }
-
-        console.log(campos); // reference by form input's `name` tag
-
-        /*fetch('/api/form-submit-url', {
-            method: 'POST',
-            body: data,
-        });*/
-    }
-
-    const onSubmit = (data, e ) => {
-
-        console.log(data)
-
-        e.target.reset()
-
-        /*setState({
-            nm_responsavel: '',
-            email_responsavel: '',
-            cd_ddd_celular_responsavel: '',
-            nr_celular_responsavel: '',
-            tp_pessoa_responsavel: '',
-            cd_cpf_responsavel: '',
-            dt_nasc_responsavel: '',
-            nm_mae_responsavel: '',
-            checkbox_declaro: '',
-        });*/
-
-        /*fetch('/api/form-submit-url', {
-           method: 'POST',
-           body: data,
-       });*/
 
     }
-
 
     return (
         <div className="w-100 formulario-inicial-home pt-5 pb-5 ">
             <div className="container">
                 <h2 className="text-white mb-xs-5">Acesse o formulário para solicitar o cartão.</h2>
 
-                <form name="abrirFormulario">
+                <form onSubmit={(e)=>onSubmitAbrirFormulario(e)} name="abrirFormulario" id='abrirFormulario' >
                     <div className="row">
                         <div className="col-lg-4 mt-4">
                             <label id="codigoEol">Código EOL</label>
-                            <input onChange={(e) => setInputCodigoEol(e.target.value)} value={inputCodigoEol} name="codigoEol" type="text" className="form-control"/>
+                            <input onChange={(e) => setInputCodigoEol(e.target.value)} value={inputCodigoEol}  name="codigoEol" type="text" className="form-control"/>
                         </div>
                         <div className="col-lg-4 mt-4">
                             <label htmlFor='dtNascAluno'>Data de nascimento do estudante</label>
                             <input onChange={(e) => setInputDtNascAluno(e.target.value)} value={inputDtNascAluno} id="dtNascAluno" type="date" className="form-control"/>
                         </div>
                         <div className="col-lg-4 mt-4 mt-md-5 pl-5 pr-5 pl-md-0 pr-md-0">
+
                             <BtnCustomizado
-                                onClick={() => handleBtnAbrirCadastro('show', true, true)}
                                 disable={handleBtnAAbrirFormularioDisable()}
-                                type="button"
+                                type="submit"
                                 classeCss="btn btn-outline-primary btn-block btn-abrir-formulario mt-2"
                                 texto="Abrir formulário"
                             />
                         </div>
+                        {
+                            msg && (
+                                <span>{msg}</span>
+                            )
+                        }
                     </div>
-
                 </form>
+
                 <div className={`collapse ${collapse}  pt-5`} id="">
                     <h2 className="text-white mb-4">Solicitação do cartão </h2>
 
@@ -156,7 +163,7 @@ export const FormularioHomeInicial = () => {
                         <p className="mb-4">
                             <strong>Confirme ou altere os dados do responsável pelo(a) estudante</strong>
                         </p>
-                        <form name="atualizacaoCadastral" onSubmit={handleSubmit(onSubmit)}>
+                        <form name="atualizacaoCadastral" onSubmit={handleSubmit(onSubmitAtualizacaoCadastral)}>
                             <div className="row">
                                 <div className="col-12">
                                     <label htmlFor="nm_responsavel"><strong>Nome completo do responsável (sem abreviações)*</strong></label>
@@ -293,26 +300,26 @@ export const FormularioHomeInicial = () => {
                             <div className="d-flex justify-content-end mt-4">
                                 <div className='p-2'>
                                     <BtnCustomizado
-                                        onClick={() => handleBtnAbrirCadastro('', false, false)}
+                                        onClick={(e) => handleBtnCancelarAtualizacao(e)}
                                         disable=""
-                                        type="button"
+                                        type="reset"
                                         classeCss="btn btn-outline-primary"
                                         texto="Cancelar"
                                     />
                                 </div>
                                 <div className='p-2'>
-                                    <button type="submit" className="btn btn-primary">Atualizar cadastro</button>
+                                    <BtnCustomizado
+                                        type="submit"
+                                        classeCss="btn btn-primary"
+                                        texto="Atualizar cadastro"
+                                    />
                                 </div>
                             </div>
-
                         </form>
 
                     </div>
-
                 </div>
-
             </div>
-
         </div>
     )
 }
