@@ -1,11 +1,14 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useContext } from "react";
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {buscaDadosAlunoResponsavel} from "../../services/ConectarApi"
+import {NotificacaoContext} from "../Context/NotificacaoContext";
 
 import {useForm} from 'react-hook-form'
 
 export const FormularioHomeInicial = () => {
+
+    const mensagem = useContext(NotificacaoContext);
 
     const {register, handleSubmit,  errors} = useForm()
 
@@ -64,7 +67,8 @@ export const FormularioHomeInicial = () => {
                 setAtualizaCampos(retorno_api);
             })
             .catch(error => {
-                setMsg("Dados inválidos, tente novamente");
+                //setMsg("Dados inválidos, tente novamente");
+                mensagem.setMsg("Dados inválidos, tente novamente")
                 setCollapse('');
                 setBtnDisable(false);
                 console.log(error.message);
