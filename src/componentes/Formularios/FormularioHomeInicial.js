@@ -1,5 +1,6 @@
-import React, {useState, useRef, useContext } from "react";
+import React, {useState, useRef, useContext} from "react";
 import {useForm} from 'react-hook-form'
+import InputMask from "react-input-mask";
 
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
@@ -8,9 +9,9 @@ import {NotificacaoContext} from "../../context/NotificacaoContext";
 
 export const FormularioHomeInicial = () => {
 
-    const mensagem = useContext(NotificacaoContext)
+    const mensagem = useContext(NotificacaoContext);
 
-    const {register, handleSubmit,  errors} = useForm()
+    const {register, handleSubmit, errors} = useForm()
 
     const [inputCodigoEol, setInputCodigoEol] = useState('');
     const [inputDtNascAluno, setInputDtNascAluno] = useState('');
@@ -46,14 +47,14 @@ export const FormularioHomeInicial = () => {
     };
 
 
-    const handleBtnCancelarAtualizacao = ()=> {
+    const handleBtnCancelarAtualizacao = () => {
         setCollapse('');
         setBtnDisable(false);
         limpaFormularios();
 
     }
 
-    const onSubmitAbrirFormulario = (e)=>{
+    const onSubmitAbrirFormulario = (e) => {
         e.preventDefault()
 
         buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno)
@@ -76,7 +77,7 @@ export const FormularioHomeInicial = () => {
             });
     }
 
-    const onSubmitAtualizacaoCadastral = (data, e ) => {
+    const onSubmitAtualizacaoCadastral = (data, e) => {
 
         console.log(data);
 
@@ -125,7 +126,7 @@ export const FormularioHomeInicial = () => {
         });
     }
 
-    const limpaFormularios = () =>{
+    const limpaFormularios = () => {
         setInputCodigoEol('')
         setInputDtNascAluno('')
 
@@ -148,11 +149,11 @@ export const FormularioHomeInicial = () => {
             <div className="container">
                 <h2 className="text-white mb-xs-5">Acesse o formulário para solicitar o cartão.</h2>
 
-                <form onSubmit={(e)=>onSubmitAbrirFormulario(e)} name="abrirFormulario" id='abrirFormulario' >
+                <form onSubmit={(e) => onSubmitAbrirFormulario(e)} name="abrirFormulario" id='abrirFormulario'>
                     <div className="row">
                         <div className="col-lg-4 mt-4">
                             <label id="codigoEol">Código EOL</label>
-                            <input onChange={(e) => setInputCodigoEol(e.target.value)} value={inputCodigoEol}  name="codigoEol" type="text" className="form-control"/>
+                            <input onChange={(e) => setInputCodigoEol(e.target.value)} value={inputCodigoEol} name="codigoEol" type="text" className="form-control"/>
                         </div>
                         <div className="col-lg-4 mt-4">
                             <label htmlFor='dtNascAluno'>Data de nascimento do estudante</label>
@@ -215,12 +216,16 @@ export const FormularioHomeInicial = () => {
                                             <label><strong>Telefone celular do responsável*</strong></label>
                                         </div>
                                         <div className="col-3">
-                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_ddd_celular_responsavel} type="text" className="form-control" name="cd_ddd_celular_responsavel" id="cd_ddd_celular_responsavel"/>
+                                            <InputMask
+                                                mask="(99)"
+                                                ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_ddd_celular_responsavel} type="text" className="form-control" name="cd_ddd_celular_responsavel" id="cd_ddd_celular_responsavel"/>
                                             {errors.cd_ddd_celular_responsavel &&
                                             <span className="span_erro mt-1">O campo DDD é obrigatório</span>}
                                         </div>
                                         <div className="col-9 pl-1">
-                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nr_celular_responsavel} type="text" className="form-control" name="nr_celular_responsavel" id="nr_celular_responsavel"/>
+                                            <InputMask
+                                                mask="9 9999 9999"
+                                                ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nr_celular_responsavel} type="tel" className="form-control" name="nr_celular_responsavel" id="nr_celular_responsavel"/>
                                             {errors.nr_celular_responsavel &&
                                             <span className="span_erro mt-1">O campo Celular é obrigatório</span>}
                                         </div>
@@ -269,14 +274,16 @@ export const FormularioHomeInicial = () => {
                                             <div className="row">
                                                 <div className='col-12 col-md-6'>
                                                     <label htmlFor="cd_cpf_responsavel"><strong>Cpf do responsável*</strong></label>
-                                                    <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} type="text" className="form-control" name="cd_cpf_responsavel" id="cd_cpf_responsavel"/>
+                                                    <InputMask
+                                                        mask="999.999.999-99"
+                                                        ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} type="text" className="form-control" name="cd_cpf_responsavel" id="cd_cpf_responsavel"/>
                                                     {errors.cd_cpf_responsavel &&
                                                     <span className="span_erro mt-1">O campo Cpf do responsável é obrigatório</span>}
                                                 </div>
 
                                                 <div className='col-12 col-md-6 mt-5 mt-md-0'>
                                                     <label htmlFor="data_nascimento"><strong>Data de nascimento do responsável*</strong></label>
-                                                    <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} type="text" className="form-control" name="data_nascimento" id="data_nascimento"/>
+                                                    <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} type="date" className="form-control" name="data_nascimento" id="data_nascimento"/>
                                                     {errors.data_nascimento &&
                                                     <span className="span_erro mt-1">O campo Data de nascimento do responsável é obrigatório</span>}
 
@@ -289,7 +296,7 @@ export const FormularioHomeInicial = () => {
                                 <div className="col-12 mt-5">
                                     <label htmlFor="nome_mae"><strong>Nome de mãe de responsável (sem abreviações)*</strong></label>
                                     <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} type="text" className="form-control" name="nome_mae" id="nome_mae"/>
-                                    {errors.data_nascimento &&
+                                    {errors.nome_mae &&
                                     <span className="span_erro mt-1">O campo Nome de mãe de responsável é obrigatório</span>}
 
                                 </div>
