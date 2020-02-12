@@ -20,14 +20,13 @@ export const FormularioHomeInicial = () => {
     // Campos Formulário de Atualização
     const [state, setState] = useState({
         nm_responsavel: "",
-        email_responsavel: "",
+        cd_cpf_responsavel: "",
         cd_ddd_celular_responsavel: "",
         nr_celular_responsavel: "",
-        tp_pessoa_responsavel: "",
-        cd_cpf_responsavel: "",
-        dt_nasc_responsavel: "",
-        nm_mae_responsavel: "",
-        checkbox_declaro: "",
+        email_responsavel: "",
+        dc_tipo_responsavel: "",
+        nome_mae: "",
+        data_nascimento: "",
     });
 
     const handleBtnAAbrirFormularioDisable = () => {
@@ -62,6 +61,8 @@ export const FormularioHomeInicial = () => {
                 setCollapse('show');
                 setBtnDisable(true);
                 setAtualizaCampos(retorno_api);
+
+                console.log("retorno_api ", retorno_api);
             })
             .catch(error => {
                 //setMsg("Dados inválidos, tente novamente");
@@ -79,15 +80,16 @@ export const FormularioHomeInicial = () => {
 
         console.log(data);
 
-        let novo_objeto;
+        // Removendo checkbox Você precisa declarar que as informações são verdadeiras
+        delete data.checkboxDeclaro;
 
-        novo_objeto = {
+        let payload_atualizado = {
             codigo_eol: inputCodigoEol,
             data_nascimento: inputDtNascAluno,
             responsavel: data
-        }
+        };
 
-        console.log(novo_objeto);
+        console.log(payload_atualizado);
 
         mensagem.setAbrirModal(true)
         mensagem.setTituloModal("Obrigado pela atualização cadastral!")
@@ -113,14 +115,13 @@ export const FormularioHomeInicial = () => {
         setState({
             ...state,
             nm_responsavel: retorno_api.detail.responsaveis[0].nm_responsavel ? retorno_api.detail.responsaveis[0].nm_responsavel : '',
-            email_responsavel: retorno_api.detail.responsaveis[0].email_responsavel ? retorno_api.detail.responsaveis[0].email_responsavel : '',
+            cd_cpf_responsavel: retorno_api.detail.responsaveis[0].cd_cpf_responsavel ? retorno_api.detail.responsaveis[0].cd_cpf_responsavel : '',
             cd_ddd_celular_responsavel: retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel ? retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel : '',
             nr_celular_responsavel: retorno_api.detail.responsaveis[0].nr_celular_responsavel ? retorno_api.detail.responsaveis[0].nr_celular_responsavel : '',
-            tp_pessoa_responsavel: retorno_api.detail.responsaveis[0].tp_pessoa_responsavel ? retorno_api.detail.responsaveis[0].tp_pessoa_responsavel : '',
-            cd_cpf_responsavel: retorno_api.detail.responsaveis[0].cd_cpf_responsavel ? retorno_api.detail.responsaveis[0].cd_cpf_responsavel : '',
-            dt_nasc_responsavel: retorno_api.detail.responsaveis[0].dt_nasc_responsavel ? retorno_api.detail.responsaveis[0].dt_nasc_responsavel : '',
-            nm_mae_responsavel: retorno_api.detail.responsaveis[0].nm_mae_responsavel ? retorno_api.detail.responsaveis[0].nm_mae_responsavel : '',
-            checkbox_declaro: retorno_api.detail.responsaveis[0].checkbox_declaro ? retorno_api.detail.responsaveis[0].checkbox_declaro : '',
+            email_responsavel: retorno_api.detail.responsaveis[0].email_responsavel ? retorno_api.detail.responsaveis[0].email_responsavel : '',
+            dc_tipo_responsavel: retorno_api.detail.responsaveis[0].dc_tipo_responsavel ? retorno_api.detail.responsaveis[0].dc_tipo_responsavel : '',
+            nome_mae: retorno_api.detail.responsaveis[0].nm_mae_responsavel ? retorno_api.detail.responsaveis[0].nm_mae_responsavel : '',
+            data_nascimento: retorno_api.detail.responsaveis[0].dt_nasc_responsavel ? retorno_api.detail.responsaveis[0].dt_nasc_responsavel : '',
         });
     }
 
@@ -131,14 +132,13 @@ export const FormularioHomeInicial = () => {
         setState({
             ...state,
             nm_responsavel: "",
-            email_responsavel: "",
+            cd_cpf_responsavel: "",
             cd_ddd_celular_responsavel: "",
             nr_celular_responsavel: "",
-            tp_pessoa_responsavel: "",
-            cd_cpf_responsavel: "",
-            dt_nasc_responsavel: "",
-            nm_mae_responsavel: "",
-            checkbox_declaro: "",
+            email_responsavel: "",
+            dc_tipo_responsavel: "",
+            nome_mae: "",
+            data_nascimento: "",
         });
 
     }
@@ -231,27 +231,27 @@ export const FormularioHomeInicial = () => {
                                     <label><strong>Vínculo com o(a) estudante (mãe/pai/outro)*</strong></label>
                                     <div className="d-flex flex-wrap justify-content-between">
                                         <div className="pl-4 container-radio">
-                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '1'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="mae" value="1"/>
+                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.dc_tipo_responsavel == 'MAE'} className="form-check-input" type="radio" name="dc_tipo_responsavel" id="mae" value="MAE"/>
                                             <label className="form-check-label" htmlFor="mae"><strong>Mãe</strong></label>
                                         </div>
 
                                         <div className="pl-4 container-radio">
-                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '2'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="pai" value="2"/>
+                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.dc_tipo_responsavel == 'PAI'} className="form-check-input" type="radio" name="dc_tipo_responsavel" id="pai" value="PAI"/>
                                             <label className="form-check-label" htmlFor="pai"><strong>Pai</strong></label>
                                         </div>
                                         <div className="pl-4 container-radio">
-                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '3'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="responsaveLegal" value="3"/>
+                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.dc_tipo_responsavel == 'RESPONSAVEL_LEGAL'} className="form-check-input" type="radio" name="dc_tipo_responsavel" id="responsaveLegal" value="RESPONSAVEL_LEGAL"/>
                                             <label className="form-check-label" htmlFor="responsaveLegal"><strong>Responsável legal</strong></label>
                                         </div>
 
                                         <div className="pl-4 container-radio">
-                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '4'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="alunoMaiorDeIdade" value="4"/>
+                                            <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.dc_tipo_responsavel == 'ALUNO_MAIOR_DE_IDADE'} className="form-check-input" type="radio" name="dc_tipo_responsavel" id="alunoMaiorDeIdade" value="ALUNO_MAIOR_DE_IDADE"/>
                                             <label className="form-check-label" htmlFor="alunoMaiorDeIdade"><strong>Aluno maior de idade</strong></label>
                                         </div>
                                     </div>
                                     <div className='row'>
                                         <div className="col-12">
-                                            {errors.tp_pessoa_responsavel &&
+                                            {errors.dc_tipo_responsavel &&
                                             <span className="span_erro mt-1">O campo Vínculo com o(a) estudante é obrigatório</span>}
                                         </div>
                                     </div>
@@ -275,9 +275,9 @@ export const FormularioHomeInicial = () => {
                                                 </div>
 
                                                 <div className='col-12 col-md-6 mt-5 mt-md-0'>
-                                                    <label htmlFor="dtNascResponsavel"><strong>Data de nascimento do responsável*</strong></label>
-                                                    <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} type="text" className="form-control" name="dtNascResponsavel" id="dtNascResponsavel"/>
-                                                    {errors.dtNascResponsavel &&
+                                                    <label htmlFor="data_nascimento"><strong>Data de nascimento do responsável*</strong></label>
+                                                    <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} type="text" className="form-control" name="data_nascimento" id="data_nascimento"/>
+                                                    {errors.data_nascimento &&
                                                     <span className="span_erro mt-1">O campo Data de nascimento do responsável é obrigatório</span>}
 
                                                 </div>
@@ -287,9 +287,9 @@ export const FormularioHomeInicial = () => {
                                 </div>
 
                                 <div className="col-12 mt-5">
-                                    <label htmlFor="nomeMaeResponsavel"><strong>Nome de mãe de responsável (sem abreviações)*</strong></label>
-                                    <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} type="text" className="form-control" name="nomeMaeResponsavel" id="nomeMaeResponsavel"/>
-                                    {errors.dtNascResponsavel &&
+                                    <label htmlFor="nome_mae"><strong>Nome de mãe de responsável (sem abreviações)*</strong></label>
+                                    <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} type="text" className="form-control" name="nome_mae" id="nome_mae"/>
+                                    {errors.data_nascimento &&
                                     <span className="span_erro mt-1">O campo Nome de mãe de responsável é obrigatório</span>}
 
                                 </div>
