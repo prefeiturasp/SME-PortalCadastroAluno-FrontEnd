@@ -1,6 +1,4 @@
 import React, {useState, createContext, Fragment} from "react";
-//import React, {useState, createContext, Fragment, useEffect} from 'react'
-//import {Button, Modal} from "react-bootstrap";
 import {Button, Modal} from "react-bootstrap";
 
 export const NotificacaoContext = createContext({
@@ -37,7 +35,7 @@ export const NotificacaoContextProvider = ({children}) => {
                             <p>{msg}</p>
                         </Modal.Body>
                         <Modal.Footer>
-                            <Button variant="primary" onClick={handleClose} >
+                            <Button variant="primary" onClick={handleClose}>
                                 fechar
                             </Button>
                         </Modal.Footer>
