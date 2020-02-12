@@ -1,14 +1,14 @@
 import React, {useState, useRef, useContext } from "react";
+import {useForm} from 'react-hook-form'
+
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {buscaDadosAlunoResponsavel} from "../../services/ConectarApi"
-import {NotificacaoContext} from "../Context/NotificacaoContext";
-
-import {useForm} from 'react-hook-form'
+import {NotificacaoContext} from "../../context/NotificacaoContext";
 
 export const FormularioHomeInicial = () => {
 
-    const mensagem = useContext(NotificacaoContext);
+    const mensagem = useContext(NotificacaoContext)
 
     const {register, handleSubmit,  errors} = useForm()
 
@@ -16,8 +16,6 @@ export const FormularioHomeInicial = () => {
     const [inputDtNascAluno, setInputDtNascAluno] = useState('');
     const [collapse, setCollapse] = useState('');
     const [btnDisable, setBtnDisable] = useState(false);
-
-    const [msg, setMsg] = useState(false);
 
     // Campos Formulário de Atualização
     const [state, setState] = useState({
@@ -63,12 +61,13 @@ export const FormularioHomeInicial = () => {
             .then(retorno_api => {
                 setCollapse('show');
                 setBtnDisable(true);
-                setMsg(false);
                 setAtualizaCampos(retorno_api);
             })
             .catch(error => {
                 //setMsg("Dados inválidos, tente novamente");
-                mensagem.setMsg("Dados inválidos, tente novamente")
+                mensagem.setAbrirModal(true)
+                mensagem.setTituloModal("Dados inválidos, tente novamente")
+                mensagem.setMsg("Tente novamente inserir o código EOL e a data de nascimento")
                 setCollapse('');
                 setBtnDisable(false);
                 console.log(error.message);
@@ -79,6 +78,22 @@ export const FormularioHomeInicial = () => {
     const onSubmitAtualizacaoCadastral = (data, e ) => {
 
         console.log(data);
+
+        let novo_objeto;
+
+        novo_objeto = {
+            codigo_eol: inputCodigoEol,
+            data_nascimento: inputDtNascAluno,
+            responsavel: data
+        }
+
+        console.log(novo_objeto);
+
+        mensagem.setAbrirModal(true)
+        mensagem.setTituloModal("Obrigado pela atualização cadastral!")
+        mensagem.setMsg("Obrigado por fazer sua atualização cadastral. Se precisar rever algum dado até o dia XX/XX, basta entrar novamente no formulário e corrigir os dados enviados.\n" +
+            "Em breve a Secretaria Municipal de Educação fará novo contato, com mais informações sobre como se dará o processo de compra dos uniformes escolares pelas famílias.")
+
         setCollapse('')
         setBtnDisable(false)
 
@@ -152,11 +167,6 @@ export const FormularioHomeInicial = () => {
                                 texto="Abrir formulário"
                             />
                         </div>
-                        {
-                            msg && (
-                                <span>{msg}</span>
-                            )
-                        }
                     </div>
                 </form>
 
@@ -200,7 +210,6 @@ export const FormularioHomeInicial = () => {
                                 </div>
 
                                 <div className="col-12 col-md-4 mt-5">
-
                                     <div className="row">
                                         <div className="col-12">
                                             <label><strong>Telefone celular do responsável*</strong></label>
@@ -214,10 +223,8 @@ export const FormularioHomeInicial = () => {
                                             <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nr_celular_responsavel} type="text" className="form-control" name="nr_celular_responsavel" id="nr_celular_responsavel"/>
                                             {errors.nr_celular_responsavel &&
                                             <span className="span_erro mt-1">O campo Celular é obrigatório</span>}
-
                                         </div>
                                     </div>
-
                                 </div>
 
                                 <div className="col-12 mt-5">
