@@ -2,8 +2,7 @@ import React, {Fragment} from "react";
 import "./home.scss"
 import {FormularioHomeInicial} from '../../componentes/Formularios/FormularioHomeInicial'
 import ImgDadosFornecer from "../../assets/img/dados-fornecer.png"
-const URL_VIDEO = process.env.REACT_APP_URL_VIDEO;
-
+import UniformeEscolar from "../../assets/img/uniforme-escolar.jpg"
 
 export const Home = () => {
     return (
@@ -11,11 +10,13 @@ export const Home = () => {
             <div className="w-100 banner-home position-relative">
                 <div className="container">
                     <div className="conteudo">
-                        <div className="col-lg-8 col-sm-12 col-xl-6">
+                        <div className="col-lg-7 col-sm-12 col-xl-5">
                             <h1>
-                                Solicite o cartão para compra
+                                Solicite o crédito para compra
                                 do uniforme.
                             </h1>
+                        </div>
+                        <div className="col-lg-6 col-sm-12 col-xl-4">
                             <p>
                                 Para efetivar o novo modelo descentralizado de compra dos uniformes escolares diretamente pelas famílias, precisamos confirmar e completar alguns dados dos responsáveis pelos estudantes matriculados na Rede Municipal de Ensino. Para isso, insira abaixo o código da criança no sistema Escola Online (EOL) e a data de nascimento dela.
                             </p>
@@ -32,9 +33,13 @@ export const Home = () => {
                     <div className="row mt-5">
 
                         <div className="col-lg-6 col-sm-12">
-                            <div className="embed-responsive embed-responsive-16by9">
-                                <iframe title="Vídeo sobre o Vaga Na Creche" src={URL_VIDEO} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-                            </div>
+                            <figure>
+                                <img
+                                    src={UniformeEscolar}
+                                    className="img-fluid"
+                                    alt="Cinco crianças com uniforme escolar .Todas sentadas e felizes"
+                                />
+                            </figure>
                         </div>
 
                         <div className="col-lg-6 col-sm-12 mb-lg-0 align-self-center">
