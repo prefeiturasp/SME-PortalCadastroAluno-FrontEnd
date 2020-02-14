@@ -24,13 +24,13 @@ export const MenuPrincipal = () => {
 
                         <li className="nav-item">
                             <Link className="nav-link text-secondary mb-1 pb-0" to="/">
-                                Home
+                                Busque loja credenciada
                             </Link>
                         </li>
 
                         <li className="nav-item">
                             <Link className="nav-link text-secondary mb-1 pb-0" to="/atualize-seu-cadastro">
-                                Atualize seu cadastro
+                                Avise sobre problemas
                             </Link>
                         </li>
 
