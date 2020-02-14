@@ -1,6 +1,6 @@
 import React, {Fragment} from "react";
 import "./home.scss"
-import {FormularioHomeInicial} from '../../componentes/Formularios/FormularioHomeInicial'
+import {Login} from '../../componentes/Formularios/Login'
 import ImgDadosFornecer from "../../assets/img/dados-fornecer.png"
 import UniformeEscolar from "../../assets/img/uniforme-escolar.jpg"
 
@@ -26,7 +26,7 @@ export const Home = () => {
                 </div>
             </div>
 
-            <FormularioHomeInicial/>
+            <Login/>
 
             <div className="w-100 quem-recebe-uniforme">
                 <div className="container">
