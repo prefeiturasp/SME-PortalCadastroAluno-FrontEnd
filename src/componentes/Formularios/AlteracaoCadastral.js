@@ -19,7 +19,8 @@ export const AlteracaoCadastral = (parametros) => {
         inputDtNascAluno,
         setBtnDisable,
         limpaFormularios,
-        handleBtnCancelarAtualizacao } = parametros;
+        handleBtnCancelarAtualizacao
+    } = parametros;
 
     const mensagem = useContext(NotificacaoContext);
 
@@ -40,7 +41,7 @@ export const AlteracaoCadastral = (parametros) => {
         data_nascimento: "",
     });
 
-    useEffect( () => {
+    useEffect(() => {
 
         setState({
             ...state,
@@ -57,7 +58,7 @@ export const AlteracaoCadastral = (parametros) => {
     }, []);
 
     const handleChangeAtualizacaoCadastral = (name, value) => {
-        value.replace("_",'')
+        value.replace("_", '')
         setState({
             ...state,
             [name]: value
@@ -95,6 +96,8 @@ export const AlteracaoCadastral = (parametros) => {
         limpaFormularios();
     }
 
+
+
     return (
         <>
             <div className={`collapse ${collapse}  pt-5`} id="">
@@ -119,9 +122,12 @@ export const AlteracaoCadastral = (parametros) => {
                                             }
                                         )
                                     } onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nm_responsavel} type="text" className="form-control" name="nm_responsavel" id="nm_responsavel"/>
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "required" && <span className="span_erro mt-1">O campo Nome é obrigatório</span>}
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "naoRepetirCaracteres" && <span className="span_erro mt-1">Não é permitido repetir 03 ou mais caracteres seguidos</span>}
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "pattern" && <span className="span_erro mt-1">Não são permitidos números</span>}
+                                {errors.nm_responsavel && errors.nm_responsavel.type === "required" &&
+                                <span className="span_erro mt-1">Nome é obrigatório</span>}
+                                {errors.nm_responsavel && errors.nm_responsavel.type === "naoRepetirCaracteres" &&
+                                <span className="span_erro mt-1">Não é permitido repetir 03 ou mais caracteres seguidos</span>}
+                                {errors.nm_responsavel && errors.nm_responsavel.type === "pattern" &&
+                                <span className="span_erro mt-1">Não são permitidos números</span>}
 
                             </div>
 
@@ -135,8 +141,10 @@ export const AlteracaoCadastral = (parametros) => {
                                         }
 
                                     })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.email_responsavel} type="email" className="form-control" name="email_responsavel" id="email_responsavel"/>
-                                {errors.email_responsavel && errors.email_responsavel.type === "required" && <span className="span_erro mt-1">O campo Email é obrigatório</span>}
-                                {errors.email_responsavel && errors.email_responsavel.type === "naoRepetirCaracteres" && <span className="span_erro mt-1">Digite um email válido</span>}
+                                {errors.email_responsavel && errors.email_responsavel.type === "required" &&
+                                <span className="span_erro mt-1">Email é obrigatório</span>}
+                                {errors.email_responsavel && errors.email_responsavel.type === "naoRepetirCaracteres" &&
+                                <span className="span_erro mt-1">Digite um email válido</span>}
                             </div>
 
                             <div className="col-12 col-md-4 mt-5">
@@ -152,8 +160,10 @@ export const AlteracaoCadastral = (parametros) => {
                                                 required: true,
                                                 minLength: 2,
                                             })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_ddd_celular_responsavel} type="text" className="form-control" name="cd_ddd_celular_responsavel" id="cd_ddd_celular_responsavel"/>
-                                            {errors.cd_ddd_celular_responsavel && errors.cd_ddd_celular_responsavel.type === 'required' && <span className="span_erro mt-1">O campo DDD é obrigatório</span>}
-                                            {errors.cd_ddd_celular_responsavel && errors.cd_ddd_celular_responsavel.type === 'minLength' && <span className="span_erro mt-1">DDD deve conter 2 números</span>}
+                                        {errors.cd_ddd_celular_responsavel && errors.cd_ddd_celular_responsavel.type === 'required' &&
+                                        <span className="span_erro mt-1">DDD é obrigatório</span>}
+                                        {errors.cd_ddd_celular_responsavel && errors.cd_ddd_celular_responsavel.type === 'minLength' &&
+                                        <span className="span_erro mt-1">DDD deve conter 2 números</span>}
 
                                     </div>
                                     <div className="col-9 pl-1">
@@ -166,8 +176,10 @@ export const AlteracaoCadastral = (parametros) => {
                                                     required: true,
                                                     minLength: 9,
                                                 })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nr_celular_responsavel} type="tel" className="form-control" name="nr_celular_responsavel" id="nr_celular_responsavel"/>
-                                        {errors.nr_celular_responsavel && errors.nr_celular_responsavel.type === "required" && <span className="span_erro mt-1">O campo Celular é obrigatório</span>}
-                                        {errors.nr_celular_responsavel && errors.nr_celular_responsavel.type === "minLength" && <span className="span_erro mt-1">Celular deve conter 9 números</span>}
+                                        {errors.nr_celular_responsavel && errors.nr_celular_responsavel.type === "required" &&
+                                        <span className="span_erro mt-1">Celular é obrigatório</span>}
+                                        {errors.nr_celular_responsavel && errors.nr_celular_responsavel.type === "minLength" &&
+                                        <span className="span_erro mt-1">Celular deve conter 9 números</span>}
                                     </div>
                                 </div>
                             </div>
@@ -197,7 +209,7 @@ export const AlteracaoCadastral = (parametros) => {
                                 <div className='row'>
                                     <div className="col-12">
                                         {errors.dc_tipo_responsavel &&
-                                        <span className="span_erro mt-1">O campo Vínculo com o(a) estudante é obrigatório</span>}
+                                        <span className="span_erro mt-1">Vínculo com o(a) estudante é obrigatório</span>}
                                     </div>
                                 </div>
                             </div>
@@ -224,22 +236,25 @@ export const AlteracaoCadastral = (parametros) => {
                                                             required: true,
                                                             minLength: 11,
                                                         })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_cpf_responsavel} type="text" className="form-control" name="cd_cpf_responsavel" id="cd_cpf_responsavel"/>
-                                                {errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "required" && <span className="span_erro mt-1">O campo CPF do responsável é obrigatório</span>}
-                                                {errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "minLength" && <span className="span_erro mt-1">CPF deve conter 11 números</span>}
+                                                {errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "required" &&
+                                                <span className="span_erro mt-1">CPF do responsável é obrigatório</span>}
+                                                {errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "minLength" &&
+                                                <span className="span_erro mt-1">CPF deve conter 11 números</span>}
                                             </div>
 
                                             <div className='col-12 col-md-6 mt-5 mt-md-0'>
                                                 <label htmlFor="data_nascimento"><strong>Data de nascimento do responsável*</strong></label>
                                                 <input
                                                     ref={
-                                                    register({
-                                                        //required: true,
-                                                        validate: {
-                                                            comparaDatas: data=>moment(data).isAfter(inputDtNascAluno)
-                                                        }
-                                                    })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.data_nascimento} type="date" className="form-control" name="data_nascimento" id="data_nascimento"/>
-                                                {/*{errors.data_nascimento && errors.data_nascimento.type === "required" && <span className="span_erro mt-1">O campo Data de nascimento do responsável é obrigatório</span>}*/}
-                                                {errors.data_nascimento && errors.data_nascimento.type === "comparaDatas" && <span className="span_erro mt-1">Data do responsável deve ser maior que a do aluno</span>}
+                                                        register({
+                                                            required: true,
+                                                            validate: {
+                                                                comparaDatas: data => moment(data).isAfter(inputDtNascAluno)
+                                                            }
+                                                        })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.data_nascimento} type="date" className="form-control" name="data_nascimento" id="data_nascimento"/>
+                                                {errors.data_nascimento && errors.data_nascimento.type === "required" && <span className="span_erro mt-1">Data de nascimento do responsável é obrigatório</span>}
+                                                {errors.data_nascimento && errors.data_nascimento.type === "comparaDatas" &&
+                                                <span className="span_erro mt-1">Digite uma data de nascimento válida</span>}
                                             </div>
                                         </div>
                                     </div>
@@ -250,7 +265,7 @@ export const AlteracaoCadastral = (parametros) => {
                                 <label htmlFor="nome_mae"><strong>Nome de mãe de responsável (sem abreviações)*</strong></label>
                                 <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nome_mae} type="text" className="form-control" name="nome_mae" id="nome_mae"/>
                                 {errors.nome_mae &&
-                                <span className="span_erro mt-1">O campo Nome de mãe de responsável é obrigatório</span>}
+                                <span className="span_erro mt-1">Nome de mãe de responsável é obrigatório</span>}
                             </div>
 
                             <div className="col-12 mt-5">
