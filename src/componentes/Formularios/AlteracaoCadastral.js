@@ -1,12 +1,12 @@
+/* eslint eqeqeq: 0 */
 import React, {useContext, useEffect, useState} from "react";
-
 import {useForm} from 'react-hook-form'
 import InputMask from "react-input-mask";
-import * as moment from 'moment'
 
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {atualizaCadastro} from "../../services/ConectarApi"
+import {validarCPF, dataNascReponsavel} from "../../utils/ValidacoesAdicionaisFormularios";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 
 export const AlteracaoCadastral = (parametros) => {
@@ -85,8 +85,8 @@ export const AlteracaoCadastral = (parametros) => {
             })
             .catch(error => {
                 mensagem.setAbrirModal(true)
-                mensagem.setTituloModal("ATUALIZAR CADASTRO ERRO")
-                mensagem.setMsg("ATUALIZAR CADASTRO ERRO - BODY")
+                mensagem.setTituloModal("Erro ao atualizar o cadastro")
+                mensagem.setMsg("Erro ao atualizar o cadastro. Tente novamente");
                 console.log(error.message);
             });
 
@@ -233,13 +233,16 @@ export const AlteracaoCadastral = (parametros) => {
                                                     maskPlaceholder={null}
                                                     ref={
                                                         register({
-                                                            required: true,
-                                                            minLength: 11,
+                                                            //required: true,
+                                                            //minLength: 11,
+                                                            validate: {
+                                                                validarCpf: async cpf => await validarCPF(cpf)
+                                                            }
                                                         })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_cpf_responsavel} type="text" className="form-control" name="cd_cpf_responsavel" id="cd_cpf_responsavel"/>
-                                                {errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "required" &&
-                                                <span className="span_erro mt-1">CPF do responsável é obrigatório</span>}
-                                                {errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "minLength" &&
-                                                <span className="span_erro mt-1">CPF deve conter 11 números</span>}
+                                                {/*{errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "required" &&
+                                                <span className="span_erro mt-1">CPF do responsável é obrigatório</span>}*/}
+                                                {errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "validarCpf" &&
+                                                <span className="span_erro mt-1">Digite um CPF válido</span>}
                                             </div>
 
                                             <div className='col-12 col-md-6 mt-5 mt-md-0'>
@@ -249,7 +252,8 @@ export const AlteracaoCadastral = (parametros) => {
                                                         register({
                                                             required: true,
                                                             validate: {
-                                                                comparaDatas: data => moment(data).isAfter(inputDtNascAluno)
+                                                                //comparaDatas: data => moment(data).isAfter(inputDtNascAluno)
+                                                                comparaDatas:  data => dataNascReponsavel(data, inputDtNascAluno)
                                                             }
                                                         })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.data_nascimento} type="date" className="form-control" name="data_nascimento" id="data_nascimento"/>
                                                 {errors.data_nascimento && errors.data_nascimento.type === "required" && <span className="span_erro mt-1">Data de nascimento do responsável é obrigatório</span>}
