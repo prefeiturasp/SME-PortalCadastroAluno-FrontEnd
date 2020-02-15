@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 
 import {useForm} from 'react-hook-form'
 import InputMask from "react-input-mask";
+import * as moment from 'moment'
 
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
@@ -20,11 +21,11 @@ export const AlteracaoCadastral = (parametros) => {
         limpaFormularios,
         handleBtnCancelarAtualizacao } = parametros;
 
-    console.log("Ollyver | ", retorno_api)
-
     const mensagem = useContext(NotificacaoContext);
 
-    const {register, handleSubmit, errors} = useForm()
+    const {register, handleSubmit, errors} = useForm({
+        mode: "onBlur"
+    });
 
 
     // Campos Formulário de Atualização
@@ -56,6 +57,7 @@ export const AlteracaoCadastral = (parametros) => {
     }, []);
 
     const handleChangeAtualizacaoCadastral = (name, value) => {
+        value.replace("_",'')
         setState({
             ...state,
             [name]: value
@@ -63,9 +65,6 @@ export const AlteracaoCadastral = (parametros) => {
     };
 
     const onSubmitAtualizacaoCadastral = (data, e) => {
-
-        console.log("Ollyver ", data)
-
         // Removendo checkbox Você precisa declarar que as informações são verdadeiras
         delete data.checkboxDeclaro;
 
@@ -96,21 +95,6 @@ export const AlteracaoCadastral = (parametros) => {
         limpaFormularios();
     }
 
-    const setAtualizaCampos = (retorno_api) => {
-
-        setState({
-            ...state,
-            nm_responsavel: retorno_api.detail.responsaveis[0].nm_responsavel ? retorno_api.detail.responsaveis[0].nm_responsavel : '',
-            cd_cpf_responsavel: retorno_api.detail.responsaveis[0].cd_cpf_responsavel ? retorno_api.detail.responsaveis[0].cd_cpf_responsavel : '',
-            email_responsavel: retorno_api.detail.responsaveis[0].email_responsavel ? retorno_api.detail.responsaveis[0].email_responsavel : '',
-            cd_ddd_celular_responsavel: retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel ? retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel : '',
-            nr_celular_responsavel: retorno_api.detail.responsaveis[0].nr_celular_responsavel ? retorno_api.detail.responsaveis[0].nr_celular_responsavel : '',
-            dc_tipo_responsavel: retorno_api.detail.responsaveis[0].dc_tipo_responsavel ? retorno_api.detail.responsaveis[0].dc_tipo_responsavel : '',
-            nome_mae: retorno_api.detail.responsaveis[0].nome_mae ? retorno_api.detail.responsaveis[0].nome_mae : '',
-            data_nascimento: retorno_api.detail.responsaveis[0].data_nascimento ? retorno_api.detail.responsaveis[0].data_nascimento : '',
-        });
-    }
-
     return (
         <>
             <div className={`collapse ${collapse}  pt-5`} id="">
@@ -135,21 +119,24 @@ export const AlteracaoCadastral = (parametros) => {
                                             }
                                         )
                                     } onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nm_responsavel} type="text" className="form-control" name="nm_responsavel" id="nm_responsavel"/>
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "required" &&
-                                <span className="span_erro mt-1">O campo Nome é obrigatório</span>}
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "naoRepetirCaracteres" &&
-                                <span className="span_erro mt-1">Não é permitido repetir 03 ou mais caracteres seguidos</span>}
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "pattern" &&
-                                <span className="span_erro mt-1">Não são permitidos números</span>}
+                                {errors.nm_responsavel && errors.nm_responsavel.type === "required" && <span className="span_erro mt-1">O campo Nome é obrigatório</span>}
+                                {errors.nm_responsavel && errors.nm_responsavel.type === "naoRepetirCaracteres" && <span className="span_erro mt-1">Não é permitido repetir 03 ou mais caracteres seguidos</span>}
+                                {errors.nm_responsavel && errors.nm_responsavel.type === "pattern" && <span className="span_erro mt-1">Não são permitidos números</span>}
 
                             </div>
 
                             <div className="col-12 col-md-8 mt-5">
                                 <label htmlFor="email_responsavel"><strong>E-mail do responsável*</strong></label>
-                                <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.email_responsavel} type="email" className="form-control" name="email_responsavel" id="email_responsavel"/>
-                                {errors.email_responsavel &&
-                                <span className="span_erro mt-1">O campo Email é obrigatório</span>}
+                                <input ref={
+                                    register({
+                                        required: true,
+                                        validate: {
+                                            naoRepetirCaracteres: valor => new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/).test(valor),
+                                        }
 
+                                    })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.email_responsavel} type="email" className="form-control" name="email_responsavel" id="email_responsavel"/>
+                                {errors.email_responsavel && errors.email_responsavel.type === "required" && <span className="span_erro mt-1">O campo Email é obrigatório</span>}
+                                {errors.email_responsavel && errors.email_responsavel.type === "naoRepetirCaracteres" && <span className="span_erro mt-1">Digite um email válido</span>}
                             </div>
 
                             <div className="col-12 col-md-4 mt-5">
@@ -160,16 +147,27 @@ export const AlteracaoCadastral = (parametros) => {
                                     <div className="col-3">
                                         <InputMask
                                             mask="99"
-                                            ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_ddd_celular_responsavel} type="text" className="form-control" name="cd_ddd_celular_responsavel" id="cd_ddd_celular_responsavel"/>
-                                        {errors.cd_ddd_celular_responsavel &&
-                                        <span className="span_erro mt-1">O campo DDD é obrigatório</span>}
+                                            maskPlaceholder={null}
+                                            ref={register({
+                                                required: true,
+                                                minLength: 2,
+                                            })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_ddd_celular_responsavel} type="text" className="form-control" name="cd_ddd_celular_responsavel" id="cd_ddd_celular_responsavel"/>
+                                            {errors.cd_ddd_celular_responsavel && errors.cd_ddd_celular_responsavel.type === 'required' && <span className="span_erro mt-1">O campo DDD é obrigatório</span>}
+                                            {errors.cd_ddd_celular_responsavel && errors.cd_ddd_celular_responsavel.type === 'minLength' && <span className="span_erro mt-1">DDD deve conter 2 números</span>}
+
                                     </div>
                                     <div className="col-9 pl-1">
                                         <InputMask
+                                            placeholder="Somente números"
                                             mask="999999999"
-                                            ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nr_celular_responsavel} type="tel" className="form-control" name="nr_celular_responsavel" id="nr_celular_responsavel"/>
-                                        {errors.nr_celular_responsavel &&
-                                        <span className="span_erro mt-1">O campo Celular é obrigatório</span>}
+                                            maskPlaceholder={null}
+                                            ref={
+                                                register({
+                                                    required: true,
+                                                    minLength: 9,
+                                                })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nr_celular_responsavel} type="tel" className="form-control" name="nr_celular_responsavel" id="nr_celular_responsavel"/>
+                                        {errors.nr_celular_responsavel && errors.nr_celular_responsavel.type === "required" && <span className="span_erro mt-1">O campo Celular é obrigatório</span>}
+                                        {errors.nr_celular_responsavel && errors.nr_celular_responsavel.type === "minLength" && <span className="span_erro mt-1">Celular deve conter 9 números</span>}
                                     </div>
                                 </div>
                             </div>
@@ -216,18 +214,32 @@ export const AlteracaoCadastral = (parametros) => {
                                         <div className="row">
                                             <div className='col-12 col-md-6'>
                                                 <label htmlFor="cd_cpf_responsavel"><strong>Cpf do responsável*</strong></label>
+
                                                 <InputMask
+                                                    placeholder="Somente números"
                                                     mask="99999999999"
-                                                    ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_cpf_responsavel} type="text" className="form-control" name="cd_cpf_responsavel" id="cd_cpf_responsavel"/>
-                                                {errors.cd_cpf_responsavel &&
-                                                <span className="span_erro mt-1">O campo Cpf do responsável é obrigatório</span>}
+                                                    maskPlaceholder={null}
+                                                    ref={
+                                                        register({
+                                                            required: true,
+                                                            minLength: 11,
+                                                        })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_cpf_responsavel} type="text" className="form-control" name="cd_cpf_responsavel" id="cd_cpf_responsavel"/>
+                                                {errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "required" && <span className="span_erro mt-1">O campo CPF do responsável é obrigatório</span>}
+                                                {errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "minLength" && <span className="span_erro mt-1">CPF deve conter 11 números</span>}
                                             </div>
 
                                             <div className='col-12 col-md-6 mt-5 mt-md-0'>
                                                 <label htmlFor="data_nascimento"><strong>Data de nascimento do responsável*</strong></label>
-                                                <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.data_nascimento} type="date" className="form-control" name="data_nascimento" id="data_nascimento"/>
-                                                {errors.data_nascimento &&
-                                                <span className="span_erro mt-1">O campo Data de nascimento do responsável é obrigatório</span>}
+                                                <input
+                                                    ref={
+                                                    register({
+                                                        //required: true,
+                                                        validate: {
+                                                            comparaDatas: data=>moment(data).isAfter(inputDtNascAluno)
+                                                        }
+                                                    })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.data_nascimento} type="date" className="form-control" name="data_nascimento" id="data_nascimento"/>
+                                                {/*{errors.data_nascimento && errors.data_nascimento.type === "required" && <span className="span_erro mt-1">O campo Data de nascimento do responsável é obrigatório</span>}*/}
+                                                {errors.data_nascimento && errors.data_nascimento.type === "comparaDatas" && <span className="span_erro mt-1">Data do responsável deve ser maior que a do aluno</span>}
                                             </div>
                                         </div>
                                     </div>
