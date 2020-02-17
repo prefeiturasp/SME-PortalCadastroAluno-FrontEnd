@@ -3,6 +3,8 @@ import * as moment from 'moment'
 export const dataNascReponsavel = (dataNascResponsavel, dataNascAluno)=>{
     if (moment(dataNascAluno).isAfter(dataNascResponsavel)){
         return false;
+    }else{
+        return true;
     }
 };
 

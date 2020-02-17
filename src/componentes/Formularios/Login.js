@@ -1,4 +1,4 @@
-import React, {useState, useContext} from "react";
+import React, {useState, useContext, useEffect, useCallback} from "react";
 import {AlteracaoCadastral} from "./AlteracaoCadastral";
 
 import "./formularios.scss"
@@ -16,6 +16,9 @@ export const Login = () => {
     const [btnDisable, setBtnDisable] = useState(false);
     const [retornoApi, setRetornoApi] = useState('');
 
+    const [codEolBloqueio, setCodEolBloqueio] = useState([])
+    const [listaCodEolBloqueado, setListaCodEolBloqueado] = useState([]);
+
     // Campos Formulário de Atualização
     const [state, setState] = useState({
         nm_responsavel: "",
@@ -28,6 +31,27 @@ export const Login = () => {
         data_nascimento: "",
     });
 
+    useEffect(() => {
+        const codEolBloqueioStorage = localStorage.getItem("codEolBloqueio");
+        const listaCodEolBloqueadoStorage = localStorage.getItem("listaCodEolBloqueado");
+
+        if (codEolBloqueioStorage) {
+            setCodEolBloqueio(JSON.parse(codEolBloqueioStorage));
+        }
+        if (listaCodEolBloqueadoStorage){
+            setListaCodEolBloqueado(JSON.parse(listaCodEolBloqueadoStorage))
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("codEolBloqueio", JSON.stringify(codEolBloqueio));
+        armazenaCodEolBloqueados();
+    }, [codEolBloqueio])
+
+    useEffect( ()=>{
+        localStorage.setItem("listaCodEolBloqueado", JSON.stringify(listaCodEolBloqueado));
+    }, [listaCodEolBloqueado]);
+
     const handleBtnAAbrirFormularioDisable = () => {
 
         if (btnDisable === true || inputCodigoEol === '' || inputDtNascAluno === '') {
@@ -37,37 +61,80 @@ export const Login = () => {
         }
     }
 
-    const handleBtnCancelarAtualizacao = () => {
+    const handleBtnCancelarAtualizacao = useCallback(() => {
         setCollapse('');
         setBtnDisable(false);
         limpaFormularios();
+    }, [collapse, btnDisable])
 
+
+
+    const armazenaCodEolBloqueados = useCallback(() => {
+
+        let codEolBloqueioStorage = localStorage.getItem("codEolBloqueio");
+        // Converte este json para objeto
+        const arrayCodEolBloqueio = JSON.parse(codEolBloqueioStorage);
+
+        if (arrayCodEolBloqueio.length >= 3) {
+
+            //Filtrei o array removendo os duplicados. Se só sobrou um elemento, todos são iguais.
+            const filtrado = arrayCodEolBloqueio.filter(function (elem, pos, arr) {
+                return arr.indexOf(elem) === pos;
+            });
+
+            if (filtrado.length === 1) {
+                setListaCodEolBloqueado([...listaCodEolBloqueado, filtrado[0]]);
+                setCodEolBloqueio([]);
+            }else{
+                setCodEolBloqueio([]);
+            }
+        }
+    }, [listaCodEolBloqueado])
+
+
+    const verificaCodEolBloqueado = (codEol) => {
+        let listaCodEolBloqueadoStorage = localStorage.getItem("listaCodEolBloqueado");
+        // Converte este json para objeto
+        const arrayBloqueados = JSON.parse(listaCodEolBloqueadoStorage);
+
+        return arrayBloqueados.includes(codEol);
     }
 
     const onSubmitAbrirFormulario = (e) => {
         e.preventDefault();
 
-        buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno)
-            .then(retorno_api => {
-                setCollapse('show');
-                setBtnDisable(true);
-                setRetornoApi(retorno_api);
-            })
-            .catch(error => {
-                //setMsg("Dados inválidos, tente novamente");
-                mensagem.setAbrirModal(true)
-                mensagem.setTituloModal("Dados inválidos, tente novamente")
-                mensagem.setMsg("Tente novamente inserir o código EOL e a data de nascimento")
-                setCollapse('');
-                setBtnDisable(false);
-                console.log(error.message);
-                limpaFormularios()
-            });
+        if (verificaCodEolBloqueado(inputCodigoEol)) {
+
+            mensagem.setAbrirModal(true)
+            mensagem.setTituloModal("Acesso Bloqueado")
+            mensagem.setMsg("Codigo EOL Bloqueado. Dirija-se a uma escola")
+            setCollapse('');
+            setBtnDisable(false);
+            limpaFormularios();
+
+        } else {
+            buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno)
+                .then(retorno_api => {
+                    setCollapse('show');
+                    setBtnDisable(true);
+                    setRetornoApi(retorno_api);
+                    setCodEolBloqueio([]);
+                })
+                .catch(error => {
+                    //setMsg("Dados inválidos, tente novamente");
+                    mensagem.setAbrirModal(true)
+                    mensagem.setTituloModal("Dados inválidos, tente novamente")
+                    mensagem.setMsg("Tente novamente inserir o código EOL e a data de nascimento")
+                    setCollapse('');
+                    setBtnDisable(false);
+                    setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
+                    console.log(error.message);
+                    limpaFormularios();
+                });
+        }
     }
 
     const limpaFormularios = (campos) => {
-
-        //console.log("Ollyver limpaFormularios campos ", campos)
 
         setInputCodigoEol('')
         setInputDtNascAluno('')
@@ -87,6 +154,7 @@ export const Login = () => {
     }
 
     return (
+
         <div className="w-100 formulario-inicial-home pt-5 pb-5 ">
             <div className="container">
                 <h2 className="text-white mb-xs-5">Acesse o formulário para solicitar o crédito.</h2>
@@ -116,14 +184,14 @@ export const Login = () => {
                 {
                     retornoApi &&
                     <AlteracaoCadastral
-                        collapse = {collapse}
-                        setCollapse = {setCollapse}
-                        retorno_api = {retornoApi}
-                        inputCodigoEol = {inputCodigoEol}
-                        inputDtNascAluno = {inputDtNascAluno}
-                        setBtnDisable = {setBtnDisable}
-                        handleBtnCancelarAtualizacao = {handleBtnCancelarAtualizacao}
-                        limpaFormularios = {limpaFormularios}
+                        collapse={collapse}
+                        setCollapse={setCollapse}
+                        retorno_api={retornoApi}
+                        inputCodigoEol={inputCodigoEol}
+                        inputDtNascAluno={inputDtNascAluno}
+                        setBtnDisable={setBtnDisable}
+                        handleBtnCancelarAtualizacao={handleBtnCancelarAtualizacao}
+                        limpaFormularios={limpaFormularios}
                     />
                 }
             </div>

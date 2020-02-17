@@ -233,14 +233,10 @@ export const AlteracaoCadastral = (parametros) => {
                                                     maskPlaceholder={null}
                                                     ref={
                                                         register({
-                                                            //required: true,
-                                                            //minLength: 11,
                                                             validate: {
                                                                 validarCpf: async cpf => await validarCPF(cpf)
                                                             }
                                                         })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_cpf_responsavel} type="text" className="form-control" name="cd_cpf_responsavel" id="cd_cpf_responsavel"/>
-                                                {/*{errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "required" &&
-                                                <span className="span_erro mt-1">CPF do responsável é obrigatório</span>}*/}
                                                 {errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "validarCpf" &&
                                                 <span className="span_erro mt-1">Digite um CPF válido</span>}
                                             </div>
@@ -253,7 +249,7 @@ export const AlteracaoCadastral = (parametros) => {
                                                             required: true,
                                                             validate: {
                                                                 //comparaDatas: data => moment(data).isAfter(inputDtNascAluno)
-                                                                comparaDatas:  data => dataNascReponsavel(data, inputDtNascAluno)
+                                                                comparaDatas:  data => !dataNascReponsavel(data, inputDtNascAluno)
                                                             }
                                                         })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.data_nascimento} type="date" className="form-control" name="data_nascimento" id="data_nascimento"/>
                                                 {errors.data_nascimento && errors.data_nascimento.type === "required" && <span className="span_erro mt-1">Data de nascimento do responsável é obrigatório</span>}
