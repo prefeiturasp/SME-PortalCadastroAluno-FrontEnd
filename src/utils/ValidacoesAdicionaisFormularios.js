@@ -1,5 +1,27 @@
 import * as moment from 'moment'
 
+export const validaDDD = value => {
+    let numero = value
+        .replace(/_/g, "");
+    if (numero.length < 2 ){
+        return false
+    }else {
+        return true;
+    }
+}
+
+export const validaTelefoneCelular = value => {
+    let numero = value
+        .replace(/ /g, "")
+        .replace(/_/g, "");
+    if (numero.length < 9 ){
+        return false
+    }else {
+        return true;
+    }
+    //return numero.length >= 10 ? undefined : "Necessário um telefone valido!";
+};
+
 export const validarPalavrao = (arrayValidar) => {
     const listPalavroes = ["puta", "cú", "viado", "buceta"]
     const arrayValidarSplit = arrayValidar.split(' ');
@@ -12,7 +34,7 @@ export const validarPalavrao = (arrayValidar) => {
     }
 }
 
-export const dataNascReponsavel = (dataNascResponsavel, dataNascAluno)=>{
+export const validarDtNascResponsavel = (dataNascResponsavel, dataNascAluno)=>{
     if (moment(dataNascAluno).isAfter(dataNascResponsavel)){
         return false;
     }else{

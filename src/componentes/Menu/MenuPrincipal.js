@@ -1,9 +1,20 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import {Link} from "react-router-dom";
 import logoEducacaoSP from "../../assets/img/educacao_sp.png";
 import './menu-principal.scss'
 
+import {NotificacaoContext} from "../../context/NotificacaoContext";
+
 export const MenuPrincipal = () => {
+
+    const mensagem = useContext(NotificacaoContext);
+
+    const abreModalInfo = ()=>{
+        mensagem.setAbrirModal(true)
+        mensagem.setTituloModal("Em breve")
+        mensagem.setMsg("Em breve você acessará Busque loja credenciada ")
+    }
+
     return (
         <div className="container">
             <div className="row mt-4 mb-4">
@@ -23,13 +34,16 @@ export const MenuPrincipal = () => {
                     <ul className="nav nav-tabs border-0">
 
                         <li className="nav-item">
-                            <Link className="nav-link text-secondary mb-1 pb-0" to="/">
+                            <a
+                                className="nav-link text-secondary mb-1 pb-0"
+                                onClick={abreModalInfo}
+                            >
                                 Busque loja credenciada
-                            </Link>
+                            </a>
                         </li>
 
                         <li className="nav-item">
-                            <Link className="nav-link text-secondary mb-1 pb-0" to="/atualize-seu-cadastro">
+                            <Link  className="nav-link text-secondary mb-1 pb-0" to="/atualize-seu-cadastro">
                                 Avise sobre problemas
                             </Link>
                         </li>

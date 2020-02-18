@@ -6,7 +6,7 @@ import InputMask from "react-input-mask";
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {atualizaCadastro} from "../../services/ConectarApi"
-import {validarCPF, dataNascReponsavel, validarPalavrao} from "../../utils/ValidacoesAdicionaisFormularios";
+import {validarCPF, validarDtNascResponsavel, validarPalavrao, validaTelefoneCelular, validaDDD} from "../../utils/ValidacoesAdicionaisFormularios";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 
 export const AlteracaoCadastral = (parametros) => {
@@ -58,7 +58,6 @@ export const AlteracaoCadastral = (parametros) => {
     }, []);
 
     const handleChangeAtualizacaoCadastral = (name, value) => {
-        value.replace("_", '')
         setState({
             ...state,
             [name]: value
@@ -66,8 +65,13 @@ export const AlteracaoCadastral = (parametros) => {
     };
 
     const onSubmitAtualizacaoCadastral = (data, e) => {
+
         // Removendo checkbox Você precisa declarar que as informações são verdadeiras
         delete data.checkboxDeclaro;
+
+        data.nr_celular_responsavel = data.nr_celular_responsavel.replace(/ /g, '');
+        data.cd_cpf_responsavel = data.cd_cpf_responsavel.replace(/-/g, "");
+        data.cd_cpf_responsavel = data.cd_cpf_responsavel.replace(/\./g, '');
 
         let payload_atualizado = {
             codigo_eol: inputCodigoEol,
@@ -95,8 +99,6 @@ export const AlteracaoCadastral = (parametros) => {
         e.target.reset();
         limpaFormularios();
     }
-
-
 
     return (
         <>
@@ -158,30 +160,36 @@ export const AlteracaoCadastral = (parametros) => {
                                     <div className="col-3">
                                         <InputMask
                                             mask="99"
-                                            maskPlaceholder={null}
+                                            //maskPlaceholder={null}
                                             ref={register({
                                                 required: true,
-                                                minLength: 2,
-                                            })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_ddd_celular_responsavel} type="text" className="form-control" name="cd_ddd_celular_responsavel" id="cd_ddd_celular_responsavel"/>
+                                                //minLength: 2,
+                                                validate: {
+                                                    validaDDD: valor => validaDDD(valor)
+                                                }
+                                            })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))} value={state.cd_ddd_celular_responsavel} type="text" className="form-control" name="cd_ddd_celular_responsavel" id="cd_ddd_celular_responsavel"/>
                                         {errors.cd_ddd_celular_responsavel && errors.cd_ddd_celular_responsavel.type === 'required' &&
                                         <span className="span_erro mt-1">DDD é obrigatório</span>}
-                                        {errors.cd_ddd_celular_responsavel && errors.cd_ddd_celular_responsavel.type === 'minLength' &&
+                                        {errors.cd_ddd_celular_responsavel && errors.cd_ddd_celular_responsavel.type === 'validaDDD' &&
                                         <span className="span_erro mt-1">DDD deve conter 2 números</span>}
 
                                     </div>
                                     <div className="col-9 pl-1">
                                         <InputMask
                                             placeholder="Somente números"
-                                            mask="999999999"
-                                            maskPlaceholder={null}
+                                            mask="9 9999 9999"
+                                            //maskPlaceholder={null}
                                             ref={
                                                 register({
                                                     required: true,
-                                                    minLength: 9,
-                                                })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nr_celular_responsavel} type="tel" className="form-control" name="nr_celular_responsavel" id="nr_celular_responsavel"/>
+                                                    //minLength: 9,
+                                                    validate: {
+                                                        validaTelefoneCelular: valor => validaTelefoneCelular(valor),
+                                                    }
+                                                })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))} value={state.nr_celular_responsavel} type="tel" className="form-control" name="nr_celular_responsavel" id="nr_celular_responsavel"/>
                                         {errors.nr_celular_responsavel && errors.nr_celular_responsavel.type === "required" &&
                                         <span className="span_erro mt-1">Celular é obrigatório</span>}
-                                        {errors.nr_celular_responsavel && errors.nr_celular_responsavel.type === "minLength" &&
+                                        {errors.nr_celular_responsavel && errors.nr_celular_responsavel.type === "validaTelefoneCelular" &&
                                         <span className="span_erro mt-1">Celular deve conter 9 números</span>}
                                     </div>
                                 </div>
@@ -205,7 +213,7 @@ export const AlteracaoCadastral = (parametros) => {
                                     </div>
 
                                     <div className="pl-4 container-radio">
-                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.dc_tipo_responsavel == 'ALUNO_MAIOR_DE_IDADE'} className="form-check-input" type="radio" name="dc_tipo_responsavel" id="alunoMaiorDeIdade" value="ALUNO MAIOR DE IDADE"/>
+                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.dc_tipo_responsavel == 'ALUNO_MAIOR_DE_IDADE'} className="form-check-input" type="radio" name="dc_tipo_responsavel" id="alunoMaiorDeIdade" value="ALUNO_MAIOR_DE_IDADE"/>
                                         <label className="form-check-label" htmlFor="alunoMaiorDeIdade"><strong>Aluno maior de idade</strong></label>
                                     </div>
                                 </div>
@@ -232,14 +240,14 @@ export const AlteracaoCadastral = (parametros) => {
 
                                                 <InputMask
                                                     placeholder="Somente números"
-                                                    mask="99999999999"
-                                                    maskPlaceholder={null}
+                                                    mask="999.999.999-99"
+                                                    //maskPlaceholder={null}
                                                     ref={
                                                         register({
                                                             validate: {
                                                                 validarCpf: async cpf => await validarCPF(cpf)
                                                             }
-                                                        })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.cd_cpf_responsavel} type="text" className="form-control" name="cd_cpf_responsavel" id="cd_cpf_responsavel"/>
+                                                        })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))} value={state.cd_cpf_responsavel} type="text" className="form-control" name="cd_cpf_responsavel" id="cd_cpf_responsavel"/>
                                                 {errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "validarCpf" &&
                                                 <span className="span_erro mt-1">Digite um CPF válido</span>}
                                             </div>
@@ -251,8 +259,7 @@ export const AlteracaoCadastral = (parametros) => {
                                                         register({
                                                             required: true,
                                                             validate: {
-                                                                //comparaDatas: data => moment(data).isAfter(inputDtNascAluno)
-                                                                comparaDatas:  data => !dataNascReponsavel(data, inputDtNascAluno)
+                                                                comparaDatas:  data => !validarDtNascResponsavel(data, inputDtNascAluno)
                                                             }
                                                         })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.data_nascimento} type="date" className="form-control" name="data_nascimento" id="data_nascimento"/>
                                                 {errors.data_nascimento && errors.data_nascimento.type === "required" && <span className="span_erro mt-1">Data de nascimento do responsável é obrigatório</span>}
