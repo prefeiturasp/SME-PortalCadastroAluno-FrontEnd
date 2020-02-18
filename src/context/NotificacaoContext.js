@@ -32,7 +32,7 @@ export const NotificacaoContextProvider = ({children}) => {
                             <Modal.Title>{tituloModal}</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <p>{msg}</p>
+                            <div dangerouslySetInnerHTML={{ __html: msg }} />
                         </Modal.Body>
                         <Modal.Footer>
                             <Button variant="primary" onClick={handleClose}>

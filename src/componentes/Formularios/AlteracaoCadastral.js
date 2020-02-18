@@ -82,15 +82,17 @@ export const AlteracaoCadastral = (parametros) => {
         atualizaCadastro(payload_atualizado)
             .then(retorno_api => {
                 mensagem.setAbrirModal(true)
-                mensagem.setTituloModal("Obrigado pela atualização cadastral!")
-                mensagem.setMsg("Obrigado por fazer sua atualização cadastral. Se precisar rever algum dado até o dia XX/XX, basta entrar novamente no formulário e corrigir os dados enviados.\n\n" +
-                    "Em breve a Secretaria Municipal de Educação fará novo contato, com mais informações sobre como se dará o processo de compra dos uniformes escolares pelas famílias.")
+                mensagem.setTituloModal("Obrigado por solicitar o uniforme escolar")
+                mensagem.setMsg("<p>O seu pedido do uniforme escolar já foi registrado. Nos próximos dias você receberá no e-mail cadastrado orientações sobre os próximos passos para realizar a compra nas lojas credenciadas</p>" +
+                    "<p>Acompanhe também as novidades sobre o novo processo de compra descentralizada pelas famílias diretamente no Portal do Uniforme: <a title='Link externo para o portal do uniforme' href='https://educacao.sme.prefeitura.sp.gov.br/portaldouniforme'>educacao.sme.prefeitura.sp.gov.br/portaldouniforme</a> </p>" +
+                    "<p>Atenciosamente,</p>"+
+                "<p>Secretaria Municipal de Educação</p>")
 
             })
             .catch(error => {
                 mensagem.setAbrirModal(true)
-                mensagem.setTituloModal("Erro ao atualizar o cadastro")
-                mensagem.setMsg("Erro ao atualizar o cadastro. Tente novamente");
+                mensagem.setTituloModal("Erro ao solicitar uniforme")
+                mensagem.setMsg("Erro ao solicitar uniforme. Tente novamente");
                 console.log(error.message);
             });
 
@@ -306,7 +308,7 @@ export const AlteracaoCadastral = (parametros) => {
                                 <BtnCustomizado
                                     type="submit"
                                     classeCss="btn btn-primary"
-                                    texto="Atualizar cadastro"
+                                    texto="Solicitar uniforme"
                                 />
                             </div>
                         </div>
