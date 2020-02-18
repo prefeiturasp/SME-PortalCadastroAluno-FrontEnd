@@ -6,7 +6,7 @@ import InputMask from "react-input-mask";
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {atualizaCadastro} from "../../services/ConectarApi"
-import {validarCPF, dataNascReponsavel} from "../../utils/ValidacoesAdicionaisFormularios";
+import {validarCPF, dataNascReponsavel, validarPalavrao} from "../../utils/ValidacoesAdicionaisFormularios";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 
 export const AlteracaoCadastral = (parametros) => {
@@ -118,6 +118,7 @@ export const AlteracaoCadastral = (parametros) => {
                                                 pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ'\s]+$/,
                                                 validate: {
                                                     naoRepetirCaracteres: valor => !new RegExp(/([aA-zZ])\1\1/).test(valor),
+                                                    validaPalavrao: valor => !validarPalavrao(valor),
                                                 }
                                             }
                                         )
@@ -128,6 +129,8 @@ export const AlteracaoCadastral = (parametros) => {
                                 <span className="span_erro mt-1">Não é permitido repetir 03 ou mais caracteres seguidos</span>}
                                 {errors.nm_responsavel && errors.nm_responsavel.type === "pattern" &&
                                 <span className="span_erro mt-1">Não são permitidos números</span>}
+                                {errors.nm_responsavel && errors.nm_responsavel.type === "validaPalavrao" &&
+                                <span className="span_erro mt-1">Não são permitas palavras inapropriadas</span>}
 
                             </div>
 

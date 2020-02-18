@@ -113,6 +113,7 @@ export const Login = () => {
             limpaFormularios();
 
         } else {
+
             buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno)
                 .then(retorno_api => {
                     setCollapse('show');

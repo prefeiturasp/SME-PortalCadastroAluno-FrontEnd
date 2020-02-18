@@ -1,5 +1,17 @@
 import * as moment from 'moment'
 
+export const validarPalavrao = (arrayValidar) => {
+    const listPalavroes = ["puta", "cú", "viado", "buceta"]
+    const arrayValidarSplit = arrayValidar.split(' ');
+    const result = arrayValidarSplit.filter((item)=>{ return listPalavroes.indexOf(item) > -1});
+
+    if (result.length > 0 ) {
+        return true
+    }else {
+        return false;
+    }
+}
+
 export const dataNascReponsavel = (dataNascResponsavel, dataNascAluno)=>{
     if (moment(dataNascAluno).isAfter(dataNascResponsavel)){
         return false;
