@@ -158,7 +158,7 @@ export const Login = () => {
 
         <div className="w-100 formulario-inicial-home pt-5 pb-5 ">
             <div className="container">
-                <h2 className="text-white mb-xs-5">Acesse o formulário para solicitar o crédito.</h2>
+                <h2 className="text-white mb-xs-5">Acesse o formulário para solicitar o uniforme escolar.        </h2>
 
                 <form onSubmit={(e) => onSubmitAbrirFormulario(e)} name="abrirFormulario" id='abrirFormulario'>
                     <div className="row">

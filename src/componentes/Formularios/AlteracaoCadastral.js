@@ -79,7 +79,7 @@ export const AlteracaoCadastral = (parametros) => {
             .then(retorno_api => {
                 mensagem.setAbrirModal(true)
                 mensagem.setTituloModal("Obrigado pela atualização cadastral!")
-                mensagem.setMsg("Obrigado por fazer sua atualização cadastral. Se precisar rever algum dado até o dia XX/XX, basta entrar novamente no formulário e corrigir os dados enviados.\n" +
+                mensagem.setMsg("Obrigado por fazer sua atualização cadastral. Se precisar rever algum dado até o dia XX/XX, basta entrar novamente no formulário e corrigir os dados enviados.\n\n" +
                     "Em breve a Secretaria Municipal de Educação fará novo contato, com mais informações sobre como se dará o processo de compra dos uniformes escolares pelas famílias.")
 
             })
@@ -101,7 +101,7 @@ export const AlteracaoCadastral = (parametros) => {
     return (
         <>
             <div className={`collapse ${collapse}  pt-5`} id="">
-                <h2 className="text-white mb-4">Solicitação do crédito </h2>
+                <h2 className="text-white mb-4">Solicitação de uniforme escolar.</h2>
 
                 <div className='container-form-dados-responsável p-4 '>
                     <p className="mb-4">
@@ -228,7 +228,7 @@ export const AlteracaoCadastral = (parametros) => {
                                     <div className="col-12 col-md-8">
                                         <div className="row">
                                             <div className='col-12 col-md-6'>
-                                                <label htmlFor="cd_cpf_responsavel"><strong>Cpf do responsável*</strong></label>
+                                                <label htmlFor="cd_cpf_responsavel"><strong>CPF do responsável*</strong></label>
 
                                                 <InputMask
                                                     placeholder="Somente números"
@@ -265,7 +265,7 @@ export const AlteracaoCadastral = (parametros) => {
                             </div>
 
                             <div className="col-12 mt-5">
-                                <label htmlFor="nome_mae"><strong>Nome de mãe de responsável (sem abreviações)*</strong></label>
+                                <label htmlFor="nome_mae"><strong>Nome da mãe do  responsável (sem abreviações)*</strong></label>
                                 <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nome_mae} type="text" className="form-control" name="nome_mae" id="nome_mae"/>
                                 {errors.nome_mae &&
                                 <span className="span_erro mt-1">Nome de mãe de responsável é obrigatório</span>}

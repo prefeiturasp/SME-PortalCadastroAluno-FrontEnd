@@ -12,11 +12,10 @@ export const Home = () => {
                     <div className="conteudo">
                         <div className="col-lg-7 col-sm-12 col-xl-5">
                             <h1>
-                                Solicite o crédito para compra
-                                do uniforme.
+                                Solicite o uniforme escolar.
                             </h1>
                         </div>
-                        <div className="col-lg-6 col-sm-12 col-xl-4">
+                        <div className="col-lg-6 col-sm-12 col-xl-5">
                             <p>
                                 Para efetivar o novo modelo descentralizado de compra dos uniformes escolares diretamente pelas famílias, precisamos confirmar e completar alguns dados dos responsáveis pelos estudantes matriculados na Rede Municipal de Ensino. Para isso, insira abaixo o código da criança no sistema Escola Online (EOL) e a data de nascimento dela.
                             </p>
@@ -58,7 +57,7 @@ export const Home = () => {
 
                         <div className="col-lg-6 col-sm-12 mb-lg-0 align-self-center">
                             <h1>E quais dados você deve fornecer?</h1>
-                            <p className='mb-1'>Os dados que o responsável deve ter em mãos para confirmar, editar e complementar suas informações de cadastro  são:</p>
+                            <p className='mb-1'>Os dados que o responsável deve ter em mãos para solicitar o uniforme escolar são:</p>
 
                             <ul className="lista-home ml-0 pl-0">
                                 <li>nome completo</li>
