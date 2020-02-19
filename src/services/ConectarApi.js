@@ -1,10 +1,18 @@
 const URL_API = process.env.REACT_APP_URL_API;
 const TOKEN = process.env.REACT_APP_TOKEN;
 
-
 export async function buscarPalavrasImproprias() {
 
-    return await fetch(`${URL_API}/palavras-bloqueadas/`)
+    const requestInfo = {
+        method: "GET",
+        headers: {
+            Authorization: TOKEN,
+            "Content-type": "application/json",
+            Accept: "application/json"
+        },
+    };
+
+    return await fetch(`${URL_API}/palavras-bloqueadas/`, requestInfo)
         .then(resposta => {
             return resposta.json();
         });

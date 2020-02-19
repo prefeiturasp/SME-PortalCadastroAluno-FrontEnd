@@ -5,7 +5,7 @@ import InputMask from "react-input-mask";
 
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
-import {atualizaCadastro} from "../../services/ConectarApi"
+import {atualizaCadastro, buscarPalavrasImproprias} from "../../services/ConectarApi"
 import {validarCPF, validarDtNascResponsavel, validarPalavrao, validaTelefoneCelular, validaDDD} from "../../utils/ValidacoesAdicionaisFormularios";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 
@@ -28,7 +28,7 @@ export const AlteracaoCadastral = (parametros) => {
         mode: "onBlur"
     });
 
-
+    const [palavroes, setPalavroes] = useState([]);
     // Campos Formulário de Atualização
     const [state, setState] = useState({
         nm_responsavel: "",
@@ -58,6 +58,14 @@ export const AlteracaoCadastral = (parametros) => {
         });
 
     }, []);
+
+    useEffect( () => {
+        buscarPalavrasImproprias()
+            .then(listaPalavroes => {
+                setPalavroes(listaPalavroes);
+            });
+
+    }, [])
 
     const handleChangeAtualizacaoCadastral = (name, value) => {
         setState({
@@ -124,7 +132,7 @@ export const AlteracaoCadastral = (parametros) => {
                                                 pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ'\s]+$/,
                                                 validate: {
                                                     naoRepetirCaracteres: valor => !new RegExp(/([aA-zZ])\1\1/).test(valor),
-                                                    validaPalavrao: valor => !validarPalavrao(valor),
+                                                    validaPalavrao: valor => !validarPalavrao(valor, palavroes),
                                                 }
                                             }
                                         )

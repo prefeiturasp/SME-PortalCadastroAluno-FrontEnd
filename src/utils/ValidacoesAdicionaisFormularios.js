@@ -1,5 +1,18 @@
+import React from "react";
 import * as moment from 'moment'
 import {buscarPalavrasImproprias} from "../services/ConectarApi";
+
+export const validarPalavrao = (arrayValidar, listaPalavroes) => {
+
+    const arrayValidarSplit = arrayValidar.split(' ');
+    const result = arrayValidarSplit.filter((item)=>{ return listaPalavroes.indexOf(item) > -1});
+
+    if (result.length > 0 ) {
+        return true
+    }else {
+        return false;
+    }
+}
 
 export const validaDDD = value => {
     let numero = value
@@ -22,24 +35,6 @@ export const validaTelefoneCelular = value => {
     }
     //return numero.length >= 10 ? undefined : "Necessário um telefone valido!";
 };
-
-export const validarPalavrao = (arrayValidar) => {
-    const listPalavroes = ["puta", "cú", "viado", "buceta"]
-
-/*    buscarPalavrasImproprias()
-        .then(listPalavroes => {
-            console.log("buscarPalavrasImproprias ", listPalavroes)
-        });*/
-
-    const arrayValidarSplit = arrayValidar.split(' ');
-    const result = arrayValidarSplit.filter((item)=>{ return listPalavroes.indexOf(item) > -1});
-
-    if (result.length > 0 ) {
-        return true
-    }else {
-        return false;
-    }
-}
 
 export const validarDtNascResponsavel = (dataNascResponsavel, dataNascAluno)=>{
     if (moment(dataNascAluno).isAfter(dataNascResponsavel)){
