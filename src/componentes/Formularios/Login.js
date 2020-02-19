@@ -26,7 +26,7 @@ export const Login = () => {
         cd_ddd_celular_responsavel: "",
         nr_celular_responsavel: "",
         email_responsavel: "",
-        dc_tipo_responsavel: "",
+        tp_pessoa_responsavel: "",
         nome_mae: "",
         data_nascimento: "",
     });
@@ -38,7 +38,7 @@ export const Login = () => {
         if (codEolBloqueioStorage) {
             setCodEolBloqueio(JSON.parse(codEolBloqueioStorage));
         }
-        if (listaCodEolBloqueadoStorage){
+        if (listaCodEolBloqueadoStorage) {
             setListaCodEolBloqueado(JSON.parse(listaCodEolBloqueadoStorage))
         }
     }, []);
@@ -48,7 +48,7 @@ export const Login = () => {
         armazenaCodEolBloqueados();
     }, [codEolBloqueio])
 
-    useEffect( ()=>{
+    useEffect(() => {
         localStorage.setItem("listaCodEolBloqueado", JSON.stringify(listaCodEolBloqueado));
     }, [listaCodEolBloqueado]);
 
@@ -68,7 +68,6 @@ export const Login = () => {
     }, [collapse, btnDisable])
 
 
-
     const armazenaCodEolBloqueados = useCallback(() => {
 
         let codEolBloqueioStorage = localStorage.getItem("codEolBloqueio");
@@ -85,7 +84,7 @@ export const Login = () => {
             if (filtrado.length === 1) {
                 setListaCodEolBloqueado([...listaCodEolBloqueado, filtrado[0]]);
                 setCodEolBloqueio([]);
-            }else{
+            } else {
                 setCodEolBloqueio([]);
             }
         }
@@ -116,22 +115,30 @@ export const Login = () => {
 
             buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno)
                 .then(retorno_api => {
-                    setCollapse('show');
-                    setBtnDisable(true);
-                    setRetornoApi(retorno_api);
-                    setCodEolBloqueio([]);
+                    if (retorno_api.detail === "Data de nascimento invalida para o código eol informado") {
+                        mensagem.setAbrirModal(true)
+                        mensagem.setTituloModal("Dados inválidos, tente novamente")
+                        mensagem.setMsg("Tente novamente inserir o código EOL e a data de nascimento")
+                        setCollapse('');
+                        setBtnDisable(false);
+                        setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
+                        limpaFormularios();
+                    } else if (retorno_api.detail === "Este estudante não faz parte do público do programa de uniforme escolar") {
+                        mensagem.setAbrirModal(true)
+                        mensagem.setTituloModal("Dados inválidos, tente novamente")
+                        mensagem.setMsg(retorno_api.detail)
+                        setCollapse('');
+                        setBtnDisable(false);
+                        setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
+                        limpaFormularios();
+                    } else {
+                        console.log(retorno_api)
+                        setCollapse('show');
+                        setBtnDisable(true);
+                        setRetornoApi(retorno_api);
+                        setCodEolBloqueio([]);
+                    }
                 })
-                .catch(error => {
-                    //setMsg("Dados inválidos, tente novamente");
-                    mensagem.setAbrirModal(true)
-                    mensagem.setTituloModal("Dados inválidos, tente novamente")
-                    mensagem.setMsg("Tente novamente inserir o código EOL e a data de nascimento")
-                    setCollapse('');
-                    setBtnDisable(false);
-                    setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
-                    console.log(error.message);
-                    limpaFormularios();
-                });
         }
     }
 
@@ -147,7 +154,7 @@ export const Login = () => {
             cd_ddd_celular_responsavel: "",
             nr_celular_responsavel: "",
             email_responsavel: "",
-            dc_tipo_responsavel: "",
+            tp_pessoa_responsavel: "",
             nome_mae: "",
             data_nascimento: "",
         });
@@ -158,7 +165,7 @@ export const Login = () => {
 
         <div className="w-100 formulario-inicial-home pt-5 pb-5 ">
             <div className="container">
-                <h2 className="text-white mb-xs-5">Acesse o formulário para solicitar o uniforme escolar.        </h2>
+                <h2 className="text-white mb-xs-5">Acesse o formulário para solicitar o uniforme escolar. </h2>
 
                 <form onSubmit={(e) => onSubmitAbrirFormulario(e)} name="abrirFormulario" id='abrirFormulario'>
                     <div className="row">

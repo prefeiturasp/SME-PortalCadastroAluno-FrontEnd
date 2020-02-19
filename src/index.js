@@ -7,7 +7,7 @@ import {NotificacaoContextProvider} from "./context/NotificacaoContext";
 
 ReactDOM.render(
     <NotificacaoContextProvider>
-        <BrowserRouter>
+        <BrowserRouter basename="pedido-uniforme">
             <App/>
         </BrowserRouter>
     </NotificacaoContextProvider>

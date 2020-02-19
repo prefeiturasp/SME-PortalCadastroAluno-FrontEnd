@@ -36,7 +36,8 @@ export const AlteracaoCadastral = (parametros) => {
         cd_ddd_celular_responsavel: "",
         nr_celular_responsavel: "",
         email_responsavel: "",
-        dc_tipo_responsavel: "",
+        tp_pessoa_responsavel: "",
+        //dc_tipo_responsavel: "",
         nome_mae: "",
         data_nascimento: "",
     });
@@ -50,7 +51,8 @@ export const AlteracaoCadastral = (parametros) => {
             email_responsavel: retorno_api.detail.responsaveis[0].email_responsavel ? retorno_api.detail.responsaveis[0].email_responsavel : '',
             cd_ddd_celular_responsavel: retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel ? retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel : '',
             nr_celular_responsavel: retorno_api.detail.responsaveis[0].nr_celular_responsavel ? retorno_api.detail.responsaveis[0].nr_celular_responsavel : '',
-            dc_tipo_responsavel: retorno_api.detail.responsaveis[0].dc_tipo_responsavel ? retorno_api.detail.responsaveis[0].dc_tipo_responsavel : '',
+            tp_pessoa_responsavel: retorno_api.detail.responsaveis[0].tp_pessoa_responsavel ? String(parseInt(retorno_api.detail.responsaveis[0].tp_pessoa_responsavel)) : '',
+           // dc_tipo_responsavel: retorno_api.detail.responsaveis[0].dc_tipo_responsavel ? retorno_api.detail.responsaveis[0].dc_tipo_responsavel : '',
             nome_mae: retorno_api.detail.responsaveis[0].nome_mae ? retorno_api.detail.responsaveis[0].nome_mae : '',
             data_nascimento: retorno_api.detail.responsaveis[0].data_nascimento ? retorno_api.detail.responsaveis[0].data_nascimento : '',
         });
@@ -201,27 +203,27 @@ export const AlteracaoCadastral = (parametros) => {
                                 <label><strong>Vínculo com o(a) estudante*</strong></label>
                                 <div className="d-flex flex-wrap justify-content-between">
                                     <div className="pl-4 container-radio">
-                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.dc_tipo_responsavel == 'MAE'} className="form-check-input" type="radio" name="dc_tipo_responsavel" id="mae" value="MAE"/>
+                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '1'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="mae" value={1}/>
                                         <label className="form-check-label" htmlFor="mae"><strong>Mãe</strong></label>
                                     </div>
 
                                     <div className="pl-4 container-radio">
-                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.dc_tipo_responsavel == 'PAI'} className="form-check-input" type="radio" name="dc_tipo_responsavel" id="pai" value="PAI"/>
+                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '2'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="pai" value={2}/>
                                         <label className="form-check-label" htmlFor="pai"><strong>Pai</strong></label>
                                     </div>
                                     <div className="pl-4 container-radio">
-                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.dc_tipo_responsavel == 'RESPONSAVEL_LEGAL'} className="form-check-input" type="radio" name="dc_tipo_responsavel" id="responsaveLegal" value="RESPONSAVEL_LEGAL"/>
+                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '3'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="responsaveLegal" value={3}/>
                                         <label className="form-check-label" htmlFor="responsaveLegal"><strong>Responsável legal</strong></label>
                                     </div>
 
                                     <div className="pl-4 container-radio">
-                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.dc_tipo_responsavel == 'ALUNO_MAIOR_DE_IDADE'} className="form-check-input" type="radio" name="dc_tipo_responsavel" id="alunoMaiorDeIdade" value="ALUNO_MAIOR_DE_IDADE"/>
+                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '4'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="alunoMaiorDeIdade" value={4}/>
                                         <label className="form-check-label" htmlFor="alunoMaiorDeIdade"><strong>Aluno maior de idade</strong></label>
                                     </div>
                                 </div>
                                 <div className='row'>
                                     <div className="col-12">
-                                        {errors.dc_tipo_responsavel &&
+                                        {errors.tp_pessoa_responsavel &&
                                         <span className="span_erro mt-1">Vínculo com o(a) estudante é obrigatório</span>}
                                     </div>
                                 </div>
