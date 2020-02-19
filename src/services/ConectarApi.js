@@ -1,10 +1,8 @@
 const URL_API = process.env.REACT_APP_URL_API;
-const URL_API_BUSCA_DADOS = process.env.REACT_APP_URL_API_BUSCA_DADOS_DEV;
-const URL_API_ATUALIZA_CADASTRO = process.env.REACT_APP_URL_API_ATUALIZAR_CADASTRO_DEV;
 const TOKEN = process.env.REACT_APP_TOKEN;
 
 
-export async function buscaPalavrasImproprias() {
+export async function buscarPalavrasImproprias() {
 
     return await fetch(`${URL_API}/palavras-bloqueadas/`)
         .then(resposta => {
@@ -27,7 +25,7 @@ export async function buscaDadosAlunoResponsavel(codigoEol, dtNascAluno) {
         },
     };
 
-    return await fetch(URL_API_BUSCA_DADOS, requestInfo)
+    return await fetch(`${URL_API}/dados-responsavel/busca_dados/`, requestInfo)
         .then(resposta => {
             return resposta.json();
         });
@@ -45,7 +43,7 @@ export async function atualizaCadastro(dados) {
         },
     };
 
-    return await fetch(URL_API_ATUALIZA_CADASTRO, requestInfo)
+    return await fetch(`${URL_API}/alunos/`, requestInfo)
         .then(resposta => {
             if (resposta.ok) {
                 return resposta.json();

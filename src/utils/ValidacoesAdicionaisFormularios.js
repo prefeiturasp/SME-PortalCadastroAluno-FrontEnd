@@ -1,4 +1,5 @@
 import * as moment from 'moment'
+import {buscarPalavrasImproprias} from "../services/ConectarApi";
 
 export const validaDDD = value => {
     let numero = value
@@ -24,6 +25,12 @@ export const validaTelefoneCelular = value => {
 
 export const validarPalavrao = (arrayValidar) => {
     const listPalavroes = ["puta", "cú", "viado", "buceta"]
+
+/*    buscarPalavrasImproprias()
+        .then(listPalavroes => {
+            console.log("buscarPalavrasImproprias ", listPalavroes)
+        });*/
+
     const arrayValidarSplit = arrayValidar.split(' ');
     const result = arrayValidarSplit.filter((item)=>{ return listPalavroes.indexOf(item) > -1});
 
