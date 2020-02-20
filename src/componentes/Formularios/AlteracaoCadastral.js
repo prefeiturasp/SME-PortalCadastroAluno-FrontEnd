@@ -59,7 +59,7 @@ export const AlteracaoCadastral = (parametros) => {
             data_nascimento: retorno_api.detail.responsaveis[0].data_nascimento ? retorno_api.detail.responsaveis[0].data_nascimento : '',
         });
 
-    }, []);
+    }, [retorno_api]);
 
     useEffect( () => {
         buscarPalavrasImproprias()

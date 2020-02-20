@@ -141,6 +141,11 @@ export const Login = () => {
                         console.log(retorno_api);
                     }
                 })
+                .catch(erro => {
+                    mensagem.setAbrirModal(true)
+                    mensagem.setTituloModal("Dados inválidos, tente novamente")
+                    mensagem.setMsg("Tente novamente inserir o código EOL e a data de nascimento")
+                })
         }
     }
 
