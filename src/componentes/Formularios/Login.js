@@ -1,5 +1,6 @@
 import React, {useState, useContext, useEffect, useCallback} from "react";
 import {AlteracaoCadastral} from "./AlteracaoCadastral";
+import {useForm} from 'react-hook-form'
 
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
@@ -9,6 +10,10 @@ import {NotificacaoContext} from "../../context/NotificacaoContext";
 export const Login = () => {
 
     const mensagem = useContext(NotificacaoContext);
+
+    const {register, handleSubmit, errors} = useForm({
+        mode: "onBlur"
+    });
 
     const [inputCodigoEol, setInputCodigoEol] = useState('');
     const [inputDtNascAluno, setInputDtNascAluno] = useState('');
@@ -87,7 +92,7 @@ export const Login = () => {
         return arrayBloqueados.includes(codEol);
     }
 
-    const onSubmitAbrirFormulario = (e) => {
+    const onSubmitAbrirFormulario = (data, e) => {
         e.preventDefault();
 
         if (verificaCodEolBloqueado(inputCodigoEol)) {
@@ -104,7 +109,7 @@ export const Login = () => {
             buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno)
 
                 .then(retorno_api => {
-                    if (retorno_api.detail === "Data de nascimento invalida para o código eol informado" || retorno_api.detail === "API EOL com erro. Status: 404") {
+                    if (retorno_api.detail === "Data de nascimento invalida para o código eol informado" || retorno_api.detail === "API EOL com erro. Status: 404" || retorno_api.detail === "API EOL com erro. Status: 500") {
                         mensagem.setAbrirModal(true)
                         mensagem.setTituloModal("Dados inválidos, tente novamente")
                         mensagem.setMsg("Tente novamente inserir o código EOL e a data de nascimento")
@@ -148,15 +153,22 @@ export const Login = () => {
             <div className="container">
                 <h2 className="text-white mb-xs-5">Acesse o formulário para solicitar o uniforme escolar. </h2>
 
-                <form onSubmit={(e) => onSubmitAbrirFormulario(e)} name="abrirFormulario" id='abrirFormulario'>
+                <form onSubmit={handleSubmit(onSubmitAbrirFormulario)}  name="abrirFormulario" id='abrirFormulario'>
                     <div className="row">
                         <div className="col-lg-4 mt-4">
                             <label id="codigoEol">Código EOL</label>
-                            <input onChange={(e) => setInputCodigoEol(e.target.value)} value={inputCodigoEol} name="codigoEol" type="text" className="form-control" placeholder="Digite código EOL"/>
+                            <input
+                                ref={
+                                    register({
+                                        maxLength: 10
+                                    })
+                                }
+                                readOnly={collapse === 'show'} onChange={(e) => setInputCodigoEol(e.target.value.trim())} value={inputCodigoEol} name="codigoEol" type="number" className="form-control" placeholder="Digite código EOL"/>
+                            {errors.codigoEol && errors.codigoEol.type === "maxLength" && <span className="span_erro text-white mt-1">Permitido até 10 dígitos</span>}
                         </div>
                         <div className="col-lg-4 mt-4">
                             <label htmlFor='dtNascAluno'>Data de nascimento do estudante</label>
-                            <input onChange={(e) => setInputDtNascAluno(e.target.value)} value={inputDtNascAluno} name="dtNascAluno" id="dtNascAluno" type="date" className="form-control"/>
+                            <input maxLength="8" readOnly={collapse === 'show'} onChange={(e) => setInputDtNascAluno(e.target.value.trim())} value={inputDtNascAluno} name="dtNascAluno" id="dtNascAluno" type="date" className="form-control"/>
                         </div>
                         <div className="col-lg-4 mt-4 mt-md-5 pl-5 pr-5 pl-md-0 pr-md-0">
 
