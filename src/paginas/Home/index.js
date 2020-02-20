@@ -32,13 +32,10 @@ export const Home = () => {
                     <div className="row mt-5">
 
                         <div className="col-lg-6 col-sm-12">
-                            <figure>
-                                <img
-                                    src={UniformeEscolar}
-                                    className="img-fluid"
-                                    alt="Cinco crianças com uniforme escolar .Todas sentadas e felizes"
-                                />
-                            </figure>
+                            <div className="embed-responsive embed-responsive-16by9">
+                                <iframe title="Vídeo sobre quem recebe o uniforme" src="https://www.youtube.com/embed/TgJBKjkm3iE" frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+
+                            </div>
                         </div>
 
                         <div className="col-lg-6 col-sm-12 mb-lg-0 align-self-center">
