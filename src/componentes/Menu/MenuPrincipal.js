@@ -1,9 +1,19 @@
-import React from 'react'
-import {Link} from "react-router-dom";
+import React, {useContext} from 'react'
 import logoEducacaoSP from "../../assets/img/educacao_sp.png";
 import './menu-principal.scss'
 
+import {NotificacaoContext} from "../../context/NotificacaoContext";
+
 export const MenuPrincipal = () => {
+
+    const mensagem = useContext(NotificacaoContext);
+
+    const abreModalInfo = ()=>{
+        mensagem.setAbrirModal(true)
+        mensagem.setTituloModal("Em breve")
+        mensagem.setMsg("Em breve você acessará Busque loja credenciada ")
+    }
+
     return (
         <div className="container">
             <div className="row mt-4 mb-4">
@@ -23,15 +33,18 @@ export const MenuPrincipal = () => {
                     <ul className="nav nav-tabs border-0">
 
                         <li className="nav-item">
-                            <Link className="nav-link text-secondary mb-1 pb-0" to="/">
-                                Home
-                            </Link>
+                            <a
+                                className="nav-link text-secondary mb-1 pb-0"
+                                onClick={abreModalInfo}
+                            >
+                                Busque loja credenciada
+                            </a>
                         </li>
 
                         <li className="nav-item">
-                            <Link className="nav-link text-secondary mb-1 pb-0" to="/atualize-seu-cadastro">
-                                Atualize seu cadastro
-                            </Link>
+                            <a title="Link externo para avise sobre problemas"  className="nav-link text-secondary mb-1 pb-0" href="https://sp156.prefeitura.sp.gov.br/portal/servicos/informacao?servico=3616">
+                                Avise sobre problemas
+                            </a>
                         </li>
 
                     </ul>
