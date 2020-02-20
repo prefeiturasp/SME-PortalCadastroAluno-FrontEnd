@@ -18,6 +18,8 @@ export const AlteracaoCadastral = (parametros) => {
         inputCodigoEol,
         inputDtNascAluno,
         setBtnDisable,
+        setInputCodigoEol,
+        setInputDtNascAluno,
         handleBtnCancelarAtualizacao,
     } = parametros;
 
@@ -109,10 +111,13 @@ export const AlteracaoCadastral = (parametros) => {
         setCollapse('')
         setBtnDisable(false)
         e.target.reset();
-        limpaFormularios();
+        limpaFormulario();
     }
 
-    const limpaFormularios = () => {
+    const limpaFormulario = () => {
+
+        setInputCodigoEol('')
+        setInputDtNascAluno('')
 
         setState({
             ...state,

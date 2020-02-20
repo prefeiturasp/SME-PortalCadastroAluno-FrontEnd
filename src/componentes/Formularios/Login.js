@@ -52,7 +52,7 @@ export const Login = () => {
     const handleBtnCancelarAtualizacao = useCallback(() => {
         setCollapse('');
         setBtnDisable(false);
-        limpaFormularios();
+        limpaFormulario();
     }, [collapse, btnDisable])
 
 
@@ -97,7 +97,7 @@ export const Login = () => {
             mensagem.setMsg("Codigo EOL Bloqueado. Dirija-se a uma escola")
             setCollapse('');
             setBtnDisable(false);
-            limpaFormularios();
+            limpaFormulario();
 
         } else {
 
@@ -111,7 +111,7 @@ export const Login = () => {
                         setCollapse('');
                         setBtnDisable(false);
                         setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
-                        limpaFormularios();
+                        limpaFormulario();
                     } else if (retorno_api.detail === "Este estudante não faz parte do público do programa de uniforme escolar") {
                         mensagem.setAbrirModal(true)
                         mensagem.setTituloModal("Dados inválidos, tente novamente")
@@ -119,7 +119,7 @@ export const Login = () => {
                         setCollapse('');
                         setBtnDisable(false);
                         setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
-                        limpaFormularios();
+                        limpaFormulario();
                     } else {
                         setCollapse('show');
                         setBtnDisable(true);
@@ -135,7 +135,7 @@ export const Login = () => {
         }
     }
 
-    const limpaFormularios = () => {
+    const limpaFormulario = () => {
 
         setInputCodigoEol('')
         setInputDtNascAluno('')
@@ -179,6 +179,8 @@ export const Login = () => {
                         inputCodigoEol={inputCodigoEol}
                         inputDtNascAluno={inputDtNascAluno}
                         setBtnDisable={setBtnDisable}
+                        setInputCodigoEol={setInputCodigoEol}
+                        setInputDtNascAluno={setInputDtNascAluno}
                         handleBtnCancelarAtualizacao={handleBtnCancelarAtualizacao}
                     />
                 }
