@@ -35,7 +35,6 @@ export async function buscaDadosAlunoResponsavel(codigoEol, dtNascAluno) {
 
     return await fetch(`${URL_API}/dados-responsavel/busca_dados/`, requestInfo)
         .then(resposta => {
-            console.log("Conecta API", resposta)
             return resposta.json();
         });
 }

@@ -18,7 +18,6 @@ export const AlteracaoCadastral = (parametros) => {
         inputCodigoEol,
         inputDtNascAluno,
         setBtnDisable,
-        limpaFormularios,
         handleBtnCancelarAtualizacao,
     } = parametros;
 
@@ -40,8 +39,6 @@ export const AlteracaoCadastral = (parametros) => {
         //dc_tipo_responsavel: "",
         nome_mae: "",
         data_nascimento: "",
-        codigo_escola: "",
-        codigo_dre: "",
     });
 
     useEffect(() => {
@@ -113,6 +110,24 @@ export const AlteracaoCadastral = (parametros) => {
         setBtnDisable(false)
         e.target.reset();
         limpaFormularios();
+    }
+
+    const limpaFormularios = () => {
+
+        setState({
+            ...state,
+            nm_responsavel: "",
+            cd_cpf_responsavel: "",
+            cd_ddd_celular_responsavel: "",
+            nr_celular_responsavel: "",
+            email_responsavel: "",
+            tp_pessoa_responsavel: "",
+            nome_mae: "",
+            data_nascimento: "",
+            codigo_escola: "",
+            codigo_dre: "",
+        });
+
     }
 
     return (

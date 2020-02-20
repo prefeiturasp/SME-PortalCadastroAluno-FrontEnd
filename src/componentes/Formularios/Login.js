@@ -19,19 +19,6 @@ export const Login = () => {
     const [codEolBloqueio, setCodEolBloqueio] = useState([])
     const [listaCodEolBloqueado, setListaCodEolBloqueado] = useState([]);
 
-    // Campos Formulário de Atualização
-    const [state, setState] = useState({
-        nm_responsavel: "",
-        cd_cpf_responsavel: "",
-        cd_ddd_celular_responsavel: "",
-        nr_celular_responsavel: "",
-        email_responsavel: "",
-        tp_pessoa_responsavel: "",
-        nome_mae: "",
-        codigo_escola: "",
-        codigo_dre: "",
-    });
-
     useEffect(() => {
         const codEolBloqueioStorage = localStorage.getItem("codEolBloqueio");
         const listaCodEolBloqueadoStorage = localStorage.getItem("listaCodEolBloqueado");
@@ -138,7 +125,6 @@ export const Login = () => {
                         setBtnDisable(true);
                         setRetornoApi(retorno_api);
                         setCodEolBloqueio([]);
-                        console.log(retorno_api);
                     }
                 })
                 .catch(erro => {
@@ -149,24 +135,10 @@ export const Login = () => {
         }
     }
 
-    const limpaFormularios = (campos) => {
+    const limpaFormularios = () => {
 
         setInputCodigoEol('')
         setInputDtNascAluno('')
-
-        setState({
-            ...state,
-            nm_responsavel: "",
-            cd_cpf_responsavel: "",
-            cd_ddd_celular_responsavel: "",
-            nr_celular_responsavel: "",
-            email_responsavel: "",
-            tp_pessoa_responsavel: "",
-            nome_mae: "",
-            data_nascimento: "",
-            codigo_escola: "",
-            codigo_dre: "",
-        });
 
     }
 
@@ -208,7 +180,6 @@ export const Login = () => {
                         inputDtNascAluno={inputDtNascAluno}
                         setBtnDisable={setBtnDisable}
                         handleBtnCancelarAtualizacao={handleBtnCancelarAtualizacao}
-                        limpaFormularios={limpaFormularios}
                     />
                 }
             </div>
