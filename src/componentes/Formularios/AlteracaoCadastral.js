@@ -84,6 +84,9 @@ export const AlteracaoCadastral = (parametros) => {
         data.cd_cpf_responsavel = data.cd_cpf_responsavel.replace(/-/g, "");
         data.cd_cpf_responsavel = data.cd_cpf_responsavel.replace(/\./g, '');
         data.codigo_eol_aluno = inputCodigoEol;
+        data.nm_responsavel = data.nm_responsavel.trimEnd().trimStart();
+        data.email_responsavel = data.email_responsavel.trimEnd().trimStart();
+        data.nome_mae = data.nome_mae.trimEnd().trimStart();
 
         let payload_atualizado = {
             codigo_eol: inputCodigoEol,
