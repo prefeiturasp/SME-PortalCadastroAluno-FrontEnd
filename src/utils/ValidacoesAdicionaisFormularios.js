@@ -1,6 +1,4 @@
-import React from "react";
 import * as moment from 'moment'
-import {buscarPalavrasImproprias} from "../services/ConectarApi";
 
 export const validarPalavrao = (arrayValidar, listaPalavroes) => {
 

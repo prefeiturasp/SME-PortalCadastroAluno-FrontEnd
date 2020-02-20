@@ -19,7 +19,7 @@ export const AlteracaoCadastral = (parametros) => {
         inputDtNascAluno,
         setBtnDisable,
         limpaFormularios,
-        handleBtnCancelarAtualizacao
+        handleBtnCancelarAtualizacao,
     } = parametros;
 
     const mensagem = useContext(NotificacaoContext);
@@ -40,6 +40,8 @@ export const AlteracaoCadastral = (parametros) => {
         //dc_tipo_responsavel: "",
         nome_mae: "",
         data_nascimento: "",
+        codigo_escola: "",
+        codigo_dre: "",
     });
 
     useEffect(() => {
@@ -82,6 +84,7 @@ export const AlteracaoCadastral = (parametros) => {
         data.nr_celular_responsavel = data.nr_celular_responsavel.replace(/ /g, '');
         data.cd_cpf_responsavel = data.cd_cpf_responsavel.replace(/-/g, "");
         data.cd_cpf_responsavel = data.cd_cpf_responsavel.replace(/\./g, '');
+        data.codigo_eol_aluno = inputCodigoEol;
 
         let payload_atualizado = {
             codigo_eol: inputCodigoEol,

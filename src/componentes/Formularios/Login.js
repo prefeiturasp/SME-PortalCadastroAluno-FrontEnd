@@ -28,7 +28,8 @@ export const Login = () => {
         email_responsavel: "",
         tp_pessoa_responsavel: "",
         nome_mae: "",
-        data_nascimento: "",
+        codigo_escola: "",
+        codigo_dre: "",
     });
 
     useEffect(() => {
@@ -137,6 +138,7 @@ export const Login = () => {
                         setBtnDisable(true);
                         setRetornoApi(retorno_api);
                         setCodEolBloqueio([]);
+                        console.log(retorno_api);
                     }
                 })
         }
@@ -157,6 +159,8 @@ export const Login = () => {
             tp_pessoa_responsavel: "",
             nome_mae: "",
             data_nascimento: "",
+            codigo_escola: "",
+            codigo_dre: "",
         });
 
     }

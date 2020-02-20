@@ -1,5 +1,4 @@
 import React, {useContext} from 'react'
-import {Link} from "react-router-dom";
 import logoEducacaoSP from "../../assets/img/educacao_sp.png";
 import './menu-principal.scss'
 
@@ -43,9 +42,9 @@ export const MenuPrincipal = () => {
                         </li>
 
                         <li className="nav-item">
-                            <Link  className="nav-link text-secondary mb-1 pb-0" to="/atualize-seu-cadastro">
+                            <a title="Link externo para avise sobre problemas"  className="nav-link text-secondary mb-1 pb-0" href="https://sp156.prefeitura.sp.gov.br/portal/servicos/informacao?servico=3616">
                                 Avise sobre problemas
-                            </Link>
+                            </a>
                         </li>
 
                     </ul>
