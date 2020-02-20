@@ -2,8 +2,12 @@ import * as moment from 'moment'
 
 export const validarPalavrao = (arrayValidar, listaPalavroes) => {
 
+    arrayValidar = arrayValidar.toLowerCase();
     const arrayValidarSplit = arrayValidar.split(' ');
-    const result = arrayValidarSplit.filter((item)=>{ return listaPalavroes.indexOf(item) > -1});
+
+    const result = arrayValidarSplit.filter((item)=>{
+        return listaPalavroes.indexOf(item) > -1
+    });
 
     if (result.length > 0 ) {
         return true
