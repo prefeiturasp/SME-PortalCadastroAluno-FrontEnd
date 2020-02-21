@@ -156,19 +156,30 @@ export const Login = () => {
                 <form onSubmit={handleSubmit(onSubmitAbrirFormulario)}  name="abrirFormulario" id='abrirFormulario'>
                     <div className="row">
                         <div className="col-lg-4 mt-4">
-                            <label id="codigoEol">Código EOL</label>
+                            <label id="codigoEol">Código EOL*</label>
                             <input
                                 ref={
                                     register({
+                                        required: true,
                                         maxLength: 10
                                     })
                                 }
                                 readOnly={collapse === 'show'} onChange={(e) => setInputCodigoEol(e.target.value.trim())} value={inputCodigoEol} name="codigoEol" type="number" className="form-control" placeholder="Digite código EOL"/>
+                            {errors.codigoEol && errors.codigoEol.type === "required" && <span className="span_erro text-white mt-1">Código EOL é obrigatório</span>}
                             {errors.codigoEol && errors.codigoEol.type === "maxLength" && <span className="span_erro text-white mt-1">Permitido até 10 dígitos</span>}
                         </div>
                         <div className="col-lg-4 mt-4">
-                            <label htmlFor='dtNascAluno'>Data de nascimento do estudante</label>
-                            <input maxLength="8" readOnly={collapse === 'show'} onChange={(e) => setInputDtNascAluno(e.target.value.trim())} value={inputDtNascAluno} name="dtNascAluno" id="dtNascAluno" type="date" className="form-control"/>
+                            <label htmlFor='dtNascAluno'>Data de nascimento do estudante*</label>
+                            <input
+                                ref={
+                                    register({
+                                        required: true,
+                                        maxLength: 10
+                                    })
+                                }
+                                readOnly={collapse === 'show'} onChange={(e) => setInputDtNascAluno(e.target.value.trim())} value={inputDtNascAluno} name="dtNascAluno" id="dtNascAluno" type="date" className="form-control" max="9999-12-31"/>
+                            {errors.dtNascAluno && errors.dtNascAluno.type === "required" && <span className="span_erro text-white mt-1">Data de nascimento do estudante é obrigatório</span>}
+                            {errors.dtNascAluno && errors.dtNascAluno.type === "maxLength" && <span className="span_erro text-white mt-1">Digite uma data Válida</span>}
                         </div>
                         <div className="col-lg-4 mt-4 mt-md-5 pl-5 pr-5 pl-md-0 pr-md-0">
 
