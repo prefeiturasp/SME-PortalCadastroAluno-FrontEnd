@@ -6,7 +6,13 @@ import InputMask from "react-input-mask";
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {atualizaCadastro, buscarPalavrasImproprias} from "../../services/ConectarApi"
-import {validarCPF, validarDtNascResponsavel, validarPalavrao, validaTelefoneCelular, validaDDD} from "../../utils/ValidacoesAdicionaisFormularios";
+import {
+    validarCPF,
+    validarDtNascResponsavel,
+    validarPalavrao,
+    validaTelefoneCelular,
+    validaDDD
+} from "../../utils/ValidacoesAdicionaisFormularios";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 
 export const AlteracaoCadastral = (parametros) => {
@@ -53,14 +59,14 @@ export const AlteracaoCadastral = (parametros) => {
             cd_ddd_celular_responsavel: retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel ? retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel : '',
             nr_celular_responsavel: retorno_api.detail.responsaveis[0].nr_celular_responsavel ? retorno_api.detail.responsaveis[0].nr_celular_responsavel : '',
             tp_pessoa_responsavel: retorno_api.detail.responsaveis[0].tp_pessoa_responsavel ? String(parseInt(retorno_api.detail.responsaveis[0].tp_pessoa_responsavel)) : '',
-           // dc_tipo_responsavel: retorno_api.detail.responsaveis[0].dc_tipo_responsavel ? retorno_api.detail.responsaveis[0].dc_tipo_responsavel : '',
+            // dc_tipo_responsavel: retorno_api.detail.responsaveis[0].dc_tipo_responsavel ? retorno_api.detail.responsaveis[0].dc_tipo_responsavel : '',
             nome_mae: retorno_api.detail.responsaveis[0].nome_mae ? retorno_api.detail.responsaveis[0].nome_mae : '',
             data_nascimento: retorno_api.detail.responsaveis[0].data_nascimento ? retorno_api.detail.responsaveis[0].data_nascimento : '',
         });
 
     }, [retorno_api]);
 
-    useEffect( () => {
+    useEffect(() => {
         buscarPalavrasImproprias()
             .then(listaPalavroes => {
                 setPalavroes(listaPalavroes);
@@ -95,26 +101,36 @@ export const AlteracaoCadastral = (parametros) => {
         };
 
         atualizaCadastro(payload_atualizado)
+
             .then(retorno_api => {
                 mensagem.setAbrirModal(true)
                 mensagem.setTituloModal("Obrigado por solicitar o uniforme escolar")
                 mensagem.setMsg("<p>O seu pedido do uniforme escolar já foi registrado. Nos próximos dias você receberá no e-mail cadastrado orientações sobre os próximos passos para realizar a compra nas lojas credenciadas</p>" +
                     "<p>Acompanhe também as novidades sobre o novo processo de compra descentralizada pelas famílias diretamente no Portal do Uniforme: <a title='Link externo para o portal do uniforme' href='https://educacao.sme.prefeitura.sp.gov.br/portaldouniforme'>educacao.sme.prefeitura.sp.gov.br/portaldouniforme</a> </p>" +
-                    "<p>Atenciosamente,</p>"+
-                "<p>Secretaria Municipal de Educação</p>")
+                    "<p>Atenciosamente,</p>" +
+                    "<p>Secretaria Municipal de Educação</p>")
 
+                setCollapse('')
+                setBtnDisable(false);
+                e.target.reset();
+                limpaFormulario();
             })
             .catch(error => {
+
                 mensagem.setAbrirModal(true)
                 mensagem.setTituloModal("Erro ao solicitar uniforme")
                 mensagem.setMsg("Erro ao solicitar uniforme. Tente novamente");
                 console.log(error.message);
+
+                setCollapse('show')
+                setBtnDisable(true)
+
             });
 
-        setCollapse('')
+        /*setCollapse('')
         setBtnDisable(false)
         e.target.reset();
-        limpaFormulario();
+        limpaFormulario();*/
     }
 
     const limpaFormulario = () => {
@@ -155,7 +171,8 @@ export const AlteracaoCadastral = (parametros) => {
                                     ref={
                                         register({
                                                 required: true,
-                                                pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ'\s]+$/,
+                                                pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/,
+                                                maxLength: 70,
                                                 validate: {
                                                     naoRepetirCaracteres: valor => !new RegExp(/([aA-zZ])\1\1/).test(valor),
                                                     validaPalavrao: valor => !validarPalavrao(valor, palavroes),
@@ -168,9 +185,11 @@ export const AlteracaoCadastral = (parametros) => {
                                 {errors.nm_responsavel && errors.nm_responsavel.type === "naoRepetirCaracteres" &&
                                 <span className="span_erro mt-1">Não é permitido repetir 03 ou mais caracteres seguidos</span>}
                                 {errors.nm_responsavel && errors.nm_responsavel.type === "pattern" &&
-                                <span className="span_erro mt-1">Não são permitidos números</span>}
+                                <span className="span_erro mt-1">Não são permitidos números ou caracteres especiais</span>}
                                 {errors.nm_responsavel && errors.nm_responsavel.type === "validaPalavrao" &&
                                 <span className="span_erro mt-1">Não são permitas palavras inapropriadas</span>}
+                                {errors.nm_responsavel && errors.nm_responsavel.type === "maxLength" &&
+                                <span className="span_erro mt-1">Permitido até 70 caracteres</span>}
 
                             </div>
 
@@ -179,15 +198,18 @@ export const AlteracaoCadastral = (parametros) => {
                                 <input ref={
                                     register({
                                         required: true,
+                                        maxLength: 50,
                                         validate: {
-                                            naoRepetirCaracteres: valor => new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/).test(valor),
+                                            emailValido: valor => new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/).test(valor),
                                         }
 
                                     })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.email_responsavel} type="email" className="form-control" name="email_responsavel" id="email_responsavel"/>
                                 {errors.email_responsavel && errors.email_responsavel.type === "required" &&
                                 <span className="span_erro mt-1">Email é obrigatório</span>}
-                                {errors.email_responsavel && errors.email_responsavel.type === "naoRepetirCaracteres" &&
+                                {errors.email_responsavel && errors.email_responsavel.type === "emailValido" &&
                                 <span className="span_erro mt-1">Digite um email válido</span>}
+                                {errors.email_responsavel && errors.email_responsavel.type === "maxLength" &&
+                                <span className="span_erro mt-1">Permitido até 50 caracteres</span>}
                             </div>
 
                             <div className="col-12 col-md-4 mt-5">
@@ -296,13 +318,17 @@ export const AlteracaoCadastral = (parametros) => {
                                                     ref={
                                                         register({
                                                             required: true,
+                                                            maxLength: 10,
                                                             validate: {
-                                                                comparaDatas:  data => !validarDtNascResponsavel(data, inputDtNascAluno)
+                                                                comparaDatas: data => !validarDtNascResponsavel(data, inputDtNascAluno)
                                                             }
-                                                        })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.data_nascimento} type="date" className="form-control" name="data_nascimento" id="data_nascimento"/>
-                                                {errors.data_nascimento && errors.data_nascimento.type === "required" && <span className="span_erro mt-1">Data de nascimento do responsável é obrigatório</span>}
+                                                        })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.data_nascimento} type="date" className="form-control" name="data_nascimento" id="data_nascimento" max="9999-12-31"/>
+                                                {errors.data_nascimento && errors.data_nascimento.type === "required" &&
+                                                <span className="span_erro mt-1">Data de nascimento do responsável é obrigatório</span>}
                                                 {errors.data_nascimento && errors.data_nascimento.type === "comparaDatas" &&
                                                 <span className="span_erro mt-1">Digite uma data de nascimento válida</span>}
+                                                {errors.dtNascAluno && errors.dtNascAluno.type === "maxLength" &&
+                                                <span className="span_erro text-white mt-1">Digite uma data Válida</span>}
                                             </div>
                                         </div>
                                     </div>
@@ -310,10 +336,34 @@ export const AlteracaoCadastral = (parametros) => {
                             </div>
 
                             <div className="col-12 mt-5">
-                                <label htmlFor="nome_mae"><strong>Nome da mãe do  responsável (sem abreviações)*</strong></label>
-                                <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nome_mae} type="text" className="form-control" name="nome_mae" id="nome_mae"/>
-                                {errors.nome_mae &&
+                                <label htmlFor="nome_mae"><strong>Nome da mãe do responsável (sem abreviações)*</strong></label>
+
+
+                                <input
+                                    ref={
+                                        register({
+                                                required: true,
+                                                pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/,
+                                                maxLength: 70,
+                                                validate: {
+                                                    naoRepetirCaracteres: valor => !new RegExp(/([aA-zZ])\1\1/).test(valor),
+                                                    validaPalavrao: valor => !validarPalavrao(valor, palavroes),
+                                                }
+                                            }
+                                        )
+                                    } onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nome_mae} type="text" className="form-control" name="nome_mae" id="nome_mae"/>
+                                {errors.nome_mae && errors.nome_mae.type === "required" &&
                                 <span className="span_erro mt-1">Nome de mãe de responsável é obrigatório</span>}
+                                {errors.nome_mae && errors.nome_mae.type === "naoRepetirCaracteres" &&
+                                <span className="span_erro mt-1">Não é permitido repetir 03 ou mais caracteres seguidos</span>}
+                                {errors.nome_mae && errors.nome_mae.type === "pattern" &&
+                                <span className="span_erro mt-1">Não são permitidos números ou caracteres especiais</span>}
+                                {errors.nome_mae && errors.nome_mae.type === "validaPalavrao" &&
+                                <span className="span_erro mt-1">Não são permitas palavras inapropriadas</span>}
+                                {errors.nome_mae && errors.nome_mae.type === "maxLength" &&
+                                <span className="span_erro mt-1">Permitido até 70 caracteres</span>}
+
+
                             </div>
 
                             <div className="col-12 mt-5">

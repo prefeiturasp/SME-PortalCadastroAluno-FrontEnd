@@ -21,7 +21,7 @@ export const Login = () => {
     const [btnDisable, setBtnDisable] = useState(false);
     const [retornoApi, setRetornoApi] = useState('');
 
-    const [codEolBloqueio, setCodEolBloqueio] = useState([])
+    const [codEolBloqueio, setCodEolBloqueio] = useState([]);
     const [listaCodEolBloqueado, setListaCodEolBloqueado] = useState([]);
 
     useEffect(() => {
@@ -39,7 +39,7 @@ export const Login = () => {
     useEffect(() => {
         localStorage.setItem("codEolBloqueio", JSON.stringify(codEolBloqueio));
         armazenaCodEolBloqueados();
-    }, [codEolBloqueio])
+    }, [codEolBloqueio]);
 
     useEffect(() => {
         localStorage.setItem("listaCodEolBloqueado", JSON.stringify(listaCodEolBloqueado));
@@ -47,18 +47,14 @@ export const Login = () => {
 
     const handleBtnAAbrirFormularioDisable = () => {
 
-        if (btnDisable === true || inputCodigoEol === '' || inputDtNascAluno === '') {
-            return true;
-        } else {
-            return false;
-        }
-    }
+        return btnDisable === true || inputCodigoEol === '' || inputDtNascAluno === '';
+    };
 
     const handleBtnCancelarAtualizacao = useCallback(() => {
         setCollapse('');
         setBtnDisable(false);
         limpaFormulario();
-    }, [collapse, btnDisable])
+    }, [collapse, btnDisable]);
 
 
     const armazenaCodEolBloqueados = useCallback(() => {
@@ -81,25 +77,28 @@ export const Login = () => {
                 setCodEolBloqueio([]);
             }
         }
-    }, [listaCodEolBloqueado])
+    }, [listaCodEolBloqueado]);
 
 
     const verificaCodEolBloqueado = (codEol) => {
         let listaCodEolBloqueadoStorage = localStorage.getItem("listaCodEolBloqueado");
         // Converte este json para objeto
-        const arrayBloqueados = JSON.parse(listaCodEolBloqueadoStorage);
 
-        return arrayBloqueados.includes(codEol);
-    }
+        if (listaCodEolBloqueadoStorage) {
+            const arrayBloqueados = JSON.parse(listaCodEolBloqueadoStorage);
+
+            return arrayBloqueados.includes(codEol);
+        }
+    };
 
     const onSubmitAbrirFormulario = (data, e) => {
         e.preventDefault();
 
         if (verificaCodEolBloqueado(inputCodigoEol)) {
 
-            mensagem.setAbrirModal(true)
-            mensagem.setTituloModal("Acesso Bloqueado")
-            mensagem.setMsg("Codigo EOL Bloqueado. Dirija-se a uma escola")
+            mensagem.setAbrirModal(true);
+            mensagem.setTituloModal("Acesso Bloqueado");
+            mensagem.setMsg("Codigo EOL Bloqueado. Dirija-se à escola do aluno");
             setCollapse('');
             setBtnDisable(false);
             limpaFormulario();
@@ -110,17 +109,17 @@ export const Login = () => {
 
                 .then(retorno_api => {
                     if (retorno_api.detail === "Data de nascimento invalida para o código eol informado" || retorno_api.detail === "API EOL com erro. Status: 404" || retorno_api.detail === "API EOL com erro. Status: 500") {
-                        mensagem.setAbrirModal(true)
-                        mensagem.setTituloModal("Dados inválidos, tente novamente")
-                        mensagem.setMsg("Tente novamente inserir o código EOL e a data de nascimento")
+                        mensagem.setAbrirModal(true);
+                        mensagem.setTituloModal("Dados inválidos, tente novamente");
+                        mensagem.setMsg("Tente novamente inserir o código EOL e a data de nascimento");
                         setCollapse('');
                         setBtnDisable(false);
                         setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
                         limpaFormulario();
                     } else if (retorno_api.detail === "Este estudante não faz parte do público do programa de uniforme escolar") {
-                        mensagem.setAbrirModal(true)
-                        mensagem.setTituloModal("Dados inválidos, tente novamente")
-                        mensagem.setMsg(retorno_api.detail)
+                        mensagem.setAbrirModal(true);
+                        mensagem.setTituloModal("Dados inválidos, tente novamente");
+                        mensagem.setMsg(retorno_api.detail);
                         setCollapse('');
                         setBtnDisable(false);
                         setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
@@ -132,7 +131,7 @@ export const Login = () => {
                         setCodEolBloqueio([]);
                     }
                 })
-                .catch(erro => {
+                .catch(() => {
                     mensagem.setAbrirModal(true)
                     mensagem.setTituloModal("Dados inválidos, tente novamente")
                     mensagem.setMsg("Tente novamente inserir o código EOL e a data de nascimento")
@@ -156,19 +155,30 @@ export const Login = () => {
                 <form onSubmit={handleSubmit(onSubmitAbrirFormulario)}  name="abrirFormulario" id='abrirFormulario'>
                     <div className="row">
                         <div className="col-lg-4 mt-4">
-                            <label id="codigoEol">Código EOL</label>
+                            <label id="codigoEol">Código EOL*</label>
                             <input
                                 ref={
                                     register({
+                                        required: true,
                                         maxLength: 10
                                     })
                                 }
                                 readOnly={collapse === 'show'} onChange={(e) => setInputCodigoEol(e.target.value.trim())} value={inputCodigoEol} name="codigoEol" type="number" className="form-control" placeholder="Digite código EOL"/>
+                            {errors.codigoEol && errors.codigoEol.type === "required" && <span className="span_erro text-white mt-1">Código EOL é obrigatório</span>}
                             {errors.codigoEol && errors.codigoEol.type === "maxLength" && <span className="span_erro text-white mt-1">Permitido até 10 dígitos</span>}
                         </div>
                         <div className="col-lg-4 mt-4">
-                            <label htmlFor='dtNascAluno'>Data de nascimento do estudante</label>
-                            <input maxLength="8" readOnly={collapse === 'show'} onChange={(e) => setInputDtNascAluno(e.target.value.trim())} value={inputDtNascAluno} name="dtNascAluno" id="dtNascAluno" type="date" className="form-control"/>
+                            <label htmlFor='dtNascAluno'>Data de nascimento do estudante*</label>
+                            <input
+                                ref={
+                                    register({
+                                        required: true,
+                                        maxLength: 10
+                                    })
+                                }
+                                readOnly={collapse === 'show'} onChange={(e) => setInputDtNascAluno(e.target.value.trim())} value={inputDtNascAluno} name="dtNascAluno" id="dtNascAluno" type="date" className="form-control" max="9999-12-31"/>
+                            {errors.dtNascAluno && errors.dtNascAluno.type === "required" && <span className="span_erro text-white mt-1">Data de nascimento do estudante é obrigatório</span>}
+                            {errors.dtNascAluno && errors.dtNascAluno.type === "maxLength" && <span className="span_erro text-white mt-1">Digite uma data Válida</span>}
                         </div>
                         <div className="col-lg-4 mt-4 mt-md-5 pl-5 pr-5 pl-md-0 pr-md-0">
 
