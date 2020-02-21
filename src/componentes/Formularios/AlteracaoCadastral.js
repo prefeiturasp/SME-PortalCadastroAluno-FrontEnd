@@ -101,6 +101,7 @@ export const AlteracaoCadastral = (parametros) => {
         };
 
         atualizaCadastro(payload_atualizado)
+
             .then(retorno_api => {
                 mensagem.setAbrirModal(true)
                 mensagem.setTituloModal("Obrigado por solicitar o uniforme escolar")
@@ -109,18 +110,27 @@ export const AlteracaoCadastral = (parametros) => {
                     "<p>Atenciosamente,</p>" +
                     "<p>Secretaria Municipal de Educação</p>")
 
+                setCollapse('')
+                setBtnDisable(false);
+                e.target.reset();
+                limpaFormulario();
             })
             .catch(error => {
+
                 mensagem.setAbrirModal(true)
                 mensagem.setTituloModal("Erro ao solicitar uniforme")
                 mensagem.setMsg("Erro ao solicitar uniforme. Tente novamente");
                 console.log(error.message);
+
+                setCollapse('show')
+                setBtnDisable(true)
+
             });
 
-        setCollapse('')
+        /*setCollapse('')
         setBtnDisable(false)
         e.target.reset();
-        limpaFormulario();
+        limpaFormulario();*/
     }
 
     const limpaFormulario = () => {
