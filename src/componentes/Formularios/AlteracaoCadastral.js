@@ -161,7 +161,7 @@ export const AlteracaoCadastral = (parametros) => {
                                     ref={
                                         register({
                                                 required: true,
-                                                pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ'\s]+$/,
+                                                pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/,
                                                 maxLength: 70,
                                                 validate: {
                                                     naoRepetirCaracteres: valor => !new RegExp(/([aA-zZ])\1\1/).test(valor),
@@ -327,19 +327,33 @@ export const AlteracaoCadastral = (parametros) => {
 
                             <div className="col-12 mt-5">
                                 <label htmlFor="nome_mae"><strong>Nome da mãe do responsável (sem abreviações)*</strong></label>
+
+
                                 <input
                                     ref={
-                                        register(
-                                            {
+                                        register({
                                                 required: true,
+                                                pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/,
                                                 maxLength: 70,
+                                                validate: {
+                                                    naoRepetirCaracteres: valor => !new RegExp(/([aA-zZ])\1\1/).test(valor),
+                                                    validaPalavrao: valor => !validarPalavrao(valor, palavroes),
+                                                }
                                             }
                                         )
                                     } onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nome_mae} type="text" className="form-control" name="nome_mae" id="nome_mae"/>
                                 {errors.nome_mae && errors.nome_mae.type === "required" &&
                                 <span className="span_erro mt-1">Nome de mãe de responsável é obrigatório</span>}
+                                {errors.nome_mae && errors.nome_mae.type === "naoRepetirCaracteres" &&
+                                <span className="span_erro mt-1">Não é permitido repetir 03 ou mais caracteres seguidos</span>}
+                                {errors.nome_mae && errors.nome_mae.type === "pattern" &&
+                                <span className="span_erro mt-1">Não são permitidos números ou caracteres especiais</span>}
+                                {errors.nome_mae && errors.nome_mae.type === "validaPalavrao" &&
+                                <span className="span_erro mt-1">Não são permitas palavras inapropriadas</span>}
                                 {errors.nome_mae && errors.nome_mae.type === "maxLength" &&
                                 <span className="span_erro mt-1">Permitido até 70 caracteres</span>}
+
+
                             </div>
 
                             <div className="col-12 mt-5">
