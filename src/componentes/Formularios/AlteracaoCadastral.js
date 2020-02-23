@@ -26,6 +26,7 @@ export const AlteracaoCadastral = (parametros) => {
         setBtnDisable,
         setInputCodigoEol,
         setInputDtNascAluno,
+        codigoEolRef,
         handleBtnCancelarAtualizacao,
     } = parametros;
 
@@ -82,6 +83,7 @@ export const AlteracaoCadastral = (parametros) => {
     };
 
     const onSubmitAtualizacaoCadastral = (data, e) => {
+        codigoEolRef.current.focus();
 
         // Removendo checkbox Você precisa declarar que as informações são verdadeiras
         delete data.checkboxDeclaro;
