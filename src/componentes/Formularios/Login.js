@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect, useCallback} from "react";
+import React, {useState, useContext, useEffect, useCallback, useRef} from "react";
 import {AlteracaoCadastral} from "./AlteracaoCadastral";
 import {useForm} from 'react-hook-form'
 
@@ -8,10 +8,10 @@ import {buscaDadosAlunoResponsavel} from "../../services/ConectarApi"
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 
 export const Login = () => {
-
+    const codigoEolRef = useRef();
     const mensagem = useContext(NotificacaoContext);
 
-    const {register, handleSubmit, errors, setValue, setError} = useForm({
+    const {register, handleSubmit, errors} = useForm({
         mode: "onBlur"
     });
 
@@ -92,6 +92,9 @@ export const Login = () => {
     };
 
     const onSubmitAbrirFormulario = (data, e) => {
+
+        codigoEolRef.current.focus();
+
         e.preventDefault();
 
         if (verificaCodEolBloqueado(inputCodigoEol)) {
@@ -146,11 +149,6 @@ export const Login = () => {
 
     }
 
-    useEffect(() => {
-        register({ name: "firstName" }, { required: true });
-        register({ name: "lastName" }, {required: true, maxLength: 10});
-    }, [])
-
     return (
 
         <div className="w-100 formulario-inicial-home pt-5 pb-5 ">
@@ -160,34 +158,12 @@ export const Login = () => {
                 <form onSubmit={handleSubmit(onSubmitAbrirFormulario)}  name="abrirFormulario" id='abrirFormulario'>
                     <div className="row">
                         <div className="col-lg-4 mt-4">
-
-                            <label id="firstName">Teste*</label>
-                            <input className="form-control"
-                                name="lastName"
-                                onChange={e => {
-                                    const value = e.target.value;
-                                    if (value === "test") {
-                                        setError("lastName", "notMatch")
-                                    } else {
-                                        setValue("lastName", e.target.value)
-                                    }
-                                }}
-                            />
-                            {errors.lastName && <span className="span_erro text-white mt-1">ERRO AQUI</span>}
-
-
-
-
-
-
                             <label id="codigoEol">Código EOL*</label>
                             <input
-                                ref={
-                                    register({
-                                        required: true,
-                                        maxLength: 10
-                                    })
-                                }
+                                ref={(e) => {
+                                    register(e, {required: true, maxLength:10})
+                                    codigoEolRef.current = e // you can still assign to ref
+                                }}
                                 readOnly={collapse === 'show'} onChange={(e) => setInputCodigoEol(e.target.value.trim())} value={inputCodigoEol} name="codigoEol" type="number" className="form-control" placeholder="Digite código EOL"/>
                             {errors.codigoEol && errors.codigoEol.type === "required" && <span className="span_erro text-white mt-1">Código EOL é obrigatório</span>}
                             {errors.codigoEol && errors.codigoEol.type === "maxLength" && <span className="span_erro text-white mt-1">Permitido até 10 dígitos</span>}
