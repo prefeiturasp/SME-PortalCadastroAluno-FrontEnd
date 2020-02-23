@@ -9,7 +9,6 @@ export const Rotas = () => {
     return(
         <Switch>
             <Route basename="/" path="/" exact component={Home}/>
-            <Route path="/teste-focus" exact component={TesteFocus}/>
         </Switch>
     )
 }

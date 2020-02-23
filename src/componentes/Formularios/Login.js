@@ -162,7 +162,7 @@ export const Login = () => {
                             <input
                                 ref={(e) => {
                                     register(e, {required: true, maxLength:10})
-                                    codigoEolRef.current = e // you can still assign to ref
+                                    codigoEolRef.current = e
                                 }}
                                 readOnly={collapse === 'show'} onChange={(e) => setInputCodigoEol(e.target.value.trim())} value={inputCodigoEol} name="codigoEol" type="number" className="form-control" placeholder="Digite código EOL"/>
                             {errors.codigoEol && errors.codigoEol.type === "required" && <span className="span_erro text-white mt-1">Código EOL é obrigatório</span>}

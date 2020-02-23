@@ -172,14 +172,14 @@ export const AlteracaoCadastral = (parametros) => {
                                         register(e, {
                                                 required: true,
                                                 pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/,
-                                                // maxLength: 70,
+                                                maxLength: 70,
                                                 validate: {
                                                     naoRepetirCaracteres: valor => !new RegExp(/([aA-zZ])\1\1/).test(valor),
                                                     validaPalavrao: valor => !validarPalavrao(valor, palavroes),
                                                 }
                                             }
                                         )
-                                        nmResponsavelRef.current = e // you can still assign to ref
+                                        nmResponsavelRef.current = e
                                     }
 
                                     } onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nm_responsavel} type="text" className="form-control" name="nm_responsavel" id="nm_responsavel"/>
