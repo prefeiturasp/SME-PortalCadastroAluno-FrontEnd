@@ -11,7 +11,7 @@ export const Login = () => {
 
     const mensagem = useContext(NotificacaoContext);
 
-    const {register, handleSubmit, errors} = useForm({
+    const {register, handleSubmit, errors, setValue, setError} = useForm({
         mode: "onBlur"
     });
 
@@ -146,6 +146,11 @@ export const Login = () => {
 
     }
 
+    useEffect(() => {
+        register({ name: "firstName" }, { required: true });
+        register({ name: "lastName" }, {required: true, maxLength: 10});
+    }, [])
+
     return (
 
         <div className="w-100 formulario-inicial-home pt-5 pb-5 ">
@@ -155,6 +160,26 @@ export const Login = () => {
                 <form onSubmit={handleSubmit(onSubmitAbrirFormulario)}  name="abrirFormulario" id='abrirFormulario'>
                     <div className="row">
                         <div className="col-lg-4 mt-4">
+
+                            <label id="firstName">Teste*</label>
+                            <input className="form-control"
+                                name="lastName"
+                                onChange={e => {
+                                    const value = e.target.value;
+                                    if (value === "test") {
+                                        setError("lastName", "notMatch")
+                                    } else {
+                                        setValue("lastName", e.target.value)
+                                    }
+                                }}
+                            />
+                            {errors.lastName && <span className="span_erro text-white mt-1">ERRO AQUI</span>}
+
+
+
+
+
+
                             <label id="codigoEol">Código EOL*</label>
                             <input
                                 ref={
