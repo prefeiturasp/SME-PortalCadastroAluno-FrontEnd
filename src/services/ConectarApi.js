@@ -1,3 +1,5 @@
+import { login, getToken } from "./auth.service";
+
 const URL_API = process.env.REACT_APP_URL_API;
 const TOKEN = process.env.REACT_APP_TOKEN;
 
@@ -31,7 +33,7 @@ export async function buscaDadosAlunoResponsavel(codigoEol, dtNascAluno) {
       data_nascimento: dtNascAluno
     }),
     headers: {
-      Authorization: TOKEN,
+      Authorization: `JWT ${getToken()}`,
       "Content-type": "application/json",
       Accept: "application/json"
     }
