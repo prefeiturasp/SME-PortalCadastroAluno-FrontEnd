@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect, useCallback} from "react";
+import React, {useState, useContext, useEffect, useCallback, useRef} from "react";
 import {AlteracaoCadastral} from "./AlteracaoCadastral";
 import {useForm} from 'react-hook-form'
 
@@ -8,7 +8,7 @@ import {buscaDadosAlunoResponsavel} from "../../services/ConectarApi"
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 
 export const Login = () => {
-
+    const codigoEolRef = useRef();
     const mensagem = useContext(NotificacaoContext);
 
     const {register, handleSubmit, errors} = useForm({
@@ -92,6 +92,9 @@ export const Login = () => {
     };
 
     const onSubmitAbrirFormulario = (data, e) => {
+
+        codigoEolRef.current.focus();
+
         e.preventDefault();
 
         if (verificaCodEolBloqueado(inputCodigoEol)) {
@@ -157,12 +160,10 @@ export const Login = () => {
                         <div className="col-lg-4 mt-4">
                             <label id="codigoEol">Código EOL*</label>
                             <input
-                                ref={
-                                    register({
-                                        required: true,
-                                        maxLength: 10
-                                    })
-                                }
+                                ref={(e) => {
+                                    register(e, {required: true, maxLength:10})
+                                    codigoEolRef.current = e
+                                }}
                                 readOnly={collapse === 'show'} onChange={(e) => setInputCodigoEol(e.target.value.trim())} value={inputCodigoEol} name="codigoEol" type="number" className="form-control" placeholder="Digite código EOL"/>
                             {errors.codigoEol && errors.codigoEol.type === "required" && <span className="span_erro text-white mt-1">Código EOL é obrigatório</span>}
                             {errors.codigoEol && errors.codigoEol.type === "maxLength" && <span className="span_erro text-white mt-1">Permitido até 10 dígitos</span>}
@@ -203,6 +204,7 @@ export const Login = () => {
                         setBtnDisable={setBtnDisable}
                         setInputCodigoEol={setInputCodigoEol}
                         setInputDtNascAluno={setInputDtNascAluno}
+                        codigoEolRef={codigoEolRef}
                         handleBtnCancelarAtualizacao={handleBtnCancelarAtualizacao}
                     />
                 }

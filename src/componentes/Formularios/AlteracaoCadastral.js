@@ -1,5 +1,5 @@
 /* eslint eqeqeq: 0 */
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {useForm} from 'react-hook-form'
 import InputMask from "react-input-mask";
 
@@ -16,7 +16,7 @@ import {
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 
 export const AlteracaoCadastral = (parametros) => {
-
+    const nmResponsavelRef = useRef();
     const {
         collapse,
         setCollapse,
@@ -26,6 +26,7 @@ export const AlteracaoCadastral = (parametros) => {
         setBtnDisable,
         setInputCodigoEol,
         setInputDtNascAluno,
+        codigoEolRef,
         handleBtnCancelarAtualizacao,
     } = parametros;
 
@@ -83,6 +84,7 @@ export const AlteracaoCadastral = (parametros) => {
 
     const onSubmitAtualizacaoCadastral = (data, e) => {
 
+
         // Removendo checkbox Você precisa declarar que as informações são verdadeiras
         delete data.checkboxDeclaro;
 
@@ -103,6 +105,9 @@ export const AlteracaoCadastral = (parametros) => {
         atualizaCadastro(payload_atualizado)
 
             .then(retorno_api => {
+                // Caso sucesso seta o focus no input codigo EOL
+                codigoEolRef.current.focus();
+
                 mensagem.setAbrirModal(true)
                 mensagem.setTituloModal("Obrigado por solicitar o uniforme escolar")
                 mensagem.setMsg("<p>O seu pedido do uniforme escolar já foi registrado. Nos próximos dias você receberá no e-mail cadastrado orientações sobre os próximos passos para realizar a compra nas lojas credenciadas</p>" +
@@ -114,23 +119,18 @@ export const AlteracaoCadastral = (parametros) => {
                 setBtnDisable(false);
                 e.target.reset();
                 limpaFormulario();
+
             })
             .catch(error => {
-
+                // Caso erro seta o focus no nome do responsável
+                nmResponsavelRef.current.focus();
                 mensagem.setAbrirModal(true)
                 mensagem.setTituloModal("Erro ao solicitar uniforme")
                 mensagem.setMsg("Erro ao solicitar uniforme. Tente novamente");
                 console.log(error.message);
-
                 setCollapse('show')
                 setBtnDisable(true)
-
             });
-
-        /*setCollapse('')
-        setBtnDisable(false)
-        e.target.reset();
-        limpaFormulario();*/
     }
 
     const limpaFormulario = () => {
@@ -168,8 +168,8 @@ export const AlteracaoCadastral = (parametros) => {
                             <div className="col-12">
                                 <label htmlFor="nm_responsavel"><strong>Nome completo do responsável (sem abreviações)*</strong></label>
                                 <input
-                                    ref={
-                                        register({
+                                    ref={(e) => {
+                                        register(e, {
                                                 required: true,
                                                 pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/,
                                                 maxLength: 70,
@@ -179,6 +179,9 @@ export const AlteracaoCadastral = (parametros) => {
                                                 }
                                             }
                                         )
+                                        nmResponsavelRef.current = e
+                                    }
+
                                     } onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nm_responsavel} type="text" className="form-control" name="nm_responsavel" id="nm_responsavel"/>
                                 {errors.nm_responsavel && errors.nm_responsavel.type === "required" &&
                                 <span className="span_erro mt-1">Nome é obrigatório</span>}
