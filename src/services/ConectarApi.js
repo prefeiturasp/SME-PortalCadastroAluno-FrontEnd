@@ -1,18 +1,16 @@
-import { login, getToken } from "./auth.service";
+import { getToken } from "./auth.service";
 
 const URL_API = process.env.REACT_APP_URL_API;
-const TOKEN = process.env.REACT_APP_TOKEN;
 
 if (process.env.NODE_ENV === "production") {
   URL_API = "API_URL_REPLACE_ME";
-  TOKEN = "TOKEN_REPLACE_ME";
 }
 
 export async function buscarPalavrasImproprias() {
   const requestInfo = {
     method: "GET",
     headers: {
-      Authorization: TOKEN,
+      Authorization: `JWT ${getToken()}`,
       "Content-type": "application/json",
       Accept: "application/json"
     }
@@ -52,7 +50,7 @@ export async function atualizaCadastro(dados) {
     method: "POST",
     body: JSON.stringify(dados),
     headers: {
-      Authorization: TOKEN,
+      Authorization: `JWT ${getToken()}`,
       "Content-type": "application/json",
       Accept: "application/json"
     }

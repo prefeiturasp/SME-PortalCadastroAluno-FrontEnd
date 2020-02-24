@@ -160,13 +160,7 @@ export const Login = () => {
       setBtnDisable(false);
       limpaFormulario();
     } else {
-      if (!getToken()) {
-        login().then(_ => {
-          buscaDadosAluno(inputCodigoEol, inputDtNascAluno);
-        });
-      } else {
-        buscaDadosAluno(inputCodigoEol, inputDtNascAluno);
-      }
+      buscaDadosAluno(inputCodigoEol, inputDtNascAluno);
     }
   };
 
