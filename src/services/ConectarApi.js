@@ -10,7 +10,6 @@ export async function buscarPalavrasImproprias() {
   const requestInfo = {
     method: "GET",
     headers: {
-      Authorization: `JWT ${getToken()}`,
       "Content-type": "application/json",
       Accept: "application/json"
     }
