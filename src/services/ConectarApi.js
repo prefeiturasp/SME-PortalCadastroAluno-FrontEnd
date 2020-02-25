@@ -1,8 +1,8 @@
 import { getToken } from "./auth.service";
 
-const URL_API = process.env.REACT_APP_URL_API;
+let URL_API = process.env.REACT_APP_URL_API;
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.IS_DOCKER_ENVIRONMENT === true) {
   URL_API = "API_URL_REPLACE_ME";
 }
 
