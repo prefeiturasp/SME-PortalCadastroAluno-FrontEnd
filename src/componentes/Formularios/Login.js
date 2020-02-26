@@ -12,7 +12,6 @@ import "./formularios.scss";
 import { BtnCustomizado } from "../BtnCustomizado";
 import { buscaDadosAlunoResponsavel } from "../../services/ConectarApi";
 import { NotificacaoContext } from "../../context/NotificacaoContext";
-import { login, getToken } from "../../services/auth.service";
 
 export const Login = () => {
   const codigoEolRef = useRef();
@@ -67,7 +66,7 @@ export const Login = () => {
     setCollapse("");
     setBtnDisable(false);
     limpaFormulario();
-  }, [collapse, btnDisable]);
+  }, []);
 
   const armazenaCodEolBloqueados = useCallback(() => {
     let codEolBloqueioStorage = localStorage.getItem("codEolBloqueio");

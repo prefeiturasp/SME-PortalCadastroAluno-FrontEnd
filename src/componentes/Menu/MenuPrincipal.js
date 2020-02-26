@@ -33,12 +33,12 @@ export const MenuPrincipal = () => {
                     <ul className="nav nav-tabs border-0">
 
                         <li className="nav-item">
-                            <a
+                            <button
                                 className="nav-link text-secondary mb-1 pb-0"
                                 onClick={abreModalInfo}
                             >
                                 Busque loja credenciada
-                            </a>
+                            </button>
                         </li>
 
                         <li className="nav-item">

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { getToken } from "./auth.service";
 
 const URL_API = process.env.REACT_APP_URL_API;
