@@ -17,8 +17,8 @@ set -xe
 
 
 sed -i "s,API_URL_REPLACE_ME,$API_URL,g" /usr/share/nginx/html/static/js/main*.js
-sed -i "s,REACT_USERNAME_REPLACE_ME,$USERNAME,g" /usr/share/nginx/html/static/js/main*.js
-sed -i "s,REACT_PASSWORD_REPLACE_ME,$PASSWORD,g" /usr/share/nginx/html/static/js/main*.js
-sed -i "s,REACT_PASSWORD_REPLACE_ME,$SERVER_NAME,g" /etc/nginx/conf.d/default.conf
+sed -i "s,USERNAME_REPLACE_ME,$USERNAME,g" /usr/share/nginx/html/static/js/main*.js
+sed -i "s,PASSWORD_REPLACE_ME,$PASSWORD,g" /usr/share/nginx/html/static/js/main*.js
+sed -i "s,SERVER_NAME,$SERVER_NAME,g" /etc/nginx/conf.d/default.conf
 
 exec "$@"
