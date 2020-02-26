@@ -1,7 +1,11 @@
 import decode from "jwt-decode";
 import CONFIG from "../config";
-const URL_API = process.env.REACT_APP_URL_API;
+let URL_API = process.env.REACT_APP_URL_API;
 const REFRESH_TOKEN_TIMEOUT = process.env.REFRESH_TOKEN_TIMEOUT;
+
+if (process.env.IS_DOCKER_ENVIRONMENT === true) {
+  URL_API = "API_URL_REPLACE_ME";
+}
 
 export const TOKEN_ALIAS = "TOKEN";
 

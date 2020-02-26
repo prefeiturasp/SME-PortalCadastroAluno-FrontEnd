@@ -9,8 +9,16 @@ set -xe
 set -xe
   : "${SERVER_NAME?Precisa de uma variavel de ambiente SERVER_NAME}"
 
+set -xe
+  : "${USERNAME?Precisa de uma variavel de ambiente USERNAME}"
+
+set -xe
+  : "${PASSWORD?Precisa de uma variavel de ambiente PASSWORD}"
+
 
 sed -i "s,API_URL_REPLACE_ME,$API_URL,g" /usr/share/nginx/html/static/js/main*.js
-sed -i "s,SERVER_NAME,$SERVER_NAME,g" /etc/nginx/conf.d/default.conf
+sed -i "s,REACT_USERNAME_REPLACE_ME,$USERNAME,g" /usr/share/nginx/html/static/js/main*.js
+sed -i "s,REACT_PASSWORD_REPLACE_ME,$PASSWORD,g" /usr/share/nginx/html/static/js/main*.js
+sed -i "s,REACT_PASSWORD_REPLACE_ME,$SERVER_NAME,g" /etc/nginx/conf.d/default.conf
 
 exec "$@"
