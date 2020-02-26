@@ -1,16 +1,16 @@
 import decode from "jwt-decode";
 
-let URL_API = process.env.REACT_APP_URL_API;
-let REACT_USERNAME = process.env.REACT_APP_USERNAME;
-let REACT_PASSWORD = process.env.REACT_APP_PASSWORD;
+let URL_API = "API_URL_REPLACE_ME";
+let REACT_USERNAME = "USERNAME_REPLACE_ME";
+let REACT_PASSWORD = "PASSWORD_REPLACE_ME";
+
+if (process.env.NODE_ENV === "development") {
+  URL_API = process.env.REACT_APP_URL_API;
+  REACT_USERNAME = process.env.REACT_APP_USERNAME;
+  REACT_PASSWORD = process.env.REACT_APP_PASSWORD;
+}
 
 const REFRESH_TOKEN_TIMEOUT = process.env.REFRESH_TOKEN_TIMEOUT;
-
-if (process.env.IS_DOCKER_ENVIRONMENT === true) {
-  URL_API = "API_URL_REPLACE_ME";
-  REACT_USERNAME = "USERNAME_REPLACE_ME";
-  REACT_PASSWORD = "PASSWORD_REPLACE_ME";
-}
 
 export const TOKEN_ALIAS = "TOKEN";
 

@@ -1,9 +1,9 @@
 import { getToken } from "./auth.service";
 
-let URL_API = process.env.REACT_APP_URL_API;
+let URL_API = "API_URL_REPLACE_ME";
 
-if (process.env.IS_DOCKER_ENVIRONMENT === true) {
-  URL_API = "API_URL_REPLACE_ME";
+if (process.env.NODE_ENV === "development") {
+  URL_API = process.env.REACT_APP_URL_API;
 }
 
 export async function buscarPalavrasImproprias() {
