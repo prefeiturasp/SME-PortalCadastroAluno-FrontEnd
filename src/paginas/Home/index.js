@@ -10,7 +10,7 @@ export const Home = () => {
                 <div className="container">
                     <div className="conteudo">
                         <div className="col-lg-7 col-sm-12 col-xl-5">
-                            <h1>
+                            <h1 id="conteudo">
                                 Solicite o uniforme escolar.
                             </h1>
                         </div>
