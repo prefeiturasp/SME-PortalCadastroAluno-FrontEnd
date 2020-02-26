@@ -1,4 +1,5 @@
 /* eslint eqeqeq: 0 */
+/* eslint-disable */
 import React, {useContext, useEffect, useRef, useState} from "react";
 import {useForm} from 'react-hook-form'
 import InputMask from "react-input-mask";
@@ -6,13 +7,7 @@ import InputMask from "react-input-mask";
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {atualizaCadastro, buscarPalavrasImproprias} from "../../services/ConectarApi"
-import {
-    validarCPF,
-    validarDtNascResponsavel,
-    validarPalavrao,
-    validaTelefoneCelular,
-    validaDDD
-} from "../../utils/ValidacoesAdicionaisFormularios";
+import {validarCPF, validarDtNascResponsavel, validarPalavrao, validaTelefoneCelular, validaDDD } from "../../utils/ValidacoesAdicionaisFormularios";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 
 export const AlteracaoCadastral = (parametros) => {
@@ -83,7 +78,6 @@ export const AlteracaoCadastral = (parametros) => {
     };
 
     const onSubmitAtualizacaoCadastral = (data, e) => {
-
 
         // Removendo checkbox Você precisa declarar que as informações são verdadeiras
         delete data.checkboxDeclaro;
