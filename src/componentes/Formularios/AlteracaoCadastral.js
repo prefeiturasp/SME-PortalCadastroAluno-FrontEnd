@@ -54,15 +54,15 @@ export const AlteracaoCadastral = (parametros) => {
 
         setState({
             ...state,
-            nm_responsavel: retorno_api.detail.responsaveis[0].nm_responsavel ? retorno_api.detail.responsaveis[0].nm_responsavel : '',
-            cd_cpf_responsavel: retorno_api.detail.responsaveis[0].cd_cpf_responsavel ? retorno_api.detail.responsaveis[0].cd_cpf_responsavel : '',
-            email_responsavel: retorno_api.detail.responsaveis[0].email_responsavel ? retorno_api.detail.responsaveis[0].email_responsavel : '',
-            cd_ddd_celular_responsavel: retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel ? retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel : '',
-            nr_celular_responsavel: retorno_api.detail.responsaveis[0].nr_celular_responsavel ? retorno_api.detail.responsaveis[0].nr_celular_responsavel : '',
+            nm_responsavel: retorno_api.detail.responsaveis[0].nm_responsavel ? retorno_api.detail.responsaveis[0].nm_responsavel.trimEnd().trimStart() : '',
+            cd_cpf_responsavel: retorno_api.detail.responsaveis[0].cd_cpf_responsavel ? retorno_api.detail.responsaveis[0].cd_cpf_responsavel.trimEnd().trimStart() : '',
+            email_responsavel: retorno_api.detail.responsaveis[0].email_responsavel ? retorno_api.detail.responsaveis[0].email_responsavel.trimEnd().trimStart() : '',
+            cd_ddd_celular_responsavel: retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel ? retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel.trimEnd().trimStart() : '',
+            nr_celular_responsavel: retorno_api.detail.responsaveis[0].nr_celular_responsavel ? retorno_api.detail.responsaveis[0].nr_celular_responsavel.trimEnd().trimStart() : '',
             tp_pessoa_responsavel: retorno_api.detail.responsaveis[0].tp_pessoa_responsavel ? String(parseInt(retorno_api.detail.responsaveis[0].tp_pessoa_responsavel)) : '',
             // dc_tipo_responsavel: retorno_api.detail.responsaveis[0].dc_tipo_responsavel ? retorno_api.detail.responsaveis[0].dc_tipo_responsavel : '',
-            nome_mae: retorno_api.detail.responsaveis[0].nome_mae ? retorno_api.detail.responsaveis[0].nome_mae : '',
-            data_nascimento: retorno_api.detail.responsaveis[0].data_nascimento ? retorno_api.detail.responsaveis[0].data_nascimento : '',
+            nome_mae: retorno_api.detail.responsaveis[0].nome_mae ? retorno_api.detail.responsaveis[0].nome_mae.trimEnd().trimStart() : '',
+            data_nascimento: retorno_api.detail.responsaveis[0].data_nascimento ? retorno_api.detail.responsaveis[0].data_nascimento.trimEnd().trimStart() : '',
         });
 
     }, [retorno_api]);
