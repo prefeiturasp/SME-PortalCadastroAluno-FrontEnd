@@ -4,16 +4,13 @@ import {App} from './App';
 import * as serviceWorker from './serviceWorker';
 import {BrowserRouter} from "react-router-dom";
 import {NotificacaoContextProvider} from "./context/NotificacaoContext";
-import {LoadingContextProvider} from "./context/LoadingContext";
 
 ReactDOM.render(
     <NotificacaoContextProvider>
-        <LoadingContextProvider>
-            <BrowserRouter>
-                <App/>
-            </BrowserRouter>
-        </LoadingContextProvider>
+        <BrowserRouter basename="/pedido-uniforme">
+            <App/>
+        </BrowserRouter>
     </NotificacaoContextProvider>
-, document.getElementById('root'));
+    , document.getElementById('root'));
 
 serviceWorker.unregister();
