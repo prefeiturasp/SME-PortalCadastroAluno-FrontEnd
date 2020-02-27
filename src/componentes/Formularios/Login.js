@@ -94,7 +94,7 @@ export const Login = () => {
 
         buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno).then(retorno_api => {
 
-            if (retorno_api.detail === "Data de nascimento invalida para o código eol informado" || retorno_api.detail === "API EOL com erro. Status: 404" || retorno_api.detail === "API EOL com erro. Status: 500") {
+            if (retorno_api.detail === "Data de nascimento invalida para o código eol informado" || retorno_api.detail === "API EOL com erro. Status: 404" || retorno_api.detail === "API EOL com erro. Status: 500" || retorno_api.detail === "Código EOL não existe") {
                 mensagem.setAbrirModal(true);
                 mensagem.setTituloModal("Dados inválidos, tente novamente");
                 mensagem.setMsg("Tente novamente inserir o código EOL e a data de nascimento");
