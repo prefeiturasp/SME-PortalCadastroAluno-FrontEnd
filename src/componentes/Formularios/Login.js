@@ -9,6 +9,7 @@ import {BtnCustomizado} from "../BtnCustomizado";
 import {buscaDadosAlunoResponsavel} from "../../services/ConectarApi";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 import Loading from "../../utils/Loading";
+import {validarPalavrao} from "../../utils/ValidacoesAdicionaisFormularios";
 
 
 export const Login = () => {
@@ -175,21 +176,30 @@ export const Login = () => {
                             <label id="codigoEol">Código EOL*</label>
                             <input
                                 ref={e => {
-                                    register(e, {required: true, maxLength: 10});
+                                    register(e, {
+                                        required: true,
+                                        maxLength: 10,
+                                        validate: {
+                                            somenteNumeros: valor => new RegExp(/^[0-9]+$/).test(valor),
+
+                                        }
+                                    });
                                     codigoEolRef.current = e;
                                 }}
                                 readOnly={collapse === "show"}
                                 onChange={e => setInputCodigoEol(e.target.value.trim())}
                                 value={inputCodigoEol}
                                 name="codigoEol"
-                                type="number"
+                                type="text"
                                 className="form-control"
-                                placeholder="Digite código EOL"
+                                placeholder="Somente números"
                             />
                             {errors.codigoEol && errors.codigoEol.type === "required" &&
                             <span className="span_erro text-white mt-1">Código EOL é obrigatório </span>}
                             {errors.codigoEol && errors.codigoEol.type === "maxLength" &&
                             <span className="span_erro text-white mt-1">Permitido até 10 dígitos</span>}
+                            {errors.codigoEol && errors.codigoEol.type === "somenteNumeros" &&
+                            <span className="span_erro text-white mt-1">Somente números são permitidos</span>}
                         </div>
                         <div className="col-lg-4 mt-4">
                             <label htmlFor="dtNascAluno">
