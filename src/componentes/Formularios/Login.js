@@ -8,10 +8,12 @@ import "./formularios.scss";
 import {BtnCustomizado} from "../BtnCustomizado";
 import {buscaDadosAlunoResponsavel} from "../../services/ConectarApi";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
+import {LoadingContext} from "../../context/LoadingContext";
 
 export const Login = () => {
     const codigoEolRef = useRef();
     const mensagem = useContext(NotificacaoContext);
+    const loading = useContext(LoadingContext)
 
     const {register, handleSubmit, errors} = useForm({
         mode: "onBlur"
@@ -78,6 +80,13 @@ export const Login = () => {
         }
     }, [listaCodEolBloqueado]);
 
+    const verificaStatusCpf = (dataVerificaCPF) => {
+        if(dataVerificaCPF.detail.responsaveis[0].status && dataVerificaCPF.detail.responsaveis[0].status === "DESATUALIZADO" ){
+            dataVerificaCPF.detail.responsaveis[0].cd_cpf_responsavel = null
+        }
+        return dataVerificaCPF;
+    }
+
     const buscaDadosAluno = (inputCodigoEol, inputDtNascAluno) => {
         buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno)
             .then(retorno_api => {
@@ -85,6 +94,7 @@ export const Login = () => {
                     mensagem.setAbrirModal(true);
                     mensagem.setTituloModal("Dados inválidos, tente novamente");
                     mensagem.setMsg("Tente novamente inserir o código EOL e a data de nascimento");
+                    loading.setLoading(true);
                     setCollapse("");
                     setBtnDisable(false);
                     setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
@@ -100,7 +110,7 @@ export const Login = () => {
                 } else {
                     setCollapse("show");
                     setBtnDisable(true);
-                    setRetornoApi(retorno_api);
+                    setRetornoApi(verificaStatusCpf(retorno_api));
                     setCodEolBloqueio([]);
                 }
             })
