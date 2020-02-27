@@ -128,9 +128,6 @@ export const Login = () => {
     };
 
     const verificaCodEolBloqueado = codEol => {
-
-        debugger;
-
         let listaCodEolBloqueadoStorage = localStorage.getItem("listaCodEolBloqueado");
         // Converte este json para objeto
         if (listaCodEolBloqueadoStorage) {
