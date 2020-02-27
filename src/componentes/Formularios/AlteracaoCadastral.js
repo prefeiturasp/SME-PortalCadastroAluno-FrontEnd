@@ -1,4 +1,5 @@
 /* eslint eqeqeq: 0 */
+/* eslint-disable */
 import React, {useContext, useEffect, useRef, useState} from "react";
 import {useForm} from 'react-hook-form'
 import InputMask from "react-input-mask";
@@ -6,17 +7,14 @@ import InputMask from "react-input-mask";
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {atualizaCadastro, buscarPalavrasImproprias} from "../../services/ConectarApi"
-import {
-    validarCPF,
-    validarDtNascResponsavel,
-    validarPalavrao,
-    validaTelefoneCelular,
-    validaDDD
-} from "../../utils/ValidacoesAdicionaisFormularios";
+import {validarCPF, validarDtNascResponsavel, validarPalavrao, validaTelefoneCelular, validaDDD } from "../../utils/ValidacoesAdicionaisFormularios";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
+import Loading from "../../utils/Loading";
 
 export const AlteracaoCadastral = (parametros) => {
+
     const nmResponsavelRef = useRef();
+
     const {
         collapse,
         setCollapse,
@@ -37,6 +35,8 @@ export const AlteracaoCadastral = (parametros) => {
     });
 
     const [palavroes, setPalavroes] = useState([]);
+    const [loading, setLoading] = useState(false);
+
     // Campos Formulário de Atualização
     const [state, setState] = useState({
         nm_responsavel: "",
@@ -54,15 +54,15 @@ export const AlteracaoCadastral = (parametros) => {
 
         setState({
             ...state,
-            nm_responsavel: retorno_api.detail.responsaveis[0].nm_responsavel ? retorno_api.detail.responsaveis[0].nm_responsavel : '',
-            cd_cpf_responsavel: retorno_api.detail.responsaveis[0].cd_cpf_responsavel ? retorno_api.detail.responsaveis[0].cd_cpf_responsavel : '',
-            email_responsavel: retorno_api.detail.responsaveis[0].email_responsavel ? retorno_api.detail.responsaveis[0].email_responsavel : '',
-            cd_ddd_celular_responsavel: retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel ? retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel : '',
-            nr_celular_responsavel: retorno_api.detail.responsaveis[0].nr_celular_responsavel ? retorno_api.detail.responsaveis[0].nr_celular_responsavel : '',
+            nm_responsavel: retorno_api.detail.responsaveis[0].nm_responsavel ? retorno_api.detail.responsaveis[0].nm_responsavel.trimEnd().trimStart() : '',
+            cd_cpf_responsavel: retorno_api.detail.responsaveis[0].cd_cpf_responsavel ? retorno_api.detail.responsaveis[0].cd_cpf_responsavel.trimEnd().trimStart() : '',
+            email_responsavel: retorno_api.detail.responsaveis[0].email_responsavel ? retorno_api.detail.responsaveis[0].email_responsavel.trimEnd().trimStart() : '',
+            cd_ddd_celular_responsavel: retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel ? retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel.trimEnd().trimStart() : '',
+            nr_celular_responsavel: retorno_api.detail.responsaveis[0].nr_celular_responsavel ? retorno_api.detail.responsaveis[0].nr_celular_responsavel.trimEnd().trimStart() : '',
             tp_pessoa_responsavel: retorno_api.detail.responsaveis[0].tp_pessoa_responsavel ? String(parseInt(retorno_api.detail.responsaveis[0].tp_pessoa_responsavel)) : '',
             // dc_tipo_responsavel: retorno_api.detail.responsaveis[0].dc_tipo_responsavel ? retorno_api.detail.responsaveis[0].dc_tipo_responsavel : '',
-            nome_mae: retorno_api.detail.responsaveis[0].nome_mae ? retorno_api.detail.responsaveis[0].nome_mae : '',
-            data_nascimento: retorno_api.detail.responsaveis[0].data_nascimento ? retorno_api.detail.responsaveis[0].data_nascimento : '',
+            nome_mae: retorno_api.detail.responsaveis[0].nome_mae ? retorno_api.detail.responsaveis[0].nome_mae.trimEnd().trimStart() : '',
+            data_nascimento: retorno_api.detail.responsaveis[0].data_nascimento ? retorno_api.detail.responsaveis[0].data_nascimento.trimEnd().trimStart() : '',
         });
 
     }, [retorno_api]);
@@ -84,6 +84,7 @@ export const AlteracaoCadastral = (parametros) => {
 
     const onSubmitAtualizacaoCadastral = (data, e) => {
 
+        setLoading(true)
 
         // Removendo checkbox Você precisa declarar que as informações são verdadeiras
         delete data.checkboxDeclaro;
@@ -120,6 +121,8 @@ export const AlteracaoCadastral = (parametros) => {
                 e.target.reset();
                 limpaFormulario();
 
+                setLoading(false);
+
             })
             .catch(error => {
                 // Caso erro seta o focus no nome do responsável
@@ -130,6 +133,7 @@ export const AlteracaoCadastral = (parametros) => {
                 console.log(error.message);
                 setCollapse('show')
                 setBtnDisable(true)
+                setLoading(false);
             });
     }
 
@@ -340,8 +344,6 @@ export const AlteracaoCadastral = (parametros) => {
 
                             <div className="col-12 mt-5">
                                 <label htmlFor="nome_mae"><strong>Nome da mãe do responsável (sem abreviações)*</strong></label>
-
-
                                 <input
                                     ref={
                                         register({
@@ -378,8 +380,7 @@ export const AlteracaoCadastral = (parametros) => {
                         </div>
                         <div className="row">
                             <div className="col-12">
-                                {errors.checkboxDeclaro &&
-                                <span className="span_erro mt-1">Você precisa declarar que as informações são verdadeiras</span>}
+                                {errors.checkboxDeclaro && <span className="span_erro mt-1">Você precisa declarar que as informações são verdadeiras</span>}
                             </div>
                         </div>
 
@@ -403,7 +404,19 @@ export const AlteracaoCadastral = (parametros) => {
                         </div>
                     </form>
 
+                    {
+                        loading ? (
+                            <Loading
+                                corGrafico="black"
+                                corFonte="dark"
+                                marginTop="0"
+                                marginBottom="0"
+                            />
+                        ) : null
+                    }
+
                 </div>
+
             </div>
         </>
     )

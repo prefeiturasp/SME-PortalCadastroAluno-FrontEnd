@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { getToken } from "./auth.service";
 
 let URL_API = "API_URL_REPLACE_ME";

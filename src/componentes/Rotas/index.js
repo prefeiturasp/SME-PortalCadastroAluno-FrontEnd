@@ -5,7 +5,7 @@ import {Home} from "../../paginas/Home";
 export const Rotas = () => {
     return(
         <Switch>
-            <Route basename="/" path="/" exact component={Home}/>
+            <Route path="/" exact component={Home}/>
         </Switch>
     )
 }
