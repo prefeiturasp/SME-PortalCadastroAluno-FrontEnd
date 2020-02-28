@@ -9,7 +9,7 @@ import {BtnCustomizado} from "../BtnCustomizado";
 import {buscaDadosAlunoResponsavel} from "../../services/ConectarApi";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 import Loading from "../../utils/Loading";
-import {validarPalavrao} from "../../utils/ValidacoesAdicionaisFormularios";
+import InputMask from "react-input-mask";
 
 
 export const Login = () => {
@@ -174,7 +174,9 @@ export const Login = () => {
                     <div className="row">
                         <div className="col-lg-4 mt-4">
                             <label id="codigoEol">Código EOL*</label>
-                            <input
+                            <InputMask
+                                mask="9999999999"
+                                maskPlaceholder={null}
                                 ref={e => {
                                     register(e, {
                                         required: true,
