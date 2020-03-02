@@ -11,9 +11,18 @@ import {NotificacaoContext} from "../../context/NotificacaoContext";
 import Loading from "../../utils/Loading";
 import InputMask from "react-input-mask";
 
+import DatePicker, {registerLocale} from "react-datepicker";
+import * as moment from 'moment'
+import pt from "date-fns/locale/pt-BR"
+registerLocale("pt", pt );
+import 'react-datepicker/dist/react-datepicker.css';
+
+import {validarDtNascEstudante} from "../../utils/ValidacoesAdicionaisFormularios";
+
 
 export const Login = () => {
     const codigoEolRef = useRef();
+    const inputDtNascAlunoRef = useRef();
     const mensagem = useContext(NotificacaoContext);
 
     const {register, handleSubmit, errors} = useForm({
@@ -21,7 +30,7 @@ export const Login = () => {
     });
 
     const [inputCodigoEol, setInputCodigoEol] = useState("");
-    const [inputDtNascAluno, setInputDtNascAluno] = useState("");
+    const [inputDtNascAluno, setInputDtNascAluno] = useState(null);
     const [collapse, setCollapse] = useState("");
     const [btnDisable, setBtnDisable] = useState(false);
     const [retornoApi, setRetornoApi] = useState("");
@@ -29,6 +38,7 @@ export const Login = () => {
     const [codEolBloqueio, setCodEolBloqueio] = useState([]);
     const [listaCodEolBloqueado, setListaCodEolBloqueado] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [sparErro, setSpanErro] = useState(false);
 
     useEffect(() => {
 
@@ -54,7 +64,7 @@ export const Login = () => {
     }, [listaCodEolBloqueado]);
 
     const handleBtnAAbrirFormularioDisable = () => {
-        return (btnDisable === true || inputCodigoEol === "" || inputDtNascAluno === "");
+        return (btnDisable === true || inputCodigoEol === "" || inputDtNascAluno === "" || inputDtNascAluno === null);
     };
 
     const handleBtnCancelarAtualizacao = useCallback(() => {
@@ -93,7 +103,9 @@ export const Login = () => {
 
     const buscaDadosAluno = (inputCodigoEol, inputDtNascAluno) => {
 
-        buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno).then(retorno_api => {
+        buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno)
+
+        .then(retorno_api => {
 
             if (retorno_api.detail === "Data de nascimento invalida para o código eol informado" || retorno_api.detail === "API EOL com erro. Status: 404" || retorno_api.detail === "API EOL com erro. Status: 500" || retorno_api.detail === "Código EOL não existe") {
                 mensagem.setAbrirModal(true);
@@ -150,7 +162,7 @@ export const Login = () => {
             limpaFormulario();
             setLoading(false);
         } else {
-            buscaDadosAluno(inputCodigoEol, inputDtNascAluno);
+            buscaDadosAluno(inputCodigoEol, validarDtNascEstudante(inputDtNascAluno));
         }
     };
 
@@ -158,6 +170,25 @@ export const Login = () => {
         setInputCodigoEol("");
         setInputDtNascAluno("");
     };
+    const handleChangeRaw = (value ) => {
+        const date = new Date(value);
+        if (!moment(date).isValid()) {
+            setSpanErro(true);
+            inputDtNascAlunoRef.current.focus();
+        } else {
+            setSpanErro(false);
+        }
+    };
+    const handleSelect  = (value)=>{
+        const date = new Date(value);
+        if (!moment(date).isValid() || value=== null) {
+            setSpanErro(true);
+            inputDtNascAlunoRef.current.focus();
+        } else {
+            setSpanErro(false);
+        }
+    }
+
 
     return (
         <div className="w-100 formulario-inicial-home pt-5 pb-5 ">
@@ -207,7 +238,34 @@ export const Login = () => {
                             <label htmlFor="dtNascAluno">
                                 Data de nascimento do estudante*
                             </label>
-                            <input
+                            <DatePicker
+                                ref={(datepicker) => { inputDtNascAlunoRef.current = datepicker }}
+                                //customInputRef = {(datepicker) => inputDtNascAlunoRef.current = datepicker}
+                                //ref={inputDtNascAlunoRef}
+                                className="form-control"
+                                placeholderText="Somente números"
+                                selected={inputDtNascAluno}
+                                onChange={date => setInputDtNascAluno(date)}
+                                onChangeRaw={(e)=>handleChangeRaw(e.currentTarget.value)}
+                                onSelect={(e)=>handleSelect(e)}
+                                dateFormat="dd/MM/yyyy"
+                                locale="pt"
+                                showYearDropdown
+                                readOnly={collapse === "show"}
+                                customInput={
+                                    <InputMask
+                                        mask="99/99/9999"
+                                        name="dtNascAluno"
+                                        ref={(datepicker) => { inputDtNascAlunoRef.current = datepicker }}
+                                    />
+                                }
+                            />
+                            {sparErro ? "Digite uma data Válida" : null}
+
+
+
+                            {/*<input
+
                                 ref={register({
                                     required: true, maxLength: 10
                                 })}
@@ -223,7 +281,7 @@ export const Login = () => {
                             {errors.dtNascAluno && errors.dtNascAluno.type === "required" && <span
                                 className="span_erro text-white mt-1">Data de nascimento do estudante é obrigatório</span>}
                             {errors.dtNascAluno && errors.dtNascAluno.type === "maxLength" &&
-                            <span className="span_erro text-white mt-1">Digite uma data Válida</span>}
+                            <span className="span_erro text-white mt-1">Digite uma data Válida</span>}*/}
                         </div>
                         <div className="col-lg-4 mt-4 mt-md-5 pl-5 pr-5 pl-md-0 pr-md-0">
                             <BtnCustomizado
@@ -254,7 +312,7 @@ export const Login = () => {
                             setCollapse={setCollapse}
                             retorno_api={retornoApi}
                             inputCodigoEol={inputCodigoEol}
-                            inputDtNascAluno={inputDtNascAluno}
+                            inputDtNascAluno={validarDtNascEstudante(inputDtNascAluno)}
                             setBtnDisable={setBtnDisable}
                             setInputCodigoEol={setInputCodigoEol}
                             setInputDtNascAluno={setInputDtNascAluno}

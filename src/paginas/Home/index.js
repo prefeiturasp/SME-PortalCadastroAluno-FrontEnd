@@ -39,7 +39,7 @@ export const Home = () => {
 
                         <div className="col-lg-6 col-sm-12 mb-lg-0 align-self-center">
                             <h1>Quem recebe o uniforme escolar?</h1>
-                            <p>Quase todos os estudantes da Rede Municipal de Ensino (REM) recebem o uniforme escolar. Ou seja, devem fazer a solicitação os responsáveis por todas as crianças matriculadas nas escolas municipais, com exceção dos alunos dos Centros de Educação Infantil ("creches"), Ensino Médio e Educação de Jovens
+                            <p>Quase todos os estudantes da Rede Municipal de Ensino (RME) recebem o uniforme escolar. Ou seja, devem fazer a solicitação os responsáveis por todas as crianças matriculadas nas escolas municipais, com exceção dos alunos dos Centros de Educação Infantil ("creches"), Ensino Médio e Educação de Jovens
                                 e Adultos.
                             </p>
                         </div>

@@ -38,6 +38,10 @@ export const validaTelefoneCelular = value => {
     //return numero.length >= 10 ? undefined : "Necessário um telefone valido!";
 };
 
+export const validarDtNascEstudante = (dataNascEstudante) =>{
+    return moment(dataNascEstudante).format("YYYY-MM-DD")
+}
+
 export const validarDtNascResponsavel = (dataNascResponsavel, dataNascAluno)=>{
     if (moment(dataNascAluno).isAfter(dataNascResponsavel)){
         return false;
