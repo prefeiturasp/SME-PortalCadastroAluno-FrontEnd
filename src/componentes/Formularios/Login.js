@@ -22,7 +22,7 @@ import {validarDtNascEstudante} from "../../utils/ValidacoesAdicionaisFormulario
 
 export const Login = () => {
     const codigoEolRef = useRef();
-    const inputDtNascAlunoRef = useRef();
+    let  datepickerRef  = useRef(null);
     const mensagem = useContext(NotificacaoContext);
 
     const {register, handleSubmit, errors} = useForm({
@@ -171,10 +171,10 @@ export const Login = () => {
         setInputDtNascAluno("");
     };
     const handleChangeRaw = (value ) => {
-        const date = new Date(value);
+        const date = new Date(value.currentTarget.value);
         if (!moment(date).isValid()) {
             setSpanErro(true);
-            inputDtNascAlunoRef.current.focus();
+            datepickerRef.input.focus()
         } else {
             setSpanErro(false);
         }
@@ -183,7 +183,7 @@ export const Login = () => {
         const date = new Date(value);
         if (!moment(date).isValid() || value=== null) {
             setSpanErro(true);
-            inputDtNascAlunoRef.current.focus();
+            //inputDtNascAlunoRef.current.focus();
         } else {
             setSpanErro(false);
         }
@@ -239,14 +239,13 @@ export const Login = () => {
                                 Data de nascimento do estudante*
                             </label>
                             <DatePicker
-                                ref={(datepicker) => { inputDtNascAlunoRef.current = datepicker }}
-                                //customInputRef = {(datepicker) => inputDtNascAlunoRef.current = datepicker}
-                                //ref={inputDtNascAlunoRef}
+
+                                ref={(r) => datepickerRef = r}
                                 className="form-control"
                                 placeholderText="Somente números"
                                 selected={inputDtNascAluno}
                                 onChange={date => setInputDtNascAluno(date)}
-                                onChangeRaw={(e)=>handleChangeRaw(e.currentTarget.value)}
+                                onChangeRaw={(e)=>handleChangeRaw(e)}
                                 onSelect={(e)=>handleSelect(e)}
                                 dateFormat="dd/MM/yyyy"
                                 locale="pt"
@@ -256,7 +255,6 @@ export const Login = () => {
                                     <InputMask
                                         mask="99/99/9999"
                                         name="dtNascAluno"
-                                        ref={(datepicker) => { inputDtNascAlunoRef.current = datepicker }}
                                     />
                                 }
                             />

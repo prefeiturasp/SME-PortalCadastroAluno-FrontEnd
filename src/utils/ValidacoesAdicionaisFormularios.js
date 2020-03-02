@@ -43,6 +43,10 @@ export const validarDtNascEstudante = (dataNascEstudante) =>{
 }
 
 export const validarDtNascResponsavel = (dataNascResponsavel, dataNascAluno)=>{
+
+    dataNascResponsavel = moment(dataNascResponsavel).format("YYYY-DD-MM")
+    dataNascAluno = moment(dataNascAluno).format("YYYY-MM-DD")
+
     if (moment(dataNascAluno).isAfter(dataNascResponsavel)){
         return false;
     }else{
