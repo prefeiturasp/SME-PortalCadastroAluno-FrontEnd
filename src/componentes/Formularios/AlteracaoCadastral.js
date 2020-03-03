@@ -7,24 +7,15 @@ import InputMask from "react-input-mask";
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {atualizaCadastro, buscarPalavrasImproprias} from "../../services/ConectarApi"
-import {
-    validarCPF,
-    validarDtNascResponsavel,
-    validarPalavrao,
-    validaTelefoneCelular,
-    validaDDD,
-    validarDtNascEstudante
-} from "../../utils/ValidacoesAdicionaisFormularios";
+import {validarCPF, validarDtNascResponsavel, validarPalavrao, validaTelefoneCelular, validaDDD, validarDtNascEstudante } from "../../utils/ValidacoesAdicionaisFormularios";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 import Loading from "../../utils/Loading";
 import DatePicker from "react-datepicker";
 import * as moment from "moment";
 
 export const AlteracaoCadastral = (parametros) => {
-
     const nmResponsavelRef = useRef();
     let  datepickerRef  = useRef(null);
-
     const {
         collapse,
         setCollapse,
@@ -47,6 +38,7 @@ export const AlteracaoCadastral = (parametros) => {
     const [palavroes, setPalavroes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [sparErro, setSpanErro] = useState(false);
+    const [dtNascResponsavel, setDtNascResponsavel] = useState(null);
 
     // Campos Formulário de Atualização
     const [state, setState] = useState({
@@ -56,12 +48,9 @@ export const AlteracaoCadastral = (parametros) => {
         nr_celular_responsavel: "",
         email_responsavel: "",
         tp_pessoa_responsavel: "",
-        //dc_tipo_responsavel: "",
         nome_mae: "",
         data_nascimento: "",
     });
-
-    const [dtNascResponsavel, setDtNascResponsavel] = useState(null);
 
     useEffect( () => {
 
@@ -87,9 +76,7 @@ export const AlteracaoCadastral = (parametros) => {
             cd_ddd_celular_responsavel: retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel ? retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel.trimEnd().trimStart() : '',
             nr_celular_responsavel: retorno_api.detail.responsaveis[0].nr_celular_responsavel ? retorno_api.detail.responsaveis[0].nr_celular_responsavel.trimEnd().trimStart() : '',
             tp_pessoa_responsavel: retorno_api.detail.responsaveis[0].tp_pessoa_responsavel ? String(parseInt(retorno_api.detail.responsaveis[0].tp_pessoa_responsavel)) : '',
-            // dc_tipo_responsavel: retorno_api.detail.responsaveis[0].dc_tipo_responsavel ? retorno_api.detail.responsaveis[0].dc_tipo_responsavel : '',
             nome_mae: retorno_api.detail.responsaveis[0].nome_mae ? retorno_api.detail.responsaveis[0].nome_mae.trimEnd().trimStart() : '',
-            //data_nascimento: retorno_api.detail.responsaveis[0].data_nascimento ? new Date(retorno_api.detail.responsaveis[0].data_nascimento) : '',
         });
 
     }, [retorno_api]);
@@ -107,16 +94,41 @@ export const AlteracaoCadastral = (parametros) => {
     }, [])
 
     const handleChangeAtualizacaoCadastral = (name, value) => {
-
-
         setState({
             ...state,
             [name]: value
         });
     };
+    const handleChangeDtNascResponsavel = (date) => {
+        setDtNascResponsavel(date)
+    }
 
+    const handleChangeRaw = (value ) => {
+        const date = new Date(value.currentTarget.value);
+        if (!moment(date).isValid() || validarDtNascResponsavel(date, inputDtNascAluno)) {
+            setSpanErro(true);
+            setDtNascResponsavel(null)
+            datepickerRef.input.focus()
+        } else {
+            setSpanErro(false);
+        }
+    };
+    const handleSelect  = (value)=>{
+        const date = new Date(value);
+        if (!moment(date).isValid() || value=== null || value === "") {
+            setSpanErro(true);
+            setDtNascResponsavel(null)
+            datepickerRef.input.focus()
+        } else {
+            setSpanErro(false);
+        }
+    }
 
-     const onSubmitAtualizacaoCadastral = (data, e) => {
+    const handleBtnSolicitarUniforme = () => {
+        return (sparErro);
+    };
+
+    const onSubmitAtualizacaoCadastral = (data, e) => {
         setLoading(true)
 
         // Removendo checkbox Você precisa declarar que as informações são verdadeiras
@@ -136,46 +148,41 @@ export const AlteracaoCadastral = (parametros) => {
             data_nascimento: inputDtNascAluno,
             responsavel: data
         };
-
         atualizaCadastro(payload_atualizado)
 
-            .then(retorno_api => {
-                // Caso sucesso seta o focus no input codigo EOL
-                codigoEolRef.current.focus();
+        .then(retorno_api => {
+            // Caso sucesso seta o focus no input codigo EOL
+            codigoEolRef.current.focus();
 
-                mensagem.setAbrirModal(true)
-                mensagem.setTituloModal("Obrigado por solicitar o uniforme escolar")
-                mensagem.setMsg("<p>O seu pedido do uniforme escolar já foi registrado. Nos próximos dias você receberá no e-mail cadastrado orientações sobre os próximos passos para realizar a compra nas lojas credenciadas</p>" +
-                    "<p>Acompanhe também as novidades sobre o novo processo de compra descentralizada pelas famílias diretamente no Portal do Uniforme: <a title='Link externo para o portal do uniforme' href='https://educacao.sme.prefeitura.sp.gov.br/portaldouniforme'>educacao.sme.prefeitura.sp.gov.br/portaldouniforme</a> </p>" +
-                    "<p>Atenciosamente,</p>" +
-                    "<p>Secretaria Municipal de Educação</p>")
+            mensagem.setAbrirModal(true)
+            mensagem.setTituloModal("Obrigado por solicitar o uniforme escolar")
+            mensagem.setMsg("<p>O seu pedido do uniforme escolar já foi registrado. Nos próximos dias você receberá no e-mail cadastrado orientações sobre os próximos passos para realizar a compra nas lojas credenciadas</p>" +
+                "<p>Acompanhe também as novidades sobre o novo processo de compra descentralizada pelas famílias diretamente no Portal do Uniforme: <a title='Link externo para o portal do uniforme' href='https://educacao.sme.prefeitura.sp.gov.br/portaldouniforme'>educacao.sme.prefeitura.sp.gov.br/portaldouniforme</a> </p>" +
+                "<p>Atenciosamente,</p>" +
+                "<p>Secretaria Municipal de Educação</p>")
 
-                setCollapse('')
-                setBtnDisable(false);
-                e.target.reset();
-                limpaFormulario();
-
-                setLoading(false);
-
-            })
-            .catch(error => {
-                // Caso erro seta o focus no nome do responsável
-                nmResponsavelRef.current.focus();
-                mensagem.setAbrirModal(true)
-                mensagem.setTituloModal("Erro ao solicitar uniforme")
-                mensagem.setMsg("Erro ao solicitar uniforme. Tente novamente");
-                console.log(error.message);
-                setCollapse('show')
-                setBtnDisable(true)
-                setLoading(false);
-            });
+            setCollapse('')
+            setBtnDisable(false);
+            e.target.reset();
+            limpaFormulario();
+            setLoading(false);
+        })
+        .catch(error => {
+            // Caso erro seta o focus no nome do responsável
+            nmResponsavelRef.current.focus();
+            mensagem.setAbrirModal(true)
+            mensagem.setTituloModal("Erro ao solicitar uniforme")
+            mensagem.setMsg("Erro ao solicitar uniforme. Tente novamente");
+            console.log(error.message);
+            setCollapse('show')
+            setBtnDisable(true)
+            setLoading(false);
+        });
     }
 
     const limpaFormulario = () => {
-
         setInputCodigoEol('')
         setInputDtNascAluno('')
-
         setState({
             ...state,
             nm_responsavel: "",
@@ -189,45 +196,12 @@ export const AlteracaoCadastral = (parametros) => {
             codigo_escola: "",
             codigo_dre: "",
         });
-
     }
-    const handleChangeDtNascResponsavel = (date) => {
-        setDtNascResponsavel(date)
-    }
-
-    const handleChangeRaw = (value ) => {
-
-        const date = new Date(value.currentTarget.value);
-
-        if (!moment(date).isValid() || validarDtNascResponsavel(date, inputDtNascAluno)) {
-            setSpanErro(true);
-            setDtNascResponsavel(null)
-            datepickerRef.input.focus()
-        } else {
-            setSpanErro(false);
-        }
-    };
-    const handleSelect  = (value)=>{
-
-        const date = new Date(value);
-        if (!moment(date).isValid() || value=== null || value === "") {
-            setSpanErro(true);
-            setDtNascResponsavel(null)
-            datepickerRef.input.focus()
-        } else {
-            setSpanErro(false);
-        }
-    }
-
-    const handleBtnSolicitarUniforme = () => {
-        return (sparErro);
-    };
 
     return (
         <>
             <div className={`collapse ${collapse}  pt-5`} id="">
                 <h2 className="text-white mb-4">Solicitação de uniforme escolar.</h2>
-
                 <div className='container-form-dados-responsável p-4 '>
                     <p className="mb-4">
                         <strong>Confirme ou altere os dados do responsável pelo(a) estudante</strong>
@@ -250,7 +224,6 @@ export const AlteracaoCadastral = (parametros) => {
                                         )
                                         nmResponsavelRef.current = e
                                     }
-
                                     } onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nm_responsavel} type="text" className="form-control" name="nm_responsavel" id="nm_responsavel"/>
                                 {errors.nm_responsavel && errors.nm_responsavel.type === "required" &&
                                 <span className="span_erro mt-1">Nome é obrigatório</span>}
@@ -262,9 +235,7 @@ export const AlteracaoCadastral = (parametros) => {
                                 <span className="span_erro mt-1">Não são permitas palavras inapropriadas</span>}
                                 {errors.nm_responsavel && errors.nm_responsavel.type === "maxLength" &&
                                 <span className="span_erro mt-1">Permitido até 70 caracteres</span>}
-
                             </div>
-
                             <div className="col-12 col-md-8 mt-5">
                                 <label htmlFor="email_responsavel"><strong>E-mail do responsável*</strong></label>
                                 <input ref={
@@ -283,7 +254,6 @@ export const AlteracaoCadastral = (parametros) => {
                                 {errors.email_responsavel && errors.email_responsavel.type === "maxLength" &&
                                 <span className="span_erro mt-1">Permitido até 50 caracteres</span>}
                             </div>
-
                             <div className="col-12 col-md-4 mt-5">
                                 <div className="row">
                                     <div className="col-12">
@@ -304,7 +274,6 @@ export const AlteracaoCadastral = (parametros) => {
                                         <span className="span_erro mt-1">DDD é obrigatório</span>}
                                         {errors.cd_ddd_celular_responsavel && errors.cd_ddd_celular_responsavel.type === 'validaDDD' &&
                                         <span className="span_erro mt-1">DDD deve conter 2 números</span>}
-
                                     </div>
                                     <div className="col-9 pl-1">
                                         <InputMask
@@ -356,20 +325,17 @@ export const AlteracaoCadastral = (parametros) => {
                                     </div>
                                 </div>
                             </div>
-
                             <div className='col-12'>
                                 <p className="fonte-maior mb-4 mt-5">
                                     <strong>Agora complete as informações do responsável pelo(a) estudante</strong>
                                 </p>
                             </div>
-
                             <div className="col-12">
                                 <div className="row">
                                     <div className="col-12 col-md-8">
                                         <div className="row">
                                             <div className='col-12 col-md-6'>
                                                 <label htmlFor="cd_cpf_responsavel"><strong>CPF do responsável*</strong></label>
-
                                                 <InputMask
                                                     placeholder="Somente números"
                                                     mask="999.999.999-99"
@@ -383,7 +349,6 @@ export const AlteracaoCadastral = (parametros) => {
                                                 {errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "validarCpf" &&
                                                 <span className="span_erro mt-1">Digite um CPF válido</span>}
                                             </div>
-
                                             <div className='col-12 col-md-6 mt-5 mt-md-0'>
                                                 <label htmlFor="data_nascimento"><strong>Data de nascimento do responsável*</strong></label>
                                                 <DatePicker
@@ -405,25 +370,11 @@ export const AlteracaoCadastral = (parametros) => {
                                                     }
                                                 />
                                                 <span className="span_erro mt-1">{sparErro ? "Digite uma data Válida" : null}</span>
-                                                {/*<input
-                                                    ref={
-                                                        register({
-                                                            required: true,
-                                                            maxLength: 10,
-                                                            validate: {
-                                                                comparaDatas: data => !validarDtNascResponsavel(data, inputDtNascAluno)
-                                                            }
-                                                        })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.data_nascimento} type="date" className="form-control" name="data_nascimento" id="data_nascimento" max="9999-12-31"/>
-                                                {errors.data_nascimento && errors.data_nascimento.type === "required" &&
-                                                <span className="span_erro mt-1">Data de nascimento do responsável é obrigatório</span>}
-                                                {errors.data_nascimento && errors.data_nascimento.type === "comparaDatas" &&
-                                                <span className="span_erro mt-1">Digite uma data de nascimento válida</span>}*/}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                             <div className="col-12 mt-5">
                                 <label htmlFor="nome_mae"><strong>Nome da mãe do responsável (sem abreviações)*</strong></label>
                                 <input
@@ -449,10 +400,7 @@ export const AlteracaoCadastral = (parametros) => {
                                 <span className="span_erro mt-1">Não são permitas palavras inapropriadas</span>}
                                 {errors.nome_mae && errors.nome_mae.type === "maxLength" &&
                                 <span className="span_erro mt-1">Permitido até 70 caracteres</span>}
-
-
                             </div>
-
                             <div className="col-12 mt-5">
                                 <div className="form-check form-check-inline">
                                     <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} className="form-check-input" type="checkbox" name="checkboxDeclaro" id="checkboxDeclaro" value="sim"/>
@@ -465,7 +413,6 @@ export const AlteracaoCadastral = (parametros) => {
                                 {errors.checkboxDeclaro && <span className="span_erro mt-1">Você precisa declarar que as informações são verdadeiras</span>}
                             </div>
                         </div>
-
                         <div className="d-flex justify-content-end mt-4">
                             <div className='p-2'>
                                 <BtnCustomizado
@@ -486,7 +433,6 @@ export const AlteracaoCadastral = (parametros) => {
                             </div>
                         </div>
                     </form>
-
                     {
                         loading ? (
                             <Loading
@@ -497,11 +443,8 @@ export const AlteracaoCadastral = (parametros) => {
                             />
                         ) : null
                     }
-
                 </div>
-
             </div>
         </>
     )
-
 }

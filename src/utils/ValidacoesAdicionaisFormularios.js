@@ -35,7 +35,6 @@ export const validaTelefoneCelular = value => {
     }else {
         return true;
     }
-    //return numero.length >= 10 ? undefined : "Necessário um telefone valido!";
 };
 
 export const validarDtNascEstudante = (dataNascEstudante) =>{
