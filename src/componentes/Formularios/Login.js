@@ -9,32 +9,37 @@ import {BtnCustomizado} from "../BtnCustomizado";
 import {buscaDadosAlunoResponsavel} from "../../services/ConectarApi";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 import Loading from "../../utils/Loading";
-import {validarPalavrao} from "../../utils/ValidacoesAdicionaisFormularios";
+import InputMask from "react-input-mask";
 
+import DatePicker, {registerLocale} from "react-datepicker";
+import * as moment from 'moment'
+import pt from "date-fns/locale/pt-BR"
+registerLocale("pt", pt );
+import 'react-datepicker/dist/react-datepicker.css';
+
+import {validarDtNascEstudante} from "../../utils/ValidacoesAdicionaisFormularios";
 
 export const Login = () => {
     const codigoEolRef = useRef();
+    let  datepickerRef  = useRef(null);
     const mensagem = useContext(NotificacaoContext);
-
     const {register, handleSubmit, errors} = useForm({
         mode: "onBlur"
     });
 
     const [inputCodigoEol, setInputCodigoEol] = useState("");
-    const [inputDtNascAluno, setInputDtNascAluno] = useState("");
+    const [inputDtNascAluno, setInputDtNascAluno] = useState(null);
     const [collapse, setCollapse] = useState("");
     const [btnDisable, setBtnDisable] = useState(false);
     const [retornoApi, setRetornoApi] = useState("");
-
     const [codEolBloqueio, setCodEolBloqueio] = useState([]);
     const [listaCodEolBloqueado, setListaCodEolBloqueado] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [sparErro, setSpanErro] = useState(false);
 
     useEffect(() => {
-
         const codEolBloqueioStorage = localStorage.getItem("codEolBloqueio");
         const listaCodEolBloqueadoStorage = localStorage.getItem("listaCodEolBloqueado");
-
         if (codEolBloqueioStorage) {
             setCodEolBloqueio(JSON.parse(codEolBloqueioStorage));
         }
@@ -42,7 +47,6 @@ export const Login = () => {
             setListaCodEolBloqueado(JSON.parse(listaCodEolBloqueadoStorage));
         }
     }, []);
-
 
     useEffect(() => {
         localStorage.setItem("codEolBloqueio", JSON.stringify(codEolBloqueio));
@@ -54,7 +58,7 @@ export const Login = () => {
     }, [listaCodEolBloqueado]);
 
     const handleBtnAAbrirFormularioDisable = () => {
-        return (btnDisable === true || inputCodigoEol === "" || inputDtNascAluno === "");
+        return (btnDisable === true || inputCodigoEol === "" || inputDtNascAluno === "" || inputDtNascAluno === null);
     };
 
     const handleBtnCancelarAtualizacao = useCallback(() => {
@@ -74,7 +78,6 @@ export const Login = () => {
             const filtrado = arrayCodEolBloqueio.filter(function (elem, pos, arr) {
                 return arr.indexOf(elem) === pos;
             });
-
             if (filtrado.length === 1) {
                 setListaCodEolBloqueado([...listaCodEolBloqueado, filtrado[0]]);
                 setCodEolBloqueio([]);
@@ -92,9 +95,8 @@ export const Login = () => {
     }
 
     const buscaDadosAluno = (inputCodigoEol, inputDtNascAluno) => {
-
-        buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno).then(retorno_api => {
-
+        buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno)
+        .then(retorno_api => {
             if (retorno_api.detail === "Data de nascimento invalida para o código eol informado" || retorno_api.detail === "API EOL com erro. Status: 404" || retorno_api.detail === "API EOL com erro. Status: 500" || retorno_api.detail === "Código EOL não existe") {
                 mensagem.setAbrirModal(true);
                 mensagem.setTituloModal("Dados inválidos, tente novamente");
@@ -136,7 +138,6 @@ export const Login = () => {
             return arrayBloqueados.includes(codEol);
         }
     };
-
     const onSubmitAbrirFormulario = (data, e) => {
         codigoEolRef.current.focus();
         setLoading(true);
@@ -150,7 +151,7 @@ export const Login = () => {
             limpaFormulario();
             setLoading(false);
         } else {
-            buscaDadosAluno(inputCodigoEol, inputDtNascAluno);
+            buscaDadosAluno(inputCodigoEol, validarDtNascEstudante(inputDtNascAluno));
         }
     };
 
@@ -158,14 +159,29 @@ export const Login = () => {
         setInputCodigoEol("");
         setInputDtNascAluno("");
     };
-
+    const handleChangeRaw = (value ) => {
+        const date = new Date(value.currentTarget.value);
+        if (!moment(date).isValid()) {
+            setSpanErro(true);
+            datepickerRef.input.focus()
+        } else {
+            setSpanErro(false);
+        }
+    };
+    const handleSelect  = (value)=>{
+        const date = new Date(value);
+        if (!moment(date).isValid() || value=== null) {
+            setSpanErro(true);
+        } else {
+            setSpanErro(false);
+        }
+    }
     return (
         <div className="w-100 formulario-inicial-home pt-5 pb-5 ">
             <div className="container">
                 <h2 className="text-white mb-xs-5">
                     Acesse o formulário para solicitar o uniforme escolar.{" "}
                 </h2>
-
                 <form
                     onSubmit={handleSubmit(onSubmitAbrirFormulario)}
                     name="abrirFormulario"
@@ -174,14 +190,15 @@ export const Login = () => {
                     <div className="row">
                         <div className="col-lg-4 mt-4">
                             <label id="codigoEol">Código EOL*</label>
-                            <input
+                            <InputMask
+                                mask="9999999999"
+                                maskPlaceholder={null}
                                 ref={e => {
                                     register(e, {
                                         required: true,
                                         maxLength: 10,
                                         validate: {
                                             somenteNumeros: valor => new RegExp(/^[0-9]+$/).test(valor),
-
                                         }
                                     });
                                     codigoEolRef.current = e;
@@ -205,23 +222,26 @@ export const Login = () => {
                             <label htmlFor="dtNascAluno">
                                 Data de nascimento do estudante*
                             </label>
-                            <input
-                                ref={register({
-                                    required: true, maxLength: 10
-                                })}
-                                readOnly={collapse === "show"}
-                                onChange={e => setInputDtNascAluno(e.target.value.trim())}
-                                value={inputDtNascAluno}
-                                name="dtNascAluno"
-                                id="dtNascAluno"
-                                type="date"
+                            <DatePicker
+                                ref={(r) => datepickerRef = r}
                                 className="form-control"
-                                max="9999-12-31"
+                                placeholderText="Somente números"
+                                selected={inputDtNascAluno}
+                                onChange={date => setInputDtNascAluno(date)}
+                                onChangeRaw={(e)=>handleChangeRaw(e)}
+                                onSelect={(e)=>handleSelect(e)}
+                                dateFormat="dd/MM/yyyy"
+                                locale="pt"
+                                showYearDropdown
+                                readOnly={collapse === "show"}
+                                customInput={
+                                    <InputMask
+                                        mask="99/99/9999"
+                                        name="dtNascAluno"
+                                    />
+                                }
                             />
-                            {errors.dtNascAluno && errors.dtNascAluno.type === "required" && <span
-                                className="span_erro text-white mt-1">Data de nascimento do estudante é obrigatório</span>}
-                            {errors.dtNascAluno && errors.dtNascAluno.type === "maxLength" &&
-                            <span className="span_erro text-white mt-1">Digite uma data Válida</span>}
+                            {sparErro ? "Digite uma data Válida" : null}
                         </div>
                         <div className="col-lg-4 mt-4 mt-md-5 pl-5 pr-5 pl-md-0 pr-md-0">
                             <BtnCustomizado
@@ -233,7 +253,6 @@ export const Login = () => {
                         </div>
                     </div>
                 </form>
-
                 {
                     loading ? (
                         <Loading
@@ -252,12 +271,11 @@ export const Login = () => {
                             setCollapse={setCollapse}
                             retorno_api={retornoApi}
                             inputCodigoEol={inputCodigoEol}
-                            inputDtNascAluno={inputDtNascAluno}
+                            inputDtNascAluno={validarDtNascEstudante(inputDtNascAluno)}
                             setBtnDisable={setBtnDisable}
                             setInputCodigoEol={setInputCodigoEol}
                             setInputDtNascAluno={setInputDtNascAluno}
                             codigoEolRef={codigoEolRef}
-                            //setLoading={setLoading}
                             handleBtnCancelarAtualizacao={handleBtnCancelarAtualizacao}
                         />
                     )

@@ -35,10 +35,17 @@ export const validaTelefoneCelular = value => {
     }else {
         return true;
     }
-    //return numero.length >= 10 ? undefined : "Necessário um telefone valido!";
 };
 
+export const validarDtNascEstudante = (dataNascEstudante) =>{
+    return moment(dataNascEstudante).format("YYYY-MM-DD")
+}
+
 export const validarDtNascResponsavel = (dataNascResponsavel, dataNascAluno)=>{
+
+    dataNascResponsavel = moment(dataNascResponsavel).format("YYYY-DD-MM")
+    dataNascAluno = moment(dataNascAluno).format("YYYY-MM-DD")
+
     if (moment(dataNascAluno).isAfter(dataNascResponsavel)){
         return false;
     }else{
