@@ -64,8 +64,16 @@ export const AlteracaoCadastral = (parametros) => {
     const [dtNascResponsavel, setDtNascResponsavel] = useState(null);
 
     useEffect( () => {
-        let diaCorreto = new Date(retorno_api.detail.responsaveis[0].data_nascimento);
-        diaCorreto.setDate(diaCorreto.getDate() + 1);
+
+        let dataApi  = retorno_api.detail.responsaveis[0].data_nascimento
+        let diaCorreto = null;
+
+        if(dataApi){
+            diaCorreto = new Date(retorno_api.detail.responsaveis[0].data_nascimento);
+            diaCorreto.setDate(diaCorreto.getDate() + 1);
+        }else {
+            diaCorreto = null;
+        }
         setDtNascResponsavel(diaCorreto)
     }, [retorno_api])
 

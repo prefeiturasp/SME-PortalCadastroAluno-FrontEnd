@@ -315,7 +315,6 @@ export const Login = () => {
                             setInputCodigoEol={setInputCodigoEol}
                             setInputDtNascAluno={setInputDtNascAluno}
                             codigoEolRef={codigoEolRef}
-                            //setLoading={setLoading}
                             handleBtnCancelarAtualizacao={handleBtnCancelarAtualizacao}
                         />
                     )
