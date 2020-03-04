@@ -28,12 +28,11 @@ export const AlteracaoCadastral = (parametros) => {
         setInputDtNascAluno,
         codigoEolRef,
         handleBtnCancelarAtualizacao,
-        formEvent
     } = parametros;
 
     const mensagem = useContext(NotificacaoContext);
 
-    const {register, handleSubmit, reset, errors} = useForm({
+    const {register, handleSubmit, errors} = useForm({
         mode: "onBlur"
     });
 
@@ -166,7 +165,7 @@ export const AlteracaoCadastral = (parametros) => {
             setCollapse('')
             setBtnDisable(false);
             e.target.reset();
-            limpaFormulario(formEvent);
+            limpaFormulario();
             setLoading(false);
         })
         .catch(error => {
@@ -183,7 +182,7 @@ export const AlteracaoCadastral = (parametros) => {
     }
 
     const limpaFormulario = () => {
-        formEvent.target.reset()
+        setInputCodigoEol('')
         setInputDtNascAluno('')
         setState({
             ...state,
@@ -418,7 +417,7 @@ export const AlteracaoCadastral = (parametros) => {
                         <div className="d-flex justify-content-end mt-4">
                             <div className='p-2'>
                                 <BtnCustomizado
-                                    onClick={() => handleBtnCancelarAtualizacao(formEvent)}
+                                    onClick={(e) => handleBtnCancelarAtualizacao(e)}
                                     disable=""
                                     type="reset"
                                     classeCss="btn btn-outline-primary"
