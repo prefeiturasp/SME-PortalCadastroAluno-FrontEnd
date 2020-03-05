@@ -58,7 +58,7 @@ export const AlteracaoCadastral = (parametros) => {
 
         email_responsavel: yup.string().required("Email do responsável é obrigatório").email(),
 
-        cd_ddd_celular_responsavel: yup.number().typeError('Somente números').required("DDD é obrigatório").min(2),
+        cd_ddd_celular_responsavel: yup.number().typeError("Somente números").required("DDD é obrigatório").min(2, "Deve conter 2 dígitos"),
 
         nr_celular_responsavel: yup.string().required("Celular é obrigatório").test('test-name', 'Celular deve conter 9 números',
             function (value) {
@@ -334,6 +334,7 @@ export const AlteracaoCadastral = (parametros) => {
                                             ref={(e) => {
                                                 register(e)
                                             }}
+                                            maxLength={2}
                                             defaultValue={state.cd_ddd_celular_responsavel}
                                             className="form-control"
                                             name="cd_ddd_celular_responsavel"
