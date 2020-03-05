@@ -290,7 +290,6 @@ export const Login = () => {
                             inputCodigoEol={inputCodigoEol}
                             inputDtNascAluno={validarDtNascEstudante(inputDtNascAluno)}
                             setBtnDisable={setBtnDisable}
-                            setInputCodigoEol={setInputCodigoEol}
                             setInputDtNascAluno={setInputDtNascAluno}
                             codigoEolRef={codigoEolRef}
                             handleBtnCancelarAtualizacao={handleBtnCancelarAtualizacao}

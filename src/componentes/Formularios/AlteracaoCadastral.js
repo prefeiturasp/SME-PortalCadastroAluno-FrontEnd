@@ -7,14 +7,7 @@ import InputMask from "react-input-mask";
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {atualizaCadastro, buscarPalavrasImproprias} from "../../services/ConectarApi"
-import {
-    validarCPF,
-    validarDtNascResponsavel,
-    validarPalavrao,
-    validaTelefoneCelular,
-    validaDDD,
-    validarDtNascEstudante
-} from "../../utils/ValidacoesAdicionaisFormularios";
+import {validarCPF, validarDtNascResponsavel, validarPalavrao, validaTelefoneCelular, validarDtNascEstudante} from "../../utils/ValidacoesAdicionaisFormularios";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 import Loading from "../../utils/Loading";
 import DatePicker from "react-datepicker";
@@ -47,10 +40,12 @@ export const AlteracaoCadastral = (parametros) => {
         nm_responsavel: yup.string().required("Nome do responsável é obrigatório").max(70).matches(/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/, {
             message: 'Não são permitidos números ou caracteres especiais',
             excludeEmptyString: true
-        }).test('test-name', 'Não é permitido repetir 03 ou mais caracteres seguidos',
+        })
+        .test('test-name', 'Não é permitido repetir 03 ou mais caracteres seguidos',
             function (value) {
                 return !new RegExp(/([aA-zZ])\1\1/).test(value)
-            }).test('test-name', 'Não são permitas palavras inapropriadas',
+            })
+        .test('test-name', 'Não são permitas palavras inapropriadas',
             function (value) {
                 let retorno = !validarPalavrao(value, palavroesContext.listaPalavroes)
                 return retorno
@@ -58,7 +53,11 @@ export const AlteracaoCadastral = (parametros) => {
 
         email_responsavel: yup.string().required("Email do responsável é obrigatório").email(),
 
-        cd_ddd_celular_responsavel: yup.number().typeError("Somente números").required("DDD é obrigatório").min(2, "Deve conter 2 dígitos"),
+        cd_ddd_celular_responsavel: yup.number().typeError("Somente números").required("DDD é obrigatório")
+        .test('test-name', 'DDD deve conter 2 dígitos',
+            function (value) {
+                return new RegExp(/^\d{2}$/).test(value)
+            }),
 
         nr_celular_responsavel: yup.string().required("Celular é obrigatório").test('test-name', 'Celular deve conter 9 números',
             function (value) {
@@ -98,16 +97,15 @@ export const AlteracaoCadastral = (parametros) => {
         inputCodigoEol,
         inputDtNascAluno,
         setBtnDisable,
-        setInputCodigoEol,
         setInputDtNascAluno,
         codigoEolRef,
         handleBtnCancelarAtualizacao,
-        formEvent
+        formEvent,
     } = parametros;
 
     const mensagem = useContext(NotificacaoContext);
 
-    const {register, handleSubmit, reset, errors} = useForm({
+    const {register, handleSubmit, errors} = useForm({
         mode: "onBlur",
         validationSchema: SignupSchema,
         defaultValues: {
@@ -115,8 +113,6 @@ export const AlteracaoCadastral = (parametros) => {
         },
     });
 
-
-    const [palavroes, setPalavroes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [sparErro, setSpanErro] = useState(false);
     const [dtNascResponsavel, setDtNascResponsavel] = useState(null);
@@ -146,10 +142,6 @@ export const AlteracaoCadastral = (parametros) => {
         }
         setDtNascResponsavel(diaCorreto)
 
-
-        console.log("Use State ", retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel)
-
-
     }, [retorno_api])
 
     useEffect(() => {
@@ -166,17 +158,6 @@ export const AlteracaoCadastral = (parametros) => {
         });
 
     }, [retorno_api]);
-
-    useEffect(() => {
-        buscarPalavrasImproprias().then(listaPalavroes => {
-            setPalavroes(listaPalavroes);
-        });
-
-    }, [])
-
-    useEffect(() => {
-
-    }, [])
 
     const handleChangeAtualizacaoCadastral = (name, value) => {
         setState({
@@ -353,9 +334,9 @@ export const AlteracaoCadastral = (parametros) => {
                                             }}
                                             onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
                                             value={state.nr_celular_responsavel} type="tel" className="form-control"
-                                            name="nr_celular_responsavel" id="nr_celular_responsavel"/>
-                                        {errors.nr_celular_responsavel && <span
-                                            className="text-danger mt-1">{errors.nr_celular_responsavel.message}</span>}
+                                            name="nr_celular_responsavel" id="nr_celular_responsavel"
+                                        />
+                                        {errors.nr_celular_responsavel && <span className="text-danger mt-1">{errors.nr_celular_responsavel.message}</span>}
                                     </div>
                                 </div>
                             </div>
