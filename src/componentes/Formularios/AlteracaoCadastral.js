@@ -13,7 +13,52 @@ import Loading from "../../utils/Loading";
 import DatePicker from "react-datepicker";
 import * as moment from "moment";
 
+import * as yup from "yup";
+
+import {PalavroesContext} from "../../context/PalavroesContext";
+
 export const AlteracaoCadastral = (parametros) => {
+
+    const palavroesContext = useContext(PalavroesContext);
+
+    yup.setLocale({
+        mixed: {
+            required: 'Preencha esse campo para continuar'
+        },
+        string: {
+            email: 'Ditite um e-mail válido',
+            min: 'Valor muito curto (mínimo ${min} caracteres)',
+            max: 'Valor muito longo (máximo ${max} caracteres)'
+        },
+        number: {
+            min: 'Deve conter ${min} dígitos',
+            max: 'Valor inválido (deve ser menor ou igual a ${max})'
+        }
+    });
+
+    const SignupSchema = yup.object().shape({
+
+
+        nm_responsavel: yup.string()
+        .required("Nome do responsável é obrigatório")
+        .max(70)
+        .matches(/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/, {
+            message: 'Não são permitidos números ou caracteres especiais',
+            excludeEmptyString: true
+        }).test('test-name', 'Não é permitido repetir 03 ou mais caracteres seguidos',
+            function (value) {
+                return !new RegExp(/([aA-zZ])\1\1/).test(value)
+            }).test('test-name', 'Não são permitas palavras inapropriadas',
+            function (value) {
+                let retorno = !validarPalavrao(value, palavroesContext.listaPalavroes)
+                return retorno
+            }),
+
+        email_responsavel: yup.string().required("Email do responsável é obrigatório").email(),
+
+        cd_ddd_celular_responsavel: yup.number().typeError('Somente números').required("DDD é obrigatório").min(2),
+
+    });
 
     const nmResponsavelRef = useRef();
     let  datepickerRef  = useRef(null);
@@ -34,8 +79,14 @@ export const AlteracaoCadastral = (parametros) => {
     const mensagem = useContext(NotificacaoContext);
 
     const {register, handleSubmit, reset, errors} = useForm({
-        mode: "onBlur"
+        mode: "onBlur",
+        validationSchema: SignupSchema,
+        defaultValues:{
+            cd_ddd_celular_responsavel: retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel,
+        },
     });
+
+
 
     const [palavroes, setPalavroes] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -66,6 +117,13 @@ export const AlteracaoCadastral = (parametros) => {
             diaCorreto = null;
         }
         setDtNascResponsavel(diaCorreto)
+
+
+        console.log("Use State ", retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel)
+
+
+
+
     }, [retorno_api])
 
     useEffect(() => {
@@ -214,47 +272,32 @@ export const AlteracaoCadastral = (parametros) => {
                                 <label htmlFor="nm_responsavel"><strong>Nome completo do responsável (sem abreviações)*</strong></label>
                                 <input
                                     ref={(e) => {
-                                        register(e, {
-                                                required: true,
-                                                pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/,
-                                                maxLength: 70,
-                                                validate: {
-                                                    naoRepetirCaracteres: valor => !new RegExp(/([aA-zZ])\1\1/).test(valor),
-                                                    validaPalavrao: valor => !validarPalavrao(valor, palavroes),
-                                                }
-                                            }
-                                        )
+                                        register(e)
                                         nmResponsavelRef.current = e
-                                    }
-                                    } onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nm_responsavel} type="text" className="form-control" name="nm_responsavel" id="nm_responsavel"/>
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "required" &&
-                                <span className="span_erro mt-1">Nome é obrigatório</span>}
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "naoRepetirCaracteres" &&
-                                <span className="span_erro mt-1">Não é permitido repetir 03 ou mais caracteres seguidos</span>}
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "pattern" &&
-                                <span className="span_erro mt-1">Não são permitidos números ou caracteres especiais</span>}
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "validaPalavrao" &&
-                                <span className="span_erro mt-1">Não são permitas palavras inapropriadas</span>}
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "maxLength" &&
-                                <span className="span_erro mt-1">Permitido até 70 caracteres</span>}
+                                    }}
+                                    defaultValue={state.nm_responsavel}
+                                    type="text"
+                                    className="form-control"
+                                    name="nm_responsavel"
+                                    id="nm_responsavel"
+                                />
+                                {errors.nm_responsavel && <span className="text-danger mt-1">{errors.nm_responsavel.message}</span>}
                             </div>
+
                             <div className="col-12 col-md-8 mt-5">
                                 <label htmlFor="email_responsavel"><strong>E-mail do responsável*</strong></label>
-                                <input ref={
-                                    register({
-                                        required: true,
-                                        maxLength: 50,
-                                        validate: {
-                                            emailValido: valor => new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/).test(valor),
-                                        }
+                                <input
+                                    ref={(e) => {
+                                        register(e)
+                                    }}
+                                    defaultValue={state.email_responsavel}
+                                    type="email"
+                                    className="form-control"
+                                    name="email_responsavel"
+                                    id="email_responsavel"
+                                    />
+                                {errors.email_responsavel && <span className="text-danger mt-1">{errors.email_responsavel.message}</span>}
 
-                                    })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.email_responsavel} type="email" className="form-control" name="email_responsavel" id="email_responsavel"/>
-                                {errors.email_responsavel && errors.email_responsavel.type === "required" &&
-                                <span className="span_erro mt-1">Email é obrigatório</span>}
-                                {errors.email_responsavel && errors.email_responsavel.type === "emailValido" &&
-                                <span className="span_erro mt-1">Digite um email válido</span>}
-                                {errors.email_responsavel && errors.email_responsavel.type === "maxLength" &&
-                                <span className="span_erro mt-1">Permitido até 50 caracteres</span>}
                             </div>
                             <div className="col-12 col-md-4 mt-5">
                                 <div className="row">
@@ -262,20 +305,18 @@ export const AlteracaoCadastral = (parametros) => {
                                         <label><strong>Telefone celular do responsável*</strong></label>
                                     </div>
                                     <div className="col-3">
-                                        <InputMask
-                                            mask="99"
-                                            //maskPlaceholder={null}
-                                            ref={register({
-                                                required: true,
-                                                //minLength: 2,
-                                                validate: {
-                                                    validaDDD: valor => validaDDD(valor)
-                                                }
-                                            })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))} value={state.cd_ddd_celular_responsavel} type="text" className="form-control" name="cd_ddd_celular_responsavel" id="cd_ddd_celular_responsavel"/>
-                                        {errors.cd_ddd_celular_responsavel && errors.cd_ddd_celular_responsavel.type === 'required' &&
-                                        <span className="span_erro mt-1">DDD é obrigatório</span>}
-                                        {errors.cd_ddd_celular_responsavel && errors.cd_ddd_celular_responsavel.type === 'validaDDD' &&
-                                        <span className="span_erro mt-1">DDD deve conter 2 números</span>}
+                                        <input
+                                            ref={(e) => {
+                                                register(e)
+                                            }}
+                                            defaultValue={state.cd_ddd_celular_responsavel}
+                                            className="form-control"
+                                            name="cd_ddd_celular_responsavel"
+                                            id="cd_ddd_celular_responsavel"
+                                        />
+
+                                        {errors.cd_ddd_celular_responsavel && <span className="text-danger mt-1">{errors.cd_ddd_celular_responsavel.message}</span>}
+
                                     </div>
                                     <div className="col-9 pl-1">
                                         <InputMask

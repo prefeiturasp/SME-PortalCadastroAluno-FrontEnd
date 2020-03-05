@@ -53,7 +53,11 @@ export const TesteYup = () => {
         alert(JSON.stringify(data));
     };
 
-
+    const InputBirthday = props => (
+        <InputMask mask="99/99/9999">
+            {inputProps => <input {...inputProps} />}
+        </InputMask>
+    );
     return (
         <div className="container">
 
