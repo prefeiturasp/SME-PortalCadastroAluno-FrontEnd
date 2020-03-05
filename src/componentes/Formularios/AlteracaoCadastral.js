@@ -82,10 +82,7 @@ export const AlteracaoCadastral = (parametros) => {
                 let retorno = !validarPalavrao(value, palavroesContext.listaPalavroes)
                 return retorno
             }),
-
         checkboxDeclaro: yup.boolean().oneOf([true], 'Você precisa declarar que as informações são verdadeiras'),
-
-
     });
 
     const nmResponsavelRef = useRef();
@@ -174,7 +171,7 @@ export const AlteracaoCadastral = (parametros) => {
         if (!moment(date).isValid() || validarDtNascResponsavel(date, inputDtNascAluno)) {
             setSpanErro(true);
             setDtNascResponsavel(null)
-            datepickerRef.input.focus()
+            //datepickerRef.input.focus()
         } else {
             setSpanErro(false);
         }
@@ -184,7 +181,7 @@ export const AlteracaoCadastral = (parametros) => {
         if (!moment(date).isValid() || value === null || value === "") {
             setSpanErro(true);
             setDtNascResponsavel(null)
-            datepickerRef.input.focus()
+            //datepickerRef.input.focus()
         } else {
             setSpanErro(false);
         }
@@ -422,6 +419,7 @@ export const AlteracaoCadastral = (parametros) => {
                                                 <label htmlFor="data_nascimento"><strong>Data de nascimento do
                                                     responsável*</strong></label>
                                                 <DatePicker
+                                                    required={true}
                                                     ref={(r) => datepickerRef = r}
                                                     selected={dtNascResponsavel}
                                                     className="form-control"
