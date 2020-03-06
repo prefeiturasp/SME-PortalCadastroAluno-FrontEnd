@@ -11,6 +11,7 @@ RUN npm run-script build
 # https://stackoverflow.com/questions/48595829/how-to-pass-environment-variables-to-a-frontend-web-application
 
 FROM nginx:alpine
+ENV IS_DOCKER_ENVIRONMENT=true
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 COPY --from=builder /app/build /usr/share/nginx/html
