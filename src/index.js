@@ -17,7 +17,7 @@ if (process.env.IS_DOCKER_ENVIRONMENT === true) {
 ReactDOM.render(
   <NotificacaoContextProvider>
     <PalavroesContextProvider>
-      <BrowserRouter basename="/pedido-uniforme">
+      <BrowserRouter>
         <App />
       </BrowserRouter>
     </PalavroesContextProvider>
