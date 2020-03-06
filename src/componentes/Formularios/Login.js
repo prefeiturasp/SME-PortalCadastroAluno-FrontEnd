@@ -16,16 +16,20 @@ import * as moment from 'moment'
 import pt from "date-fns/locale/pt-BR"
 registerLocale("pt", pt );
 import 'react-datepicker/dist/react-datepicker.css';
-
-import {validarDtNascEstudante} from "../../utils/ValidacoesAdicionaisFormularios";
+import {validarDtNascEstudante, yupGeralLogin, SignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
 
 export const Login = () => {
+
+    yupGeralLogin();
+    const {register, handleSubmit, errors} = useForm({
+        //mode: "onBlur"
+        validationSchema: SignupSchemaLogin,
+    });
+
     const codigoEolRef = useRef();
     let  datepickerRef  = useRef(null);
     const mensagem = useContext(NotificacaoContext);
-    const {register, handleSubmit, errors} = useForm({
-        mode: "onBlur"
-    });
+
 
     const [inputCodigoEol, setInputCodigoEol] = useState("");
     const [inputDtNascAluno, setInputDtNascAluno] = useState(null);
@@ -36,6 +40,7 @@ export const Login = () => {
     const [listaCodEolBloqueado, setListaCodEolBloqueado] = useState([]);
     const [loading, setLoading] = useState(false);
     const [sparErro, setSpanErro] = useState(false);
+    const [formEvent, setFormEvent] = useState(false);
 
     useEffect(() => {
         const codEolBloqueioStorage = localStorage.getItem("codEolBloqueio");
@@ -58,14 +63,14 @@ export const Login = () => {
     }, [listaCodEolBloqueado]);
 
     const handleBtnAAbrirFormularioDisable = () => {
-        return (btnDisable === true || inputCodigoEol === "" || inputDtNascAluno === "" || inputDtNascAluno === null);
+        return (btnDisable === true ||  inputDtNascAluno === "" || inputDtNascAluno === null);
     };
 
-    const handleBtnCancelarAtualizacao = useCallback(() => {
+    const handleBtnCancelarAtualizacao = useCallback((formEvent) => {
         codigoEolRef.current.focus();
         setCollapse("");
         setBtnDisable(false);
-        limpaFormulario();
+        limpaFormulario(formEvent);
     }, []);
 
     const armazenaCodEolBloqueados = useCallback(() => {
@@ -94,7 +99,7 @@ export const Login = () => {
         return dataVerificaCPF;
     }
 
-    const buscaDadosAluno = (inputCodigoEol, inputDtNascAluno) => {
+    const buscaDadosAluno = (inputCodigoEol, inputDtNascAluno, formEvent) => {
         buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno)
         .then(retorno_api => {
             if (retorno_api.detail === "Data de nascimento invalida para o código eol informado" || retorno_api.detail === "API EOL com erro. Status: 404" || retorno_api.detail === "API EOL com erro. Status: 500" || retorno_api.detail === "Código EOL não existe") {
@@ -104,7 +109,7 @@ export const Login = () => {
                 setCollapse("");
                 setBtnDisable(false);
                 setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
-                limpaFormulario();
+                limpaFormulario(formEvent);
                 setLoading(false);
             } else if (retorno_api.detail === "Este estudante não faz parte do público do programa de uniforme escolar") {
                 mensagem.setAbrirModal(true);
@@ -113,7 +118,7 @@ export const Login = () => {
                 setCollapse("");
                 setBtnDisable(false);
                 setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
-                limpaFormulario();
+                limpaFormulario(formEvent);
                 setLoading(false);
             } else {
                 setCollapse("show");
@@ -138,24 +143,29 @@ export const Login = () => {
             return arrayBloqueados.includes(codEol);
         }
     };
-    const onSubmitAbrirFormulario = (data, e) => {
+    const onSubmitAbrirFormulario = (data, formEventRecebido) => {
+
+        setInputCodigoEol(data.codigoEol)
+        setFormEvent(formEventRecebido)
+
         codigoEolRef.current.focus();
         setLoading(true);
-        e.preventDefault();
-        if (verificaCodEolBloqueado(inputCodigoEol)) {
+        formEventRecebido.preventDefault();
+        if (verificaCodEolBloqueado(data.codigoEol)) {
             mensagem.setAbrirModal(true);
             mensagem.setTituloModal("Acesso Bloqueado");
             mensagem.setMsg("Codigo EOL Bloqueado. Dirija-se à escola do aluno");
             setCollapse("");
             setBtnDisable(false);
-            limpaFormulario();
+            limpaFormulario(formEventRecebido);
             setLoading(false);
         } else {
-            buscaDadosAluno(inputCodigoEol, validarDtNascEstudante(inputDtNascAluno));
+            buscaDadosAluno(data.codigoEol, validarDtNascEstudante(inputDtNascAluno), formEventRecebido);
         }
     };
 
-    const limpaFormulario = () => {
+    const limpaFormulario = (formEvent) => {
+        formEvent.target.reset();
         setInputCodigoEol("");
         setInputDtNascAluno("");
     };
@@ -163,7 +173,7 @@ export const Login = () => {
         const date = new Date(value.currentTarget.value);
         if (!moment(date).isValid()) {
             setSpanErro(true);
-            datepickerRef.input.focus()
+            //datepickerRef.input.focus()
         } else {
             setSpanErro(false);
         }
@@ -194,29 +204,16 @@ export const Login = () => {
                                 mask="9999999999"
                                 maskPlaceholder={null}
                                 ref={e => {
-                                    register(e, {
-                                        required: true,
-                                        maxLength: 10,
-                                        validate: {
-                                            somenteNumeros: valor => new RegExp(/^[0-9]+$/).test(valor),
-                                        }
-                                    });
+                                    register(e);
                                     codigoEolRef.current = e;
                                 }}
                                 readOnly={collapse === "show"}
-                                onChange={e => setInputCodigoEol(e.target.value.trim())}
-                                value={inputCodigoEol}
                                 name="codigoEol"
                                 type="text"
                                 className="form-control"
                                 placeholder="Somente números"
                             />
-                            {errors.codigoEol && errors.codigoEol.type === "required" &&
-                            <span className="span_erro text-white mt-1">Código EOL é obrigatório </span>}
-                            {errors.codigoEol && errors.codigoEol.type === "maxLength" &&
-                            <span className="span_erro text-white mt-1">Permitido até 10 dígitos</span>}
-                            {errors.codigoEol && errors.codigoEol.type === "somenteNumeros" &&
-                            <span className="span_erro text-white mt-1">Somente números são permitidos</span>}
+                            {errors.codigoEol && <span className="span_erro text-white mt-1">{errors.codigoEol.message}</span>}
                         </div>
                         <div className="col-lg-4 mt-4">
                             <label htmlFor="dtNascAluno">
@@ -273,10 +270,10 @@ export const Login = () => {
                             inputCodigoEol={inputCodigoEol}
                             inputDtNascAluno={validarDtNascEstudante(inputDtNascAluno)}
                             setBtnDisable={setBtnDisable}
-                            setInputCodigoEol={setInputCodigoEol}
                             setInputDtNascAluno={setInputDtNascAluno}
                             codigoEolRef={codigoEolRef}
                             handleBtnCancelarAtualizacao={handleBtnCancelarAtualizacao}
+                            formEvent={formEvent}
                         />
                     )
                 }
