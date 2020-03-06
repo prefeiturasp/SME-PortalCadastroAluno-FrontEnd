@@ -224,7 +224,7 @@ export const AlteracaoCadastral = (parametros) => {
                 codigoEolRef.current.focus();
                 mensagem.setAbrirModal(true)
                 mensagem.setTituloModal("Erro ao solicitar uniforme")
-                mensagem.setMsg(retorno_api)
+                mensagem.setMsg("Essa solicitação já foi finalizada pela escola. Caso necessite realizar alguma alteração, dirija-se a escola do aluno.")
                 setCollapse('')
                 setBtnDisable(false);
                 e.target.reset();
