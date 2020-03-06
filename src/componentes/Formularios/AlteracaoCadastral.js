@@ -193,7 +193,7 @@ export const AlteracaoCadastral = (parametros) => {
 
     const onSubmitAtualizacaoCadastral = (data, e) => {
         setLoading(true)
-
+        
         // Removendo checkbox Você precisa declarar que as informações são verdadeiras
         delete data.checkboxDeclaro;
 
@@ -205,6 +205,12 @@ export const AlteracaoCadastral = (parametros) => {
         data.email_responsavel = data.email_responsavel.trimEnd().trimStart();
         data.nome_mae = data.nome_mae.trimEnd().trimStart();
         data.data_nascimento = validarDtNascEstudante(dtNascResponsavel);
+
+        if (data.data_nascimento === undefined || data.data_nascimento === "Invalid date"){
+            setSpanErro(true);
+            setLoading(false)
+            return false
+        }
 
         let payload_atualizado = {
             codigo_eol: inputCodigoEol,
