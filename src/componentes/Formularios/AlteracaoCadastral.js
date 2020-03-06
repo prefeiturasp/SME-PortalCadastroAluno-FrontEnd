@@ -7,16 +7,86 @@ import InputMask from "react-input-mask";
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {atualizaCadastro, buscarPalavrasImproprias} from "../../services/ConectarApi"
-import {validarCPF, validarDtNascResponsavel, validarPalavrao, validaTelefoneCelular, validaDDD, validarDtNascEstudante } from "../../utils/ValidacoesAdicionaisFormularios";
+import {validarCPF, validarDtNascResponsavel, validarPalavrao, validaTelefoneCelular, validarDtNascEstudante} from "../../utils/ValidacoesAdicionaisFormularios";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 import Loading from "../../utils/Loading";
 import DatePicker from "react-datepicker";
 import * as moment from "moment";
 
+import * as yup from "yup";
+
+import {PalavroesContext} from "../../context/PalavroesContext";
+
 export const AlteracaoCadastral = (parametros) => {
 
+    const palavroesContext = useContext(PalavroesContext);
+
+    yup.setLocale({
+        mixed: {
+            required: 'Preencha esse campo para continuar'
+        },
+        string: {
+            email: 'Ditite um e-mail válido',
+            min: 'Deve conter ${min} caracteres',
+            max: 'Valor muito longo (máximo ${max} caracteres)'
+        },
+        number: {
+            min: 'Deve conter ${min} dígitos',
+            max: 'Valor inválido (deve ser menor ou igual a ${max})'
+        }
+    });
+
+    const SignupSchema = yup.object().shape({
+        nm_responsavel: yup.string().required("Nome do responsável é obrigatório").max(70).matches(/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/, {
+            message: 'Não são permitidos números ou caracteres especiais',
+            excludeEmptyString: true
+        })
+        .test('test-name', 'Não é permitido repetir 03 ou mais caracteres seguidos',
+            function (value) {
+                return !new RegExp(/([aA-zZ])\1\1/).test(value)
+            })
+        .test('test-name', 'Não são permitas palavras inapropriadas',
+            function (value) {
+                let retorno = !validarPalavrao(value, palavroesContext.listaPalavroes)
+                return retorno
+            }),
+
+        email_responsavel: yup.string().required("Email do responsável é obrigatório").email(),
+
+        cd_ddd_celular_responsavel: yup.number().typeError("Somente números").required("DDD é obrigatório")
+        .test('test-name', 'DDD deve conter 2 dígitos',
+            function (value) {
+                return new RegExp(/^\d{2}$/).test(value)
+            }),
+
+        nr_celular_responsavel: yup.string().required("Celular é obrigatório").test('test-name', 'Celular deve conter 9 números',
+            function (value) {
+                return validaTelefoneCelular(value)
+            }),
+
+        tp_pessoa_responsavel: yup.number().required(),
+
+        cd_cpf_responsavel: yup.string().required().test('test-name', 'Digite um CPF válido',
+            function (value) {
+                return validarCPF(value)
+            }),
+
+        nome_mae: yup.string().required("Nome da mãe do responsável é obrigatório").max(70).matches(/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/, {
+            message: 'Não são permitidos números ou caracteres especiais',
+            excludeEmptyString: true
+        }).test('test-name', 'Não é permitido repetir 03 ou mais caracteres seguidos',
+            function (value) {
+                return !new RegExp(/([aA-zZ])\1\1/).test(value)
+            }).test('test-name', 'Não são permitas palavras inapropriadas',
+            function (value) {
+                let retorno = !validarPalavrao(value, palavroesContext.listaPalavroes)
+                return retorno
+            }),
+        checkboxDeclaro: yup.boolean().oneOf([true], 'Você precisa declarar que as informações são verdadeiras'),
+    });
+
     const nmResponsavelRef = useRef();
-    let  datepickerRef  = useRef(null);
+    let datepickerRef = useRef(null);
     const {
         collapse,
         setCollapse,
@@ -24,19 +94,22 @@ export const AlteracaoCadastral = (parametros) => {
         inputCodigoEol,
         inputDtNascAluno,
         setBtnDisable,
-        setInputCodigoEol,
         setInputDtNascAluno,
         codigoEolRef,
         handleBtnCancelarAtualizacao,
+        formEvent,
     } = parametros;
 
     const mensagem = useContext(NotificacaoContext);
 
     const {register, handleSubmit, errors} = useForm({
-        mode: "onBlur"
+        mode: "onBlur",
+        validationSchema: SignupSchema,
+        defaultValues: {
+            cd_ddd_celular_responsavel: retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel,
+        },
     });
 
-    const [palavroes, setPalavroes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [sparErro, setSpanErro] = useState(false);
     const [dtNascResponsavel, setDtNascResponsavel] = useState(null);
@@ -53,18 +126,19 @@ export const AlteracaoCadastral = (parametros) => {
         data_nascimento: "",
     });
 
-    useEffect( () => {
+    useEffect(() => {
 
-        let dataApi  = retorno_api.detail.responsaveis[0].data_nascimento
+        let dataApi = retorno_api.detail.responsaveis[0].data_nascimento
         let diaCorreto = null;
 
-        if(dataApi){
+        if (dataApi) {
             diaCorreto = new Date(retorno_api.detail.responsaveis[0].data_nascimento);
             diaCorreto.setDate(diaCorreto.getDate() + 1);
-        }else {
+        } else {
             diaCorreto = null;
         }
         setDtNascResponsavel(diaCorreto)
+
     }, [retorno_api])
 
     useEffect(() => {
@@ -82,18 +156,6 @@ export const AlteracaoCadastral = (parametros) => {
 
     }, [retorno_api]);
 
-    useEffect(() => {
-        buscarPalavrasImproprias()
-            .then(listaPalavroes => {
-                setPalavroes(listaPalavroes);
-            });
-
-    }, [])
-
-    useEffect( () => {
-
-    }, [])
-
     const handleChangeAtualizacaoCadastral = (name, value) => {
         setState({
             ...state,
@@ -104,22 +166,22 @@ export const AlteracaoCadastral = (parametros) => {
         setDtNascResponsavel(date)
     }
 
-    const handleChangeRaw = (value ) => {
+    const handleChangeRaw = (value) => {
         const date = new Date(value.currentTarget.value);
         if (!moment(date).isValid() || validarDtNascResponsavel(date, inputDtNascAluno)) {
             setSpanErro(true);
             setDtNascResponsavel(null)
-            datepickerRef.input.focus()
+            //datepickerRef.input.focus()
         } else {
             setSpanErro(false);
         }
     };
-    const handleSelect  = (value)=>{
+    const handleSelect = (value) => {
         const date = new Date(value);
-        if (!moment(date).isValid() || value=== null || value === "") {
+        if (!moment(date).isValid() || value === null || value === "") {
             setSpanErro(true);
             setDtNascResponsavel(null)
-            datepickerRef.input.focus()
+            //datepickerRef.input.focus()
         } else {
             setSpanErro(false);
         }
@@ -131,7 +193,7 @@ export const AlteracaoCadastral = (parametros) => {
 
     const onSubmitAtualizacaoCadastral = (data, e) => {
         setLoading(true)
-
+        
         // Removendo checkbox Você precisa declarar que as informações são verdadeiras
         delete data.checkboxDeclaro;
 
@@ -144,31 +206,49 @@ export const AlteracaoCadastral = (parametros) => {
         data.nome_mae = data.nome_mae.trimEnd().trimStart();
         data.data_nascimento = validarDtNascEstudante(dtNascResponsavel);
 
+        if (data.data_nascimento === undefined || data.data_nascimento === "Invalid date"){
+            setSpanErro(true);
+            setLoading(false)
+            return false
+        }
+
         let payload_atualizado = {
             codigo_eol: inputCodigoEol,
             data_nascimento: inputDtNascAluno,
             responsavel: data
         };
         atualizaCadastro(payload_atualizado)
-
         .then(retorno_api => {
-            // Caso sucesso seta o focus no input codigo EOL
-            codigoEolRef.current.focus();
 
-            mensagem.setAbrirModal(true)
-            mensagem.setTituloModal("Obrigado por solicitar o uniforme escolar")
-            mensagem.setMsg("<p>O seu pedido do uniforme escolar já foi registrado. Nos próximos dias você receberá no e-mail cadastrado orientações sobre os próximos passos para realizar a compra nas lojas credenciadas</p>" +
-                "<p>Acompanhe também as novidades sobre o novo processo de compra descentralizada pelas famílias diretamente no Portal do Uniforme: <a title='Link externo para o portal do uniforme' href='https://educacao.sme.prefeitura.sp.gov.br/portaldouniforme'>educacao.sme.prefeitura.sp.gov.br/portaldouniforme</a> </p>" +
-                "<p>Atenciosamente,</p>" +
-                "<p>Secretaria Municipal de Educação</p>")
+            if (retorno_api === "Solicitação finalizada. Não pode atualizar os dados."){
+                codigoEolRef.current.focus();
+                mensagem.setAbrirModal(true)
+                mensagem.setTituloModal("Erro ao solicitar uniforme")
+                mensagem.setMsg("Essa solicitação já foi finalizada pela escola. Caso necessite realizar alguma alteração, dirija-se a escola do aluno.")
+                setCollapse('')
+                setBtnDisable(false);
+                e.target.reset();
+                limpaFormulario(formEvent);
+                setLoading(false);
+            }else {
+                // Caso sucesso seta o focus no input codigo EOL
+                codigoEolRef.current.focus();
+                mensagem.setAbrirModal(true)
+                mensagem.setTituloModal("Obrigado por solicitar o uniforme escolar")
+                mensagem.setMsg("<p>O seu pedido do uniforme escolar já foi registrado. Nos próximos dias você receberá no e-mail cadastrado orientações sobre os próximos passos para realizar a compra nas lojas credenciadas</p>" +
+                    "<p>Acompanhe também as novidades sobre o novo processo de compra descentralizada pelas famílias diretamente no Portal do Uniforme: <a title='Link externo para o portal do uniforme' href='https://educacao.sme.prefeitura.sp.gov.br/portaldouniforme'>educacao.sme.prefeitura.sp.gov.br/portaldouniforme</a> </p>" +
+                    "<p>Atenciosamente,</p>" +
+                    "<p>Secretaria Municipal de Educação</p>")
 
-            setCollapse('')
-            setBtnDisable(false);
-            e.target.reset();
-            limpaFormulario();
-            setLoading(false);
-        })
-        .catch(error => {
+                setCollapse('')
+                setBtnDisable(false);
+                e.target.reset();
+                limpaFormulario(formEvent);
+                setLoading(false);
+            }
+
+
+        }).catch(error => {
             // Caso erro seta o focus no nome do responsável
             nmResponsavelRef.current.focus();
             mensagem.setAbrirModal(true)
@@ -182,7 +262,7 @@ export const AlteracaoCadastral = (parametros) => {
     }
 
     const limpaFormulario = () => {
-        setInputCodigoEol('')
+        formEvent.target.reset()
         setInputDtNascAluno('')
         setState({
             ...state,
@@ -210,50 +290,38 @@ export const AlteracaoCadastral = (parametros) => {
                     <form name="atualizacaoCadastral" onSubmit={handleSubmit(onSubmitAtualizacaoCadastral)}>
                         <div className="row">
                             <div className="col-12">
-                                <label htmlFor="nm_responsavel"><strong>Nome completo do responsável (sem abreviações)*</strong></label>
+                                <label htmlFor="nm_responsavel"><strong>Nome completo do responsável (sem
+                                    abreviações)*</strong></label>
                                 <input
                                     ref={(e) => {
-                                        register(e, {
-                                                required: true,
-                                                pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/,
-                                                maxLength: 70,
-                                                validate: {
-                                                    naoRepetirCaracteres: valor => !new RegExp(/([aA-zZ])\1\1/).test(valor),
-                                                    validaPalavrao: valor => !validarPalavrao(valor, palavroes),
-                                                }
-                                            }
-                                        )
+                                        register(e)
                                         nmResponsavelRef.current = e
-                                    }
-                                    } onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nm_responsavel} type="text" className="form-control" name="nm_responsavel" id="nm_responsavel"/>
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "required" &&
-                                <span className="span_erro mt-1">Nome é obrigatório</span>}
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "naoRepetirCaracteres" &&
-                                <span className="span_erro mt-1">Não é permitido repetir 03 ou mais caracteres seguidos</span>}
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "pattern" &&
-                                <span className="span_erro mt-1">Não são permitidos números ou caracteres especiais</span>}
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "validaPalavrao" &&
-                                <span className="span_erro mt-1">Não são permitas palavras inapropriadas</span>}
-                                {errors.nm_responsavel && errors.nm_responsavel.type === "maxLength" &&
-                                <span className="span_erro mt-1">Permitido até 70 caracteres</span>}
+                                    }}
+                                    defaultValue={state.nm_responsavel}
+                                    type="text"
+                                    className="form-control"
+                                    name="nm_responsavel"
+                                    id="nm_responsavel"
+                                />
+                                {errors.nm_responsavel &&
+                                <span className="text-danger mt-1">{errors.nm_responsavel.message}</span>}
                             </div>
+
                             <div className="col-12 col-md-8 mt-5">
                                 <label htmlFor="email_responsavel"><strong>E-mail do responsável*</strong></label>
-                                <input ref={
-                                    register({
-                                        required: true,
-                                        maxLength: 50,
-                                        validate: {
-                                            emailValido: valor => new RegExp(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/).test(valor),
-                                        }
+                                <input
+                                    ref={(e) => {
+                                        register(e)
+                                    }}
+                                    defaultValue={state.email_responsavel}
+                                    type="email"
+                                    className="form-control"
+                                    name="email_responsavel"
+                                    id="email_responsavel"
+                                />
+                                {errors.email_responsavel &&
+                                <span className="text-danger mt-1">{errors.email_responsavel.message}</span>}
 
-                                    })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.email_responsavel} type="email" className="form-control" name="email_responsavel" id="email_responsavel"/>
-                                {errors.email_responsavel && errors.email_responsavel.type === "required" &&
-                                <span className="span_erro mt-1">Email é obrigatório</span>}
-                                {errors.email_responsavel && errors.email_responsavel.type === "emailValido" &&
-                                <span className="span_erro mt-1">Digite um email válido</span>}
-                                {errors.email_responsavel && errors.email_responsavel.type === "maxLength" &&
-                                <span className="span_erro mt-1">Permitido até 50 caracteres</span>}
                             </div>
                             <div className="col-12 col-md-4 mt-5">
                                 <div className="row">
@@ -261,38 +329,32 @@ export const AlteracaoCadastral = (parametros) => {
                                         <label><strong>Telefone celular do responsável*</strong></label>
                                     </div>
                                     <div className="col-3">
-                                        <InputMask
-                                            mask="99"
-                                            //maskPlaceholder={null}
-                                            ref={register({
-                                                required: true,
-                                                //minLength: 2,
-                                                validate: {
-                                                    validaDDD: valor => validaDDD(valor)
-                                                }
-                                            })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))} value={state.cd_ddd_celular_responsavel} type="text" className="form-control" name="cd_ddd_celular_responsavel" id="cd_ddd_celular_responsavel"/>
-                                        {errors.cd_ddd_celular_responsavel && errors.cd_ddd_celular_responsavel.type === 'required' &&
-                                        <span className="span_erro mt-1">DDD é obrigatório</span>}
-                                        {errors.cd_ddd_celular_responsavel && errors.cd_ddd_celular_responsavel.type === 'validaDDD' &&
-                                        <span className="span_erro mt-1">DDD deve conter 2 números</span>}
+                                        <input
+                                            ref={(e) => {
+                                                register(e)
+                                            }}
+                                            maxLength={2}
+                                            defaultValue={state.cd_ddd_celular_responsavel}
+                                            className="form-control"
+                                            name="cd_ddd_celular_responsavel"
+                                            id="cd_ddd_celular_responsavel"
+                                        />
+                                        {errors.cd_ddd_celular_responsavel && <span
+                                            className="text-danger mt-1">{errors.cd_ddd_celular_responsavel.message}</span>}
                                     </div>
                                     <div className="col-9 pl-1">
                                         <InputMask
                                             placeholder="Somente números"
                                             mask="9 9999 9999"
-                                            //maskPlaceholder={null}
-                                            ref={
-                                                register({
-                                                    required: true,
-                                                    //minLength: 9,
-                                                    validate: {
-                                                        validaTelefoneCelular: valor => validaTelefoneCelular(valor),
-                                                    }
-                                                })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))} value={state.nr_celular_responsavel} type="tel" className="form-control" name="nr_celular_responsavel" id="nr_celular_responsavel"/>
-                                        {errors.nr_celular_responsavel && errors.nr_celular_responsavel.type === "required" &&
-                                        <span className="span_erro mt-1">Celular é obrigatório</span>}
-                                        {errors.nr_celular_responsavel && errors.nr_celular_responsavel.type === "validaTelefoneCelular" &&
-                                        <span className="span_erro mt-1">Celular deve conter 9 números</span>}
+                                            maskPlaceholder={null}
+                                            ref={(e) => {
+                                                register(e)
+                                            }}
+                                            onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
+                                            value={state.nr_celular_responsavel} type="tel" className="form-control"
+                                            name="nr_celular_responsavel" id="nr_celular_responsavel"
+                                        />
+                                        {errors.nr_celular_responsavel && <span className="text-danger mt-1">{errors.nr_celular_responsavel.message}</span>}
                                     </div>
                                 </div>
                             </div>
@@ -301,28 +363,50 @@ export const AlteracaoCadastral = (parametros) => {
                                 <label><strong>Vínculo com o(a) estudante*</strong></label>
                                 <div className="d-flex flex-wrap justify-content-between">
                                     <div className="pl-4 container-radio">
-                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '1'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="mae" value={1}/>
+                                        <input ref={(e) => {
+                                            register(e)
+                                        }}
+                                               onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)}
+                                               checked={state.tp_pessoa_responsavel == '1'} className="form-check-input"
+                                               type="radio" name="tp_pessoa_responsavel" id="mae" value={1}/>
                                         <label className="form-check-label" htmlFor="mae"><strong>Mãe</strong></label>
                                     </div>
 
                                     <div className="pl-4 container-radio">
-                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '2'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="pai" value={2}/>
+                                        <input ref={(e) => {
+                                            register(e)
+                                        }}
+                                               onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)}
+                                               checked={state.tp_pessoa_responsavel == '2'} className="form-check-input"
+                                               type="radio" name="tp_pessoa_responsavel" id="pai" value={2}/>
                                         <label className="form-check-label" htmlFor="pai"><strong>Pai</strong></label>
                                     </div>
                                     <div className="pl-4 container-radio">
-                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '3'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="responsaveLegal" value={3}/>
-                                        <label className="form-check-label" htmlFor="responsaveLegal"><strong>Responsável legal</strong></label>
+                                        <input ref={(e) => {
+                                            register(e)
+                                        }}
+                                               onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)}
+                                               checked={state.tp_pessoa_responsavel == '3'} className="form-check-input"
+                                               type="radio" name="tp_pessoa_responsavel" id="responsaveLegal"
+                                               value={3}/>
+                                        <label className="form-check-label" htmlFor="responsaveLegal"><strong>Responsável
+                                            legal</strong></label>
                                     </div>
 
                                     <div className="pl-4 container-radio">
-                                        <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} checked={state.tp_pessoa_responsavel == '4'} className="form-check-input" type="radio" name="tp_pessoa_responsavel" id="alunoMaiorDeIdade" value={4}/>
-                                        <label className="form-check-label" htmlFor="alunoMaiorDeIdade"><strong>Aluno maior de idade</strong></label>
+                                        <input ref={register({required: true})}
+                                               onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)}
+                                               checked={state.tp_pessoa_responsavel == '4'} className="form-check-input"
+                                               type="radio" name="tp_pessoa_responsavel" id="alunoMaiorDeIdade"
+                                               value={4}/>
+                                        <label className="form-check-label" htmlFor="alunoMaiorDeIdade"><strong>Aluno
+                                            maior de idade</strong></label>
                                     </div>
                                 </div>
                                 <div className='row'>
                                     <div className="col-12">
-                                        {errors.tp_pessoa_responsavel &&
-                                        <span className="span_erro mt-1">Vínculo com o(a) estudante é obrigatório</span>}
+                                        {errors.tp_pessoa_responsavel && <span
+                                            className="text-danger mt-1">{errors.tp_pessoa_responsavel.message}</span>}
                                     </div>
                                 </div>
                             </div>
@@ -341,24 +425,28 @@ export const AlteracaoCadastral = (parametros) => {
                                                     placeholder="Somente números"
                                                     mask="999.999.999-99"
                                                     //maskPlaceholder={null}
-                                                    ref={
-                                                        register({
-                                                            validate: {
-                                                                validarCpf: async cpf => await validarCPF(cpf)
-                                                            }
-                                                        })} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))} value={state.cd_cpf_responsavel} type="text" className="form-control" name="cd_cpf_responsavel" id="cd_cpf_responsavel"/>
-                                                {errors.cd_cpf_responsavel && errors.cd_cpf_responsavel.type === "validarCpf" &&
-                                                <span className="span_erro mt-1">Digite um CPF válido</span>}
+                                                    ref={(e) => {
+                                                        register(e)
+                                                    }}
+                                                    onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
+                                                    value={state.cd_cpf_responsavel} type="text"
+                                                    className="form-control" name="cd_cpf_responsavel"
+                                                    id="cd_cpf_responsavel"/>
+                                                {errors.cd_cpf_responsavel && <span
+                                                    className="text-danger mt-1">{errors.cd_cpf_responsavel.message}</span>}
+
                                             </div>
                                             <div className='col-12 col-md-6 mt-5 mt-md-0'>
-                                                <label htmlFor="data_nascimento"><strong>Data de nascimento do responsável*</strong></label>
+                                                <label htmlFor="data_nascimento"><strong>Data de nascimento do
+                                                    responsável*</strong></label>
                                                 <DatePicker
+                                                    required={true}
                                                     ref={(r) => datepickerRef = r}
                                                     selected={dtNascResponsavel}
                                                     className="form-control"
                                                     onChange={(date) => handleChangeDtNascResponsavel(date)}
-                                                    onChangeRaw={(e)=>handleChangeRaw(e)}
-                                                    onSelect={(e)=>handleSelect(e)}
+                                                    onChangeRaw={(e) => handleChangeRaw(e)}
+                                                    onSelect={(e) => handleSelect(e)}
                                                     maxDate={new Date(inputDtNascAluno)}
                                                     //onBlur={(e)=>handleBlur(e)}
                                                     dateFormat="dd/MM/yyyy"
@@ -370,7 +458,8 @@ export const AlteracaoCadastral = (parametros) => {
                                                         />
                                                     }
                                                 />
-                                                <span className="span_erro mt-1">{sparErro ? "Digite uma data Válida" : null}</span>
+                                                <span
+                                                    className="span_erro mt-1">{sparErro ? "Digite uma data Válida" : null}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -379,45 +468,42 @@ export const AlteracaoCadastral = (parametros) => {
                             <div className="col-12 mt-5">
                                 <label htmlFor="nome_mae"><strong>Nome da mãe do responsável (sem abreviações)*</strong></label>
                                 <input
-                                    ref={
-                                        register({
-                                                required: true,
-                                                pattern: /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/,
-                                                maxLength: 70,
-                                                validate: {
-                                                    naoRepetirCaracteres: valor => !new RegExp(/([aA-zZ])\1\1/).test(valor),
-                                                    validaPalavrao: valor => !validarPalavrao(valor, palavroes),
-                                                }
-                                            }
-                                        )
-                                    } onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} value={state.nome_mae} type="text" className="form-control" name="nome_mae" id="nome_mae"/>
-                                {errors.nome_mae && errors.nome_mae.type === "required" &&
-                                <span className="span_erro mt-1">Nome de mãe de responsável é obrigatório</span>}
-                                {errors.nome_mae && errors.nome_mae.type === "naoRepetirCaracteres" &&
-                                <span className="span_erro mt-1">Não é permitido repetir 03 ou mais caracteres seguidos</span>}
-                                {errors.nome_mae && errors.nome_mae.type === "pattern" &&
-                                <span className="span_erro mt-1">Não são permitidos números ou caracteres especiais</span>}
-                                {errors.nome_mae && errors.nome_mae.type === "validaPalavrao" &&
-                                <span className="span_erro mt-1">Não são permitas palavras inapropriadas</span>}
-                                {errors.nome_mae && errors.nome_mae.type === "maxLength" &&
-                                <span className="span_erro mt-1">Permitido até 70 caracteres</span>}
+                                    defaultValue={state.nome_mae}
+                                    type="text"
+                                    className="form-control"
+                                    name="nome_mae"
+                                    id="nome_mae"
+                                    ref={(e) => {
+                                        register(e)
+                                    }}
+                                />
+                                {errors.nome_mae && <span className="text-danger mt-1">{errors.nome_mae.message}</span>}
                             </div>
                             <div className="col-12 mt-5">
                                 <div className="form-check form-check-inline">
-                                    <input ref={register({required: true})} onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)} className="form-check-input" type="checkbox" name="checkboxDeclaro" id="checkboxDeclaro" value="sim"/>
+                                    <input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        name="checkboxDeclaro"
+                                        id="checkboxDeclaro" value={true}
+                                        ref={(e) => {
+                                            register(e)
+                                        }}
+
+                                    />
                                     <label className="form-check-label" htmlFor="checkboxDeclaro">Declaro que as informações acima são verdadeiras</label>
                                 </div>
                             </div>
                         </div>
                         <div className="row">
                             <div className="col-12">
-                                {errors.checkboxDeclaro && <span className="span_erro mt-1">Você precisa declarar que as informações são verdadeiras</span>}
+                                {errors.checkboxDeclaro &&<span className="text-danger mt-1">{errors.checkboxDeclaro.message}</span>}
                             </div>
                         </div>
                         <div className="d-flex justify-content-end mt-4">
                             <div className='p-2'>
                                 <BtnCustomizado
-                                    onClick={(e) => handleBtnCancelarAtualizacao(e)}
+                                    onClick={() => handleBtnCancelarAtualizacao(formEvent)}
                                     disable=""
                                     type="reset"
                                     classeCss="btn btn-outline-primary"

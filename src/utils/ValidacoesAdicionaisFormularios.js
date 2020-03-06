@@ -1,4 +1,51 @@
 import * as moment from 'moment'
+import * as yup from "yup";
+
+// Validações yup schema
+
+export const yupGeralLogin = () =>{
+
+    yup.setLocale({
+        mixed: {
+            required: 'Preencha esse campo para continuar'
+        },
+        string: {
+            email: 'Preencha um e-mail válido',
+            min: 'Valor muito curto (mínimo ${min} caracteres)',
+            max: 'Valor muito longo (máximo ${max} caracteres)'
+        },
+        number: {
+            min: 'Valor inválido (deve ser maior ou igual a ${min})',
+            max: 'Valor inválido (deve ser menor ou igual a ${max})'
+        }
+    });
+}
+
+export const SignupSchemaLogin = yup.object().shape({
+    codigoEol: yup.number().typeError('Campo EOL precisa ser numérico').required("Campo código EOL é obrigatório"),
+});
+
+export const yupGeralCadastro = () =>{
+
+    yup.setLocale({
+        mixed: {
+            required: 'Preencha esse campo para continuar'
+        },
+        string: {
+            email: 'Ditite um e-mail válido',
+            min: 'Deve conter ${min} caracteres',
+            max: 'Valor muito longo (máximo ${max} caracteres)'
+        },
+        number: {
+            min: 'Deve conter ${min} dígitos',
+            max: 'Valor inválido (deve ser menor ou igual a ${max})'
+        }
+    });
+}
+
+export const SignupSchemaCadastro = yup.object().shape({
+    codigoEol: yup.number().typeError('Campo EOL precisa ser numérico').required("Campo código EOL é obrigatório"),
+});
 
 export const validarPalavrao = (arrayValidar, listaPalavroes) => {
 
