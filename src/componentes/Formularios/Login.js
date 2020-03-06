@@ -16,40 +16,20 @@ import * as moment from 'moment'
 import pt from "date-fns/locale/pt-BR"
 registerLocale("pt", pt );
 import 'react-datepicker/dist/react-datepicker.css';
-
-import {validarDtNascEstudante, validarPalavrao} from "../../utils/ValidacoesAdicionaisFormularios";
-
-import * as yup from "yup";
+import {validarDtNascEstudante, yupGeralLogin, SignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
 
 export const Login = () => {
 
-    yup.setLocale({
-        mixed: {
-            required: 'Preencha esse campo para continuar'
-        },
-        string: {
-            email: 'Preencha um e-mail válido',
-            min: 'Valor muito curto (mínimo ${min} caracteres)',
-            max: 'Valor muito longo (máximo ${max} caracteres)'
-        },
-        number: {
-            min: 'Valor inválido (deve ser maior ou igual a ${min})',
-            max: 'Valor inválido (deve ser menor ou igual a ${max})'
-        }
+    yupGeralLogin();
+    const {register, handleSubmit, errors} = useForm({
+        //mode: "onBlur"
+        validationSchema: SignupSchemaLogin,
     });
-
-    const SignupSchema = yup.object().shape({
-        codigoEol: yup.number().typeError('Campo EOL precisa ser numérico').required("Campo código EOL é obrigatório"),
-    });
-
 
     const codigoEolRef = useRef();
     let  datepickerRef  = useRef(null);
     const mensagem = useContext(NotificacaoContext);
-    const {register, handleSubmit, errors} = useForm({
-        //mode: "onBlur"
-        validationSchema: SignupSchema,
-    });
+
 
     const [inputCodigoEol, setInputCodigoEol] = useState("");
     const [inputDtNascAluno, setInputDtNascAluno] = useState(null);
@@ -132,15 +112,6 @@ export const Login = () => {
                 limpaFormulario(formEvent);
                 setLoading(false);
             } else if (retorno_api.detail === "Este estudante não faz parte do público do programa de uniforme escolar") {
-                mensagem.setAbrirModal(true);
-                mensagem.setTituloModal("Dados inválidos, tente novamente");
-                mensagem.setMsg(retorno_api.detail);
-                setCollapse("");
-                setBtnDisable(false);
-                setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
-                limpaFormulario(formEvent);
-                setLoading(false);
-            } else if (retorno_api.detail === "Solicitação finalizada. Não pode atualizar os dados.") {
                 mensagem.setAbrirModal(true);
                 mensagem.setTituloModal("Dados inválidos, tente novamente");
                 mensagem.setMsg(retorno_api.detail);

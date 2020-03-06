@@ -25,6 +25,28 @@ export const SignupSchemaLogin = yup.object().shape({
     codigoEol: yup.number().typeError('Campo EOL precisa ser numérico').required("Campo código EOL é obrigatório"),
 });
 
+export const yupGeralCadastro = () =>{
+
+    yup.setLocale({
+        mixed: {
+            required: 'Preencha esse campo para continuar'
+        },
+        string: {
+            email: 'Ditite um e-mail válido',
+            min: 'Deve conter ${min} caracteres',
+            max: 'Valor muito longo (máximo ${max} caracteres)'
+        },
+        number: {
+            min: 'Deve conter ${min} dígitos',
+            max: 'Valor inválido (deve ser menor ou igual a ${max})'
+        }
+    });
+}
+
+export const SignupSchemaCadastro = yup.object().shape({
+    codigoEol: yup.number().typeError('Campo EOL precisa ser numérico').required("Campo código EOL é obrigatório"),
+});
+
 export const validarPalavrao = (arrayValidar, listaPalavroes) => {
 
     arrayValidar = arrayValidar.toLowerCase();

@@ -217,22 +217,37 @@ export const AlteracaoCadastral = (parametros) => {
             data_nascimento: inputDtNascAluno,
             responsavel: data
         };
-        atualizaCadastro(payload_atualizado).then(retorno_api => {
-            // Caso sucesso seta o focus no input codigo EOL
-            codigoEolRef.current.focus();
+        atualizaCadastro(payload_atualizado)
+        .then(retorno_api => {
 
-            mensagem.setAbrirModal(true)
-            mensagem.setTituloModal("Obrigado por solicitar o uniforme escolar")
-            mensagem.setMsg("<p>O seu pedido do uniforme escolar já foi registrado. Nos próximos dias você receberá no e-mail cadastrado orientações sobre os próximos passos para realizar a compra nas lojas credenciadas</p>" +
-                "<p>Acompanhe também as novidades sobre o novo processo de compra descentralizada pelas famílias diretamente no Portal do Uniforme: <a title='Link externo para o portal do uniforme' href='https://educacao.sme.prefeitura.sp.gov.br/portaldouniforme'>educacao.sme.prefeitura.sp.gov.br/portaldouniforme</a> </p>" +
-                "<p>Atenciosamente,</p>" +
-                "<p>Secretaria Municipal de Educação</p>")
+            if (retorno_api === "Solicitação finalizada. Não pode atualizar os dados."){
+                codigoEolRef.current.focus();
+                mensagem.setAbrirModal(true)
+                mensagem.setTituloModal("Erro ao solicitar uniforme")
+                mensagem.setMsg(retorno_api)
+                setCollapse('')
+                setBtnDisable(false);
+                e.target.reset();
+                limpaFormulario(formEvent);
+                setLoading(false);
+            }else {
+                // Caso sucesso seta o focus no input codigo EOL
+                codigoEolRef.current.focus();
+                mensagem.setAbrirModal(true)
+                mensagem.setTituloModal("Obrigado por solicitar o uniforme escolar")
+                mensagem.setMsg("<p>O seu pedido do uniforme escolar já foi registrado. Nos próximos dias você receberá no e-mail cadastrado orientações sobre os próximos passos para realizar a compra nas lojas credenciadas</p>" +
+                    "<p>Acompanhe também as novidades sobre o novo processo de compra descentralizada pelas famílias diretamente no Portal do Uniforme: <a title='Link externo para o portal do uniforme' href='https://educacao.sme.prefeitura.sp.gov.br/portaldouniforme'>educacao.sme.prefeitura.sp.gov.br/portaldouniforme</a> </p>" +
+                    "<p>Atenciosamente,</p>" +
+                    "<p>Secretaria Municipal de Educação</p>")
 
-            setCollapse('')
-            setBtnDisable(false);
-            e.target.reset();
-            limpaFormulario(formEvent);
-            setLoading(false);
+                setCollapse('')
+                setBtnDisable(false);
+                e.target.reset();
+                limpaFormulario(formEvent);
+                setLoading(false);
+            }
+
+
         }).catch(error => {
             // Caso erro seta o focus no nome do responsável
             nmResponsavelRef.current.focus();
