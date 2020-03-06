@@ -140,6 +140,15 @@ export const Login = () => {
                 setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
                 limpaFormulario(formEvent);
                 setLoading(false);
+            } else if (retorno_api.detail === "Solicitação finalizada. Não pode atualizar os dados.") {
+                mensagem.setAbrirModal(true);
+                mensagem.setTituloModal("Dados inválidos, tente novamente");
+                mensagem.setMsg(retorno_api.detail);
+                setCollapse("");
+                setBtnDisable(false);
+                setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
+                limpaFormulario(formEvent);
+                setLoading(false);
             } else {
                 setCollapse("show");
                 setBtnDisable(true);
