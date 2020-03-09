@@ -7,7 +7,7 @@ import InputMask from "react-input-mask";
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {atualizaCadastro} from "../../services/ConectarApi"
-import {validarDtNascResponsavel, validarDtNascEstudante, yupSetLocaleCadastro, SignupSchemaCadastro} from "../../utils/ValidacoesAdicionaisFormularios";
+import {validarDtNascResponsavel, validarDtNascEstudante, yupSetLocaleCadastro, YupSignupSchemaCadastro} from "../../utils/ValidacoesAdicionaisFormularios";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 import Loading from "../../utils/Loading";
 import DatePicker from "react-datepicker";
@@ -35,7 +35,7 @@ export const AlteracaoCadastral = (parametros) => {
     yupSetLocaleCadastro();
     const {register, handleSubmit, errors} = useForm({
         mode: "onBlur",
-        validationSchema: SignupSchemaCadastro(),
+        validationSchema: YupSignupSchemaCadastro(),
 
     });
 

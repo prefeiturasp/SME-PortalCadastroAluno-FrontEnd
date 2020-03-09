@@ -22,7 +22,7 @@ export const yupSetLocaleLogin = () => (
     })
 )
 
-export const yupSignupSchemaLogin = yup.object().shape({
+export const YupSignupSchemaLogin = yup.object().shape({
     codigoEol: yup.number().typeError('Campo EOL precisa ser numérico').required("Campo código EOL é obrigatório"),
 });
 
@@ -44,7 +44,7 @@ export const yupSetLocaleCadastro = () => (
     })
 )
 
-export const SignupSchemaCadastro = () => {
+export const YupSignupSchemaCadastro = () => {
 
     const palavroesContext = useContext(PalavroesContext);
 

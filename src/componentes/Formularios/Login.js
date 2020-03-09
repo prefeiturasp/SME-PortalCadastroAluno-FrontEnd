@@ -16,14 +16,14 @@ import * as moment from 'moment'
 import pt from "date-fns/locale/pt-BR"
 registerLocale("pt", pt );
 import 'react-datepicker/dist/react-datepicker.css';
-import {validarDtNascEstudante, yupSetLocaleLogin, yupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
+import {validarDtNascEstudante, yupSetLocaleLogin, YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
 
 export const Login = () => {
 
     yupSetLocaleLogin();
     const {register, handleSubmit, errors} = useForm({
         //mode: "onBlur"
-        validationSchema: yupSignupSchemaLogin,
+        validationSchema: YupSignupSchemaLogin,
     });
 
     const codigoEolRef = useRef();
