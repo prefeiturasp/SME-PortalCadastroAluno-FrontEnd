@@ -6,84 +6,14 @@ import InputMask from "react-input-mask";
 
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
-import {atualizaCadastro, buscarPalavrasImproprias} from "../../services/ConectarApi"
-import {validarCPF, validarDtNascResponsavel, validarPalavrao, validaTelefoneCelular, validarDtNascEstudante} from "../../utils/ValidacoesAdicionaisFormularios";
+import {atualizaCadastro} from "../../services/ConectarApi"
+import {validarDtNascResponsavel, validarDtNascEstudante, yupSetLocaleCadastro, SignupSchemaCadastro} from "../../utils/ValidacoesAdicionaisFormularios";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 import Loading from "../../utils/Loading";
 import DatePicker from "react-datepicker";
 import * as moment from "moment";
 
-import * as yup from "yup";
-
-import {PalavroesContext} from "../../context/PalavroesContext";
-
 export const AlteracaoCadastral = (parametros) => {
-
-    const palavroesContext = useContext(PalavroesContext);
-
-    yup.setLocale({
-        mixed: {
-            required: 'Preencha esse campo para continuar'
-        },
-        string: {
-            email: 'Ditite um e-mail válido',
-            min: 'Deve conter ${min} caracteres',
-            max: 'Valor muito longo (máximo ${max} caracteres)'
-        },
-        number: {
-            min: 'Deve conter ${min} dígitos',
-            max: 'Valor inválido (deve ser menor ou igual a ${max})'
-        }
-    });
-
-    const SignupSchema = yup.object().shape({
-        nm_responsavel: yup.string().required("Nome do responsável é obrigatório").max(70).matches(/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/, {
-            message: 'Não são permitidos números ou caracteres especiais',
-            excludeEmptyString: true
-        })
-        .test('test-name', 'Não é permitido repetir 03 ou mais caracteres seguidos',
-            function (value) {
-                return !new RegExp(/([aA-zZ])\1\1/).test(value)
-            })
-        .test('test-name', 'Não são permitas palavras inapropriadas',
-            function (value) {
-                let retorno = !validarPalavrao(value, palavroesContext.listaPalavroes)
-                return retorno
-            }),
-
-        email_responsavel: yup.string().required("Email do responsável é obrigatório").email(),
-
-        cd_ddd_celular_responsavel: yup.number().typeError("Somente números").required("DDD é obrigatório")
-        .test('test-name', 'DDD deve conter 2 dígitos',
-            function (value) {
-                return new RegExp(/^\d{2}$/).test(value)
-            }),
-
-        nr_celular_responsavel: yup.string().required("Celular é obrigatório").test('test-name', 'Celular deve conter 9 números',
-            function (value) {
-                return validaTelefoneCelular(value)
-            }),
-
-        tp_pessoa_responsavel: yup.number().required(),
-
-        cd_cpf_responsavel: yup.string().required().test('test-name', 'Digite um CPF válido',
-            function (value) {
-                return validarCPF(value)
-            }),
-
-        nome_mae: yup.string().required("Nome da mãe do responsável é obrigatório").max(70).matches(/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/, {
-            message: 'Não são permitidos números ou caracteres especiais',
-            excludeEmptyString: true
-        }).test('test-name', 'Não é permitido repetir 03 ou mais caracteres seguidos',
-            function (value) {
-                return !new RegExp(/([aA-zZ])\1\1/).test(value)
-            }).test('test-name', 'Não são permitas palavras inapropriadas',
-            function (value) {
-                let retorno = !validarPalavrao(value, palavroesContext.listaPalavroes)
-                return retorno
-            }),
-        checkboxDeclaro: yup.boolean().oneOf([true], 'Você precisa declarar que as informações são verdadeiras'),
-    });
 
     const nmResponsavelRef = useRef();
     let datepickerRef = useRef(null);
@@ -102,12 +32,11 @@ export const AlteracaoCadastral = (parametros) => {
 
     const mensagem = useContext(NotificacaoContext);
 
+    yupSetLocaleCadastro();
     const {register, handleSubmit, errors} = useForm({
         mode: "onBlur",
-        validationSchema: SignupSchema,
-        defaultValues: {
-            cd_ddd_celular_responsavel: retorno_api.detail.responsaveis[0].cd_ddd_celular_responsavel,
-        },
+        validationSchema: SignupSchemaCadastro(),
+
     });
 
     const [loading, setLoading] = useState(false);
@@ -200,7 +129,7 @@ export const AlteracaoCadastral = (parametros) => {
         data.nr_celular_responsavel = data.nr_celular_responsavel.replace(/ /g, '');
         data.cd_cpf_responsavel = data.cd_cpf_responsavel.replace(/-/g, "");
         data.cd_cpf_responsavel = data.cd_cpf_responsavel.replace(/\./g, '');
-        data.codigo_eol_aluno = inputCodigoEol;
+        data.codigo_eol_aluno = String(inputCodigoEol);
         data.nm_responsavel = data.nm_responsavel.trimEnd().trimStart();
         data.email_responsavel = data.email_responsavel.trimEnd().trimStart();
         data.nome_mae = data.nome_mae.trimEnd().trimStart();
@@ -213,7 +142,7 @@ export const AlteracaoCadastral = (parametros) => {
         }
 
         let payload_atualizado = {
-            codigo_eol: inputCodigoEol,
+            codigo_eol: String(inputCodigoEol),
             data_nascimento: inputDtNascAluno,
             responsavel: data
         };
