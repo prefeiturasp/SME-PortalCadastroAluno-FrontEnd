@@ -211,7 +211,7 @@ export const AlteracaoCadastral = (parametros) => {
                 <h2 className="text-white mb-4">Solicitação de uniforme escolar.</h2>
                 <div className='container-form-dados-responsável p-4 '>
                     <p className="mb-4">
-                        <strong>Confirme ou altere os dados do responsável pelo(a) estudante</strong>
+                        <strong>Responsável, confirme ou altere (se necessário) seus dados e complete os campos ainda não preenchidos.</strong>
                     </p>
                     <form name="atualizacaoCadastral" onSubmit={handleSubmit(onSubmitAtualizacaoCadastral)}>
                         <div className="row">
@@ -237,6 +237,7 @@ export const AlteracaoCadastral = (parametros) => {
                             <div className="col-12 col-md-8 mt-5">
                                 <label htmlFor="email_responsavel"><strong>E-mail do responsável*</strong></label>
                                 <input
+                                    placeholder="Digite um email válido"
                                     ref={(e) => {
                                         register(e)
                                     }}
@@ -332,19 +333,13 @@ export const AlteracaoCadastral = (parametros) => {
                                 </div>
                                 <div className='row'>
                                     <div className="col-12">
-                                        {errors.tp_pessoa_responsavel && <span
-                                            className="text-danger mt-1">{errors.tp_pessoa_responsavel.message}</span>}
+                                        {errors.tp_pessoa_responsavel && <span className="text-danger mt-1">{errors.tp_pessoa_responsavel.message}</span>}
                                     </div>
                                 </div>
                             </div>
-                            <div className='col-12'>
-                                <p className="fonte-maior mb-4 mt-5">
-                                    <strong>Agora complete as informações do responsável pelo(a) estudante</strong>
-                                </p>
-                            </div>
                             <div className="col-12">
                                 <div className="row">
-                                    <div className="col-12 col-md-8">
+                                    <div className="col-12 col-md-8 mt-5">
                                         <div className="row">
                                             <div className='col-12 col-md-6'>
                                                 <label htmlFor="cd_cpf_responsavel"><strong>CPF do responsável*</strong></label>
@@ -367,6 +362,7 @@ export const AlteracaoCadastral = (parametros) => {
                                                 <label htmlFor="data_nascimento"><strong>Data de nascimento do
                                                     responsável*</strong></label>
                                                 <DatePicker
+                                                    placeholder="Somente números"
                                                     required={true}
                                                     ref={(r) => datepickerRef = r}
                                                     selected={dtNascResponsavel}
@@ -385,14 +381,14 @@ export const AlteracaoCadastral = (parametros) => {
                                                         />
                                                     }
                                                 />
-                                                <span className="span_erro mt-1">{sparErro ? "Digite uma data Válida" : null}</span>
+                                                <span className="text-danger mt-1">{sparErro ? "Digite uma data válida" : null}</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div className="col-12 mt-5">
-                                <label htmlFor="nome_mae"><strong>{`Nome da mãe de ${state.nm_responsavel} (sem abreviações)*`}</strong> </label>
+                                <label htmlFor="nome_mae"><strong>{` ${state.nm_responsavel ? 'Nome da mãe de ' + state.nm_responsavel : 'Digite o nome da mãe do responsável'} `}</strong> </label>
                                 <input
                                     placeholder="Escreva aqui o nome completo da sua mãe"
                                     defaultValue={state.nome_mae}

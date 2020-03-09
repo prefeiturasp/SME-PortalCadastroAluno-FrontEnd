@@ -29,7 +29,7 @@ export const YupSignupSchemaCadastro = () => {
                     return retorno
                 }),
 
-            email_responsavel: yup.string().required("Email do responsável é obrigatório").email("Digite um email válido"),
+            email_responsavel: yup.string().required("E-mail do responsável é obrigatório").email("Digite um email válido"),
 
             cd_ddd_celular_responsavel: yup.number().typeError("Somente números").required("DDD é obrigatório")
             .test('test-name', 'DDD deve conter 2 dígitos',
@@ -43,9 +43,9 @@ export const YupSignupSchemaCadastro = () => {
                     return validaTelefoneCelular(value)
                 }),
 
-            tp_pessoa_responsavel: yup.number().required(),
+            tp_pessoa_responsavel: yup.number().required("Vínculo com o estudante é obrigatório"),
 
-            cd_cpf_responsavel: yup.string().required()
+            cd_cpf_responsavel: yup.string().required("CPF do responsável é obrigatório")
             .test('test-name', 'Digite um CPF válido',
                 function (value) {
                     return validarCPF(value)
