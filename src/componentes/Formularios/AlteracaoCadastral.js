@@ -7,7 +7,7 @@ import InputMask from "react-input-mask";
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {atualizaCadastro} from "../../services/ConectarApi"
-import {validarDtNascResponsavel, validarDtNascEstudante, yupSetLocaleCadastro, YupSignupSchemaCadastro} from "../../utils/ValidacoesAdicionaisFormularios";
+import {validarDtNascResponsavel, validarDtNascEstudante,  YupSignupSchemaCadastro} from "../../utils/ValidacoesAdicionaisFormularios";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 import Loading from "../../utils/Loading";
 import DatePicker from "react-datepicker";
@@ -32,11 +32,9 @@ export const AlteracaoCadastral = (parametros) => {
 
     const mensagem = useContext(NotificacaoContext);
 
-    yupSetLocaleCadastro();
     const {register, handleSubmit, errors} = useForm({
         mode: "onBlur",
         validationSchema: YupSignupSchemaCadastro(),
-
     });
 
     const [loading, setLoading] = useState(false);
@@ -231,6 +229,7 @@ export const AlteracaoCadastral = (parametros) => {
                                     className="form-control"
                                     name="nm_responsavel"
                                     id="nm_responsavel"
+                                    onBlur={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
                                 />
                                 {errors.nm_responsavel &&
                                 <span className="text-danger mt-1">{errors.nm_responsavel.message}</span>}
@@ -387,16 +386,16 @@ export const AlteracaoCadastral = (parametros) => {
                                                         />
                                                     }
                                                 />
-                                                <span
-                                                    className="span_erro mt-1">{sparErro ? "Digite uma data Válida" : null}</span>
+                                                <span className="span_erro mt-1">{sparErro ? "Digite uma data Válida" : null}</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div className="col-12 mt-5">
-                                <label htmlFor="nome_mae"><strong>Nome da mãe do responsável (sem abreviações)*</strong></label>
+                                <label htmlFor="nome_mae"><strong>{`Nome da mãe de ${state.nm_responsavel} (sem abreviações)*`}</strong> </label>
                                 <input
+                                    placeholder="Escreva aqui o nome completo da sua mãe"
                                     defaultValue={state.nome_mae}
                                     type="text"
                                     className="form-control"

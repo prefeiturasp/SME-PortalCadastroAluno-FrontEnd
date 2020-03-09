@@ -3,24 +3,6 @@ import * as yup from "yup";
 import {PalavroesContext} from "../context/PalavroesContext";
 import {useContext} from "react";
 
-// Validações yup schema
-export const yupSetLocaleLogin = () => (
-
-    yup.setLocale({
-        mixed: {
-            required: 'Preencha esse campo para continuar'
-        },
-        string: {
-            email: 'Preencha um e-mail válido',
-            min: 'Valor muito curto (mínimo ${min} caracteres)',
-            max: 'Valor muito longo (máximo ${max} caracteres)'
-        },
-        number: {
-            min: 'Valor inválido (deve ser maior ou igual a ${min})',
-            max: 'Valor inválido (deve ser menor ou igual a ${max})'
-        }
-    })
-)
 
 export const YupSignupSchemaLogin = yup.object().shape({
     codigoEol: yup.number().typeError('Campo EOL precisa ser numérico').required("Campo código EOL é obrigatório"),
@@ -50,7 +32,9 @@ export const YupSignupSchemaCadastro = () => {
 
     return (
         yup.object().shape({
-            nm_responsavel: yup.string().required("Nome do responsável é obrigatório").max(70).matches(/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/, {
+            nm_responsavel: yup.string().required("Nome do responsável é obrigatório")
+            .max(70, "Nome do responsável deve conter no máximo 70 caracteres")
+            .matches(/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/, {
                 message: 'Não são permitidos números ou caracteres especiais',
                 excludeEmptyString: true
             }).test('test-name', 'Não é permitido repetir 03 ou mais caracteres seguidos',
@@ -63,26 +47,31 @@ export const YupSignupSchemaCadastro = () => {
                     return retorno
                 }),
 
-            email_responsavel: yup.string().required("Email do responsável é obrigatório").email(),
+            email_responsavel: yup.string().required("Email do responsável é obrigatório").email("Digite um email válido"),
 
-            cd_ddd_celular_responsavel: yup.number().typeError("Somente números").required("DDD é obrigatório").test('test-name', 'DDD deve conter 2 dígitos',
+            cd_ddd_celular_responsavel: yup.number().typeError("Somente números").required("DDD é obrigatório")
+            .test('test-name', 'DDD deve conter 2 dígitos',
                 function (value) {
                     return new RegExp(/^\d{2}$/).test(value)
                 }),
 
-            nr_celular_responsavel: yup.string().required("Celular é obrigatório").test('test-name', 'Celular deve conter 9 números',
+            nr_celular_responsavel: yup.string().required("Celular é obrigatório")
+            .test('test-name', 'Celular deve conter 9 números',
                 function (value) {
                     return validaTelefoneCelular(value)
                 }),
 
             tp_pessoa_responsavel: yup.number().required(),
 
-            cd_cpf_responsavel: yup.string().required().test('test-name', 'Digite um CPF válido',
+            cd_cpf_responsavel: yup.string().required()
+            .test('test-name', 'Digite um CPF válido',
                 function (value) {
                     return validarCPF(value)
                 }),
 
-            nome_mae: yup.string().required("Nome da mãe do responsável é obrigatório").max(70).matches(/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/, {
+            nome_mae: yup.string().required("Nome da mãe do responsável é obrigatório")
+            .max(70, "Nome da mãe do responsável deve conter no máximo 70 caracteres")
+            .matches(/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]+$/, {
                 message: 'Não são permitidos números ou caracteres especiais',
                 excludeEmptyString: true
             }).test('test-name', 'Não é permitido repetir 03 ou mais caracteres seguidos',
@@ -93,10 +82,22 @@ export const YupSignupSchemaCadastro = () => {
                 function (value) {
                     let retorno = !validarPalavrao(value, palavroesContext.listaPalavroes)
                     return retorno
+                })
+            .test('test-name', 'Aqui você deve digitar o nome da sua mãe',
+                function (value) {
+                    const { nm_responsavel } = this.parent;
+                    return validarStringsIguais(nm_responsavel, value)
                 }),
+
             checkboxDeclaro: yup.boolean().oneOf([true], 'Você precisa declarar que as informações são verdadeiras'),
         })
     )
+}
+
+export const validarStringsIguais = (string1, string2) => {
+    string1 = string1.toLowerCase().replace(/ /g, "");
+    string2 = string2.toLowerCase().replace(/ /g, "");
+    return string1 === string2 ? false : true;
 }
 
 export const validarPalavrao = (arrayValidar, listaPalavroes) => {
@@ -112,15 +113,6 @@ export const validarPalavrao = (arrayValidar, listaPalavroes) => {
         return true
     } else {
         return false;
-    }
-}
-
-export const validaDDD = value => {
-    let numero = value.replace(/_/g, "");
-    if (numero.length < 2) {
-        return false
-    } else {
-        return true;
     }
 }
 

@@ -16,11 +16,10 @@ import * as moment from 'moment'
 import pt from "date-fns/locale/pt-BR"
 registerLocale("pt", pt );
 import 'react-datepicker/dist/react-datepicker.css';
-import {validarDtNascEstudante, yupSetLocaleLogin, YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
+import {validarDtNascEstudante, YupSignupSchemaLogin} from "../../utils/ValidacoesAdicionaisFormularios";
 
 export const Login = () => {
 
-    yupSetLocaleLogin();
     const {register, handleSubmit, errors} = useForm({
         //mode: "onBlur"
         validationSchema: YupSignupSchemaLogin,
@@ -201,8 +200,8 @@ export const Login = () => {
                         <div className="col-lg-4 mt-4">
                             <label id="codigoEol">Código EOL*</label>
                             <InputMask
-                               // mask="9999999999"
-                                //maskPlaceholder={null}
+                                mask="9999999999"
+                                maskPlaceholder={null}
                                 ref={e => {
                                     register(e);
                                     codigoEolRef.current = e;
