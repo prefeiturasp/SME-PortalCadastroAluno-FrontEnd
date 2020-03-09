@@ -17,18 +17,7 @@ export const AlteracaoCadastral = (parametros) => {
 
     const nmResponsavelRef = useRef();
     let datepickerRef = useRef(null);
-    const {
-        collapse,
-        setCollapse,
-        retorno_api,
-        inputCodigoEol,
-        inputDtNascAluno,
-        setBtnDisable,
-        setInputDtNascAluno,
-        codigoEolRef,
-        handleBtnCancelarAtualizacao,
-        formEvent,
-    } = parametros;
+    const {collapse, setCollapse, retorno_api, inputCodigoEol, inputDtNascAluno, setBtnDisable, setInputDtNascAluno, codigoEolRef, handleBtnCancelarAtualizacao, formEvent} = parametros;
 
     const mensagem = useContext(NotificacaoContext);
 
@@ -147,11 +136,21 @@ export const AlteracaoCadastral = (parametros) => {
         atualizaCadastro(payload_atualizado)
         .then(retorno_api => {
 
-            if (retorno_api === "Solicitação finalizada. Não pode atualizar os dados."){
+            if (retorno_api === "Solicitação finalizada. Não pode atualizar os dados.") {
                 codigoEolRef.current.focus();
                 mensagem.setAbrirModal(true)
                 mensagem.setTituloModal("Erro ao solicitar uniforme")
                 mensagem.setMsg("Essa solicitação já foi finalizada pela escola. Caso necessite realizar alguma alteração, dirija-se a escola do aluno.")
+                setCollapse('')
+                setBtnDisable(false);
+                e.target.reset();
+                limpaFormulario(formEvent);
+                setLoading(false);
+            }else if(retorno_api === "EOL Timeout"){
+                codigoEolRef.current.focus();
+                mensagem.setAbrirModal(true)
+                mensagem.setTituloModal("Erro ao solicitar uniforme")
+                mensagem.setMsg("Tente novamente inserir o código EOL e a data de nascimento");
                 setCollapse('')
                 setBtnDisable(false);
                 e.target.reset();
