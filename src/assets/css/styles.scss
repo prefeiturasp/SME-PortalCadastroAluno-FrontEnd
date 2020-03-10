@@ -1,0 +1,285 @@
+@import "variaveis.scss";
+
+.fonte-maior {
+  font-size: 20px !important;
+  div,
+  ul,
+  p,
+  table {
+    font-size: 20px !important;
+  }
+  h1{
+    font-size: 50px;
+  }
+  h2{
+    font-size: 40px;
+  }
+}
+
+.alto-contraste {
+  background-color: #fefefe;
+  filter: invert(100%);
+  * {
+    background-color: inherit;
+  }
+
+  img:not([src*=".svg"]),
+  video {
+    filter: invert(100%);
+  }
+}
+
+body {
+  @include roboto-sans;
+  letter-spacing: 0.015em;
+}
+
+// Fontes
+
+.fonte-12 {
+  font-size: 12px;
+}
+
+.fonte-14 {
+  font-size: 14px;
+}
+
+.fonte-16 {
+  font-size: 16px;
+}
+
+.cor-azul {
+    color: $corAzulPortal;
+  }
+
+.btn-enviar-home{
+  margin-top: 31px;
+}
+
+.btn-success {
+  color: #fff;
+  background-color: #9BBA54;
+  border-color: #9BBA54;
+}
+
+.btn-success:hover {
+  color: #fff;
+  background-color: #738E34;;
+  border-color: #738E34;;
+}
+
+// Home
+
+.busca-escolas {
+  background: $corCinzaClaro url("../img/bg_busca.png");
+  //background-blend-mode: lighten;
+  background-size: cover;
+  color: $corCinzaHome;
+  min-height: 490px;
+
+  .conteudo {
+    margin: 80px auto;
+    z-index: 1;
+    width: auto;
+
+    h2 {
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    .texto-home{
+      margin-top: 25px;
+    }
+
+    .busca {
+      .form-control {
+        font-size: 16px;
+        font-style: italic;
+        text-align: center;
+      }
+
+      .rounded-pill {
+        border-radius: 30px !important;
+      }
+
+      .rounded-bottom-0 {
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+      }
+
+      select.mes_nascimento_home option{
+
+      }
+    }
+
+    .resultados {
+      &.borda-on {
+        border-color: $corAzulBuscaOn !important;
+      }
+
+      &.borda-off {
+        border-color: $corCinzaBuscaOff !important;
+      }
+
+      .cursor-link {
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.sociedade-governo {
+  background: $corAzulPortal;
+
+  button {
+    background: $corVerdeBotaoHome;
+  }
+}
+
+.numeros {
+  background: $corAzulFiltro;
+
+  .rounded-circle {
+    color: $corAzulPortal;
+    height: 200px;
+    text-align: center;
+    vertical-align: middle;
+    width: 200px;
+
+    .valor {
+      display: block;
+      font-size: 40px;
+      font-weight: bold;
+    }
+
+    .texto {
+      font-size: 16px;
+    }
+  }
+}
+
+h2 {
+  font-size: 35px;
+  font-weight: bold !important;
+  line-height: 40px;
+
+  &.cor-azul {
+    color: $corAzulPortal;
+  }
+}
+
+// Filtro
+
+.menu-auxiliar {
+  background: $corAzulPortal;
+
+  h3 {
+    font-size: 24px;
+    line-height: 28px;
+  }
+}
+
+.resultados-autocomplete {
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 5;
+
+  .cursor-padrao {
+    cursor: default;
+  }
+}
+
+// Escolas
+
+.escolas {
+  @media (min-width: 992px) {
+    min-height: 860px;
+  }
+
+  .filtro {
+    @media (max-width: 576px) {
+      left: 0;
+    }
+
+    @media (min-width: 992px) {
+      position: absolute;
+    }
+
+    background: $corAzulFiltro;
+
+    h4 {
+      @extend .fonte-14;
+      font-weight: bold;
+    }
+
+    .limpar {
+      @extend .fonte-14;
+      font-weight: bold;
+      line-height: 16px;
+    }
+  }
+
+}
+
+// Consulta
+
+.react-datepicker-wrapper {
+  display: block !important;
+
+  .react-datepicker__input-container {
+    display: block !important;
+  }
+}
+
+// Rodapé
+
+.area-rodape {
+  background: $corCinzaRodape;
+  color: $corBranco;
+  font-size: 0.8rem;
+}
+
+.endereco {
+  font-size: 0.8rem;
+}
+
+// Estatísticas
+
+.estatisticas {
+  .nav {
+    border-bottom-color: $corAzulPortal;
+    font-size: 12px;
+
+    .nav-link {
+      color: $corPretoPortal;
+
+      &.active {
+        border: 0 none;
+        border-bottom: 8px solid $corAzulPortal !important;
+        font-weight: bold;
+      }
+
+      &:hover {
+        border: 0 none;
+      }
+    }
+  }
+
+  .cor-azul {
+    color: $corAzulPortal;
+  }
+
+  .cor-cinza {
+    color: $corCinzaHome;
+  }
+}
+
+.estatisticas-cabecalho {
+  h1 {
+    font-size: 30px;
+  }
+
+  .referencia {
+    font-size: 12px;
+  }
+}

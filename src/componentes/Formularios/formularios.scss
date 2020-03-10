@@ -1,0 +1,29 @@
+@import "../../assets/css/variaveis";
+.formulario-inicial-home{
+  background-color: $corAzulPortal;
+  color: #fff;
+
+  .btn-abrir-formulario{
+    border: solid 1px #fff;
+    color: #fff;
+    margin-top: 2rem;
+  }
+
+  .container-form-dados-responsável{
+    background-color: #fff;
+    color: $corPretoPortal;
+    
+    .container-radio{
+
+      @media(max-width: 992px) {
+        flex-basis: 100%;
+      }
+    }
+  }
+
+  .span_erro{
+    color: red;
+    font-size: 0.9rem;
+    display: inline-block;
+  }
+}

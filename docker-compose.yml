@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  frontend:
+    restart: always
+    build: .
+    env_file: .env.docker
+    ports:
+      - 80:80
