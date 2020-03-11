@@ -104,7 +104,7 @@ export const AlteracaoCadastral = (parametros) => {
     }
 
     const handleBtnSolicitarUniforme = () => {
-        return (sparErro);
+        return (sparErro || loading);
     };
 
     const onSubmitAtualizacaoCadastral = (data, e) => {
@@ -216,8 +216,7 @@ export const AlteracaoCadastral = (parametros) => {
                     <form name="atualizacaoCadastral" onSubmit={handleSubmit(onSubmitAtualizacaoCadastral)}>
                         <div className="row">
                             <div className="col-12">
-                                <label htmlFor="nm_responsavel"><strong>Nome completo do responsável (sem
-                                    abreviações)*</strong></label>
+                                <label htmlFor="nm_responsavel"><strong>Nome completo do responsável (sem abreviações)*</strong></label>
                                 <input
                                     ref={(e) => {
                                         register(e)
