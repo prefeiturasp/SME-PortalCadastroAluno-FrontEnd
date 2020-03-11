@@ -104,7 +104,7 @@ export const AlteracaoCadastral = (parametros) => {
     }
 
     const handleBtnSolicitarUniforme = () => {
-        return (sparErro);
+        return (sparErro, loading);
     };
 
     const onSubmitAtualizacaoCadastral = (data, e) => {
