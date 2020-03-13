@@ -42,19 +42,29 @@ export const YupSignupSchemaCadastro = () => {
                     return !validarStringsIguais(email_responsavel, value)
                 }),
 
+            checkboxSemCelular: yup.boolean(),
 
-            cd_ddd_celular_responsavel: yup.number().typeError("Somente números").required("DDD é obrigatório")
-            .test('test-name', 'DDD deve conter 2 dígitos',
-                function (value) {
-                    return new RegExp(/^\d{2}$/).test(value)
-                }),
+            cd_ddd_celular_responsavel: yup
+            .string()
+            .when("checkboxSemCelular", {
+                is: false,
+                then: yup.string().required("DDD é obrigatório")
+                .test('test-name', 'DDD deve conter 2 dígitos',
+                    function (value) {
+                        return new RegExp(/^\d{2}$/).test(value)
+                    })
+            }),
 
-
-            nr_celular_responsavel: yup.string().required("Celular é obrigatório")
-            .test('test-name', 'Celular deve conter 9 números',
-                function (value) {
-                    return validaTelefoneCelular(value)
-                }),
+            nr_celular_responsavel: yup
+            .string()
+            .when("checkboxSemCelular", {
+                is: false,
+                then: yup.string().required("Celular é obrigatório")
+                .test('test-name', 'Celular deve conter 9 números',
+                    function (value) {
+                        return validaTelefoneCelular(value)
+                    }),
+            }),
 
             tp_pessoa_responsavel: yup.number().required("Vínculo com o estudante é obrigatório"),
 
