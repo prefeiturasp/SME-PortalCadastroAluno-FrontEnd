@@ -29,13 +29,26 @@ export const YupSignupSchemaCadastro = () => {
                     return retorno
                 }),
 
-            email_responsavel: yup.string().required("E-mail do responsável é obrigatório").email("Digite um email válido"),
+            email_responsavel: yup.string().required("E-mail do responsável é obrigatório").email("Digite um email válido")
+            .test('test-name', 'Esse não parece ser um e-mail válido. Tente novamente',
+                function (value) {
+                    return !validarDominioEmail(value)
+                }),
+
+            email_responsavel_confirm: yup.string().required("Confirmação do e-mail é obrigatória").email("Digite um email válido")
+            .test('test-name', 'E-mail diferente',
+                function (value) {
+                    const { email_responsavel } = this.parent;
+                    return !validarStringsIguais(email_responsavel, value)
+                }),
+
 
             cd_ddd_celular_responsavel: yup.number().typeError("Somente números").required("DDD é obrigatório")
             .test('test-name', 'DDD deve conter 2 dígitos',
                 function (value) {
                     return new RegExp(/^\d{2}$/).test(value)
                 }),
+
 
             nr_celular_responsavel: yup.string().required("Celular é obrigatório")
             .test('test-name', 'Celular deve conter 9 números',
@@ -82,20 +95,23 @@ export const validarStringsIguais = (string1, string2) => {
     return string1 === string2 ? false : true;
 }
 
-export const validarPalavrao = (arrayValidar, listaPalavroes) => {
+export const validarDominioEmail = (email) => {
+    let dominiosInvalidos = ["gmil","gmal", "gmail.com.br", "yahhoo", "yahho", "outlok"]
+    const result = dominiosInvalidos.filter((item) => {
+        return email.indexOf(item) > -1
+    });
+    return result.length > 0;
 
+}
+
+export const validarPalavrao = (arrayValidar, listaPalavroes) => {
     arrayValidar = arrayValidar.toLowerCase();
     const arrayValidarSplit = arrayValidar.split(' ');
-
     const result = arrayValidarSplit.filter((item) => {
         return listaPalavroes.indexOf(item) > -1
     });
 
-    if (result.length > 0) {
-        return true
-    } else {
-        return false;
-    }
+    return result.length > 0;
 }
 
 export const validaTelefoneCelular = value => {
