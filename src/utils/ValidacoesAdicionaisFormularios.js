@@ -29,32 +29,54 @@ export const YupSignupSchemaCadastro = () => {
                     return retorno
                 }),
 
-            email_responsavel: yup.string().required("E-mail do responsável é obrigatório").email("Digite um email válido")
-            .test('test-name', 'Esse não parece ser um e-mail válido. Tente novamente',
-                function (value) {
-                    return !validarDominioEmail(value)
-                }),
+            checkboxSemEmail: yup.boolean(),
 
-            email_responsavel_confirm: yup.string().required("Confirmação do e-mail é obrigatória").email("Digite um email válido")
-            .test('test-name', 'E-mail diferente',
-                function (value) {
-                    const { email_responsavel } = this.parent;
-                    return !validarStringsIguais(email_responsavel, value)
-                }),
+            email_responsavel: yup
+            .string()
+            .when("checkboxSemEmail", {
+                is: false,
+                then: yup.string().required("E-mail do responsável é obrigatório").email("Digite um email válido")
+                .test('test-name', 'Esse não parece ser um e-mail válido. Tente novamente',
+                    function (value) {
+                        return !validarDominioEmail(value)
+                    }),
+            }),
 
+            email_responsavel_confirm: yup
+            .string()
+            .when("checkboxSemEmail", {
+                is: false,
+                then: yup.string().required("Confirmação do e-mail é obrigatória").email("Digite um email válido")
+                .test('test-name', 'E-mail diferente',
+                    function (value) {
+                        const { email_responsavel } = this.parent;
+                        return !validarStringsIguais(email_responsavel, value)
+                    }),
+            }),
 
-            cd_ddd_celular_responsavel: yup.number().typeError("Somente números").required("DDD é obrigatório")
-            .test('test-name', 'DDD deve conter 2 dígitos',
-                function (value) {
-                    return new RegExp(/^\d{2}$/).test(value)
-                }),
+            checkboxSemCelular: yup.boolean(),
 
+            cd_ddd_celular_responsavel: yup
+            .string()
+            .when("checkboxSemCelular", {
+                is: false,
+                then: yup.string().required("DDD é obrigatório")
+                .test('test-name', 'DDD deve conter 2 dígitos',
+                    function (value) {
+                        return new RegExp(/^\d{2}$/).test(value)
+                    })
+            }),
 
-            nr_celular_responsavel: yup.string().required("Celular é obrigatório")
-            .test('test-name', 'Celular deve conter 9 números',
-                function (value) {
-                    return validaTelefoneCelular(value)
-                }),
+            nr_celular_responsavel: yup
+            .string()
+            .when("checkboxSemCelular", {
+                is: false,
+                then: yup.string().required("Celular é obrigatório")
+                .test('test-name', 'Celular deve conter 9 números',
+                    function (value) {
+                        return validaTelefoneCelular(value)
+                    }),
+            }),
 
             tp_pessoa_responsavel: yup.number().required("Vínculo com o estudante é obrigatório"),
 

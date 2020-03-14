@@ -44,6 +44,8 @@ export const AlteracaoCadastral = (parametros) => {
         tp_pessoa_responsavel: "",
         nome_mae: "",
         data_nascimento: "",
+        checkboxSemCelular:false,
+        checkboxSemEmail:false,
     });
 
     useEffect(() => {
@@ -111,18 +113,38 @@ export const AlteracaoCadastral = (parametros) => {
         return (sparErro || loading);
     };
 
+    const handleBtnCancelar = (formEvent) => {
+        setState({
+            ...state,
+            checkboxSemCelular: false,
+            checkboxSemEmail: false
+        });
+        handleBtnCancelarAtualizacao(formEvent);
+    }
+
     const onSubmitAtualizacaoCadastral = (data, e) => {
         setLoading(true)
 
         // Removendo checkbox Você precisa declarar que as informações são verdadeiras
         delete data.checkboxDeclaro;
 
-        data.nr_celular_responsavel = data.nr_celular_responsavel.replace(/ /g, '');
+        if (data.checkboxSemCelular){
+            data.cd_ddd_celular_responsavel = null
+            data.nr_celular_responsavel = null;
+        }else {
+            data.nr_celular_responsavel = data.nr_celular_responsavel.replace(/ /g, '');
+        }
+
+        if (data.checkboxSemEmail){
+            data.email_responsavel = null
+        }else {
+            data.email_responsavel = data.email_responsavel.trimEnd().trimStart();
+        }
+
         data.cd_cpf_responsavel = data.cd_cpf_responsavel.replace(/-/g, "");
         data.cd_cpf_responsavel = data.cd_cpf_responsavel.replace(/\./g, '');
         data.codigo_eol_aluno = String(inputCodigoEol);
         data.nm_responsavel = data.nm_responsavel.trimEnd().trimStart();
-        data.email_responsavel = data.email_responsavel.trimEnd().trimStart();
         data.nome_mae = data.nome_mae.trimEnd().trimStart();
         data.data_nascimento = validarDtNascEstudante(dtNascResponsavel);
 
@@ -192,6 +214,7 @@ export const AlteracaoCadastral = (parametros) => {
 
     const limpaFormulario = () => {
         formEvent.target.reset()
+
         setInputDtNascAluno('')
         setState({
             ...state,
@@ -205,6 +228,8 @@ export const AlteracaoCadastral = (parametros) => {
             data_nascimento: "",
             codigo_escola: "",
             codigo_dre: "",
+            checkboxSemCelular:false,
+            checkboxSemEmail:false,
         });
     }
 
@@ -241,8 +266,33 @@ export const AlteracaoCadastral = (parametros) => {
                             <div className="col-12 col-md-8 mt-5">
                                 <div className="row">
                                     <div className="col-12">
+
                                         <label htmlFor="email_responsavel"><strong>E-mail do
                                             responsável*</strong></label>
+
+                                        <div className="row">
+                                            <div className="col-12">
+                                                <div className="form-check form-check-inline">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="checkbox"
+                                                        name="checkboxSemEmail"
+                                                        id="checkboxSemEmail"
+
+                                                        ref={(e) => {
+                                                            register(e)
+                                                        }}
+                                                        checked={state.checkboxSemEmail}
+                                                        onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.checked)}
+                                                    />
+                                                    <label className="form-check-label" htmlFor="checkboxSemEmail">
+                                                        Não possuo e-mail
+                                                    </label>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
                                         <input
                                             placeholder="Digite um email válido"
                                             ref={(e) => {
@@ -253,6 +303,7 @@ export const AlteracaoCadastral = (parametros) => {
                                             className="form-control"
                                             name="email_responsavel"
                                             id="email_responsavel"
+                                            disabled={state.checkboxSemEmail}
                                         />
                                         {errors.email_responsavel &&
                                         <span className="text-danger mt-1">{errors.email_responsavel.message}</span>}
@@ -271,6 +322,7 @@ export const AlteracaoCadastral = (parametros) => {
                                             className="form-control"
                                             name="email_responsavel_confirm"
                                             id="email_responsavel_confirm"
+                                            disabled={state.checkboxSemEmail}
                                         />
                                         {errors.email_responsavel_confirm &&
                                         <span
@@ -283,6 +335,26 @@ export const AlteracaoCadastral = (parametros) => {
                                     <div className="col-12">
                                         <label><strong>Telefone celular do responsável*</strong></label>
                                     </div>
+                                    <div className="col-12">
+                                        <div className="form-check form-check-inline">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                name="checkboxSemCelular"
+                                                id="checkboxSemCelular"
+                                                //value={true}
+                                                ref={(e) => {
+                                                    register(e)
+                                                }}
+                                                checked={state.checkboxSemCelular}
+                                                onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.checked)}
+                                            />
+                                            <label className="form-check-label" htmlFor="checkboxSemCelular">
+                                                Não possuo celular
+                                            </label>
+                                        </div>
+
+                                    </div>
                                     <div className="col-3">
                                         <input
                                             ref={(e) => {
@@ -293,6 +365,7 @@ export const AlteracaoCadastral = (parametros) => {
                                             className="form-control"
                                             name="cd_ddd_celular_responsavel"
                                             id="cd_ddd_celular_responsavel"
+                                            disabled={state.checkboxSemCelular}
                                         />
                                         {errors.cd_ddd_celular_responsavel && <span
                                             className="text-danger mt-1">{errors.cd_ddd_celular_responsavel.message}</span>}
@@ -307,7 +380,9 @@ export const AlteracaoCadastral = (parametros) => {
                                             }}
                                             onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
                                             value={state.nr_celular_responsavel} type="tel" className="form-control"
-                                            name="nr_celular_responsavel" id="nr_celular_responsavel"
+                                            name="nr_celular_responsavel"
+                                            id="nr_celular_responsavel"
+                                            disabled={state.checkboxSemCelular}
                                         />
                                         {errors.nr_celular_responsavel && <span
                                             className="text-danger mt-1">{errors.nr_celular_responsavel.message}</span>}
@@ -370,6 +445,7 @@ export const AlteracaoCadastral = (parametros) => {
                                 <div className="row">
                                     <div className="col-12 col-md-8 mt-5">
                                         <div className="row">
+
                                             <div className='col-12 col-md-6'>
                                                 <label htmlFor="cd_cpf_responsavel"><strong>CPF do responsável*</strong></label>
                                                 <InputMask
@@ -460,7 +536,8 @@ export const AlteracaoCadastral = (parametros) => {
                         <div className="d-flex justify-content-end mt-4">
                             <div className='p-2'>
                                 <BtnCustomizado
-                                    onClick={() => handleBtnCancelarAtualizacao(formEvent)}
+                                    //onClick={() => handleBtnCancelarAtualizacao(formEvent)}
+                                    onClick={() => handleBtnCancelar(formEvent)}
                                     disable=""
                                     type="reset"
                                     classeCss="btn btn-outline-primary"
