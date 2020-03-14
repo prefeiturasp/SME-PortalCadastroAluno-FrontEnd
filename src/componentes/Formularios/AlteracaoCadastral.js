@@ -45,6 +45,7 @@ export const AlteracaoCadastral = (parametros) => {
         nome_mae: "",
         data_nascimento: "",
         checkboxSemCelular:false,
+        checkboxSemEmail:false,
     });
 
     useEffect(() => {
@@ -115,7 +116,8 @@ export const AlteracaoCadastral = (parametros) => {
     const handleBtnCancelar = (formEvent) => {
         setState({
             ...state,
-            checkboxSemCelular: false
+            checkboxSemCelular: false,
+            checkboxSemEmail: false
         });
         handleBtnCancelarAtualizacao(formEvent);
     }
@@ -133,11 +135,16 @@ export const AlteracaoCadastral = (parametros) => {
             data.nr_celular_responsavel = data.nr_celular_responsavel.replace(/ /g, '');
         }
 
+        if (data.checkboxSemEmail){
+            data.email_responsavel = null
+        }else {
+            data.email_responsavel = data.email_responsavel.trimEnd().trimStart();
+        }
+
         data.cd_cpf_responsavel = data.cd_cpf_responsavel.replace(/-/g, "");
         data.cd_cpf_responsavel = data.cd_cpf_responsavel.replace(/\./g, '');
         data.codigo_eol_aluno = String(inputCodigoEol);
         data.nm_responsavel = data.nm_responsavel.trimEnd().trimStart();
-        data.email_responsavel = data.email_responsavel.trimEnd().trimStart();
         data.nome_mae = data.nome_mae.trimEnd().trimStart();
         data.data_nascimento = validarDtNascEstudante(dtNascResponsavel);
 
@@ -222,6 +229,7 @@ export const AlteracaoCadastral = (parametros) => {
             codigo_escola: "",
             codigo_dre: "",
             checkboxSemCelular:false,
+            checkboxSemEmail:false,
         });
     }
 
@@ -258,8 +266,33 @@ export const AlteracaoCadastral = (parametros) => {
                             <div className="col-12 col-md-8 mt-5">
                                 <div className="row">
                                     <div className="col-12">
+
                                         <label htmlFor="email_responsavel"><strong>E-mail do
                                             responsável*</strong></label>
+
+                                        <div className="row">
+                                            <div className="col-12">
+                                                <div className="form-check form-check-inline">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="checkbox"
+                                                        name="checkboxSemEmail"
+                                                        id="checkboxSemEmail"
+
+                                                        ref={(e) => {
+                                                            register(e)
+                                                        }}
+                                                        checked={state.checkboxSemEmail}
+                                                        onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.checked)}
+                                                    />
+                                                    <label className="form-check-label" htmlFor="checkboxSemEmail">
+                                                        Não possuo e-mail
+                                                    </label>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
                                         <input
                                             placeholder="Digite um email válido"
                                             ref={(e) => {
@@ -270,6 +303,7 @@ export const AlteracaoCadastral = (parametros) => {
                                             className="form-control"
                                             name="email_responsavel"
                                             id="email_responsavel"
+                                            disabled={state.checkboxSemEmail}
                                         />
                                         {errors.email_responsavel &&
                                         <span className="text-danger mt-1">{errors.email_responsavel.message}</span>}
@@ -288,6 +322,7 @@ export const AlteracaoCadastral = (parametros) => {
                                             className="form-control"
                                             name="email_responsavel_confirm"
                                             id="email_responsavel_confirm"
+                                            disabled={state.checkboxSemEmail}
                                         />
                                         {errors.email_responsavel_confirm &&
                                         <span
@@ -410,6 +445,7 @@ export const AlteracaoCadastral = (parametros) => {
                                 <div className="row">
                                     <div className="col-12 col-md-8 mt-5">
                                         <div className="row">
+
                                             <div className='col-12 col-md-6'>
                                                 <label htmlFor="cd_cpf_responsavel"><strong>CPF do responsável*</strong></label>
                                                 <InputMask

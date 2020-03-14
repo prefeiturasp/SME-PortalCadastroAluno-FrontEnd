@@ -29,18 +29,30 @@ export const YupSignupSchemaCadastro = () => {
                     return retorno
                 }),
 
-            email_responsavel: yup.string().required("E-mail do responsável é obrigatório").email("Digite um email válido")
-            .test('test-name', 'Esse não parece ser um e-mail válido. Tente novamente',
-                function (value) {
-                    return !validarDominioEmail(value)
-                }),
+            checkboxSemEmail: yup.boolean(),
 
-            email_responsavel_confirm: yup.string().required("Confirmação do e-mail é obrigatória").email("Digite um email válido")
-            .test('test-name', 'E-mail diferente',
-                function (value) {
-                    const { email_responsavel } = this.parent;
-                    return !validarStringsIguais(email_responsavel, value)
-                }),
+            email_responsavel: yup
+            .string()
+            .when("checkboxSemEmail", {
+                is: false,
+                then: yup.string().required("E-mail do responsável é obrigatório").email("Digite um email válido")
+                .test('test-name', 'Esse não parece ser um e-mail válido. Tente novamente',
+                    function (value) {
+                        return !validarDominioEmail(value)
+                    }),
+            }),
+
+            email_responsavel_confirm: yup
+            .string()
+            .when("checkboxSemEmail", {
+                is: false,
+                then: yup.string().required("Confirmação do e-mail é obrigatória").email("Digite um email válido")
+                .test('test-name', 'E-mail diferente',
+                    function (value) {
+                        const { email_responsavel } = this.parent;
+                        return !validarStringsIguais(email_responsavel, value)
+                    }),
+            }),
 
             checkboxSemCelular: yup.boolean(),
 
