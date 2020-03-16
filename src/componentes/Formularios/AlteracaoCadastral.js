@@ -46,6 +46,7 @@ export const AlteracaoCadastral = (parametros) => {
         data_nascimento: "",
         nao_possui_celular:false,
         nao_possui_email:false,
+        email_responsavel_confirm:"",
     });
 
     useEffect(() => {
@@ -74,6 +75,8 @@ export const AlteracaoCadastral = (parametros) => {
             nr_celular_responsavel: retorno_api.detail.responsaveis[0].nr_celular_responsavel ? retorno_api.detail.responsaveis[0].nr_celular_responsavel.trimEnd().trimStart() : '',
             tp_pessoa_responsavel: retorno_api.detail.responsaveis[0].tp_pessoa_responsavel ? String(parseInt(retorno_api.detail.responsaveis[0].tp_pessoa_responsavel)) : '',
             nome_mae: retorno_api.detail.responsaveis[0].nome_mae ? retorno_api.detail.responsaveis[0].nome_mae.trimEnd().trimStart() : '',
+            nao_possui_celular: retorno_api.detail.responsaveis[0].nao_possui_celular ? retorno_api.detail.responsaveis[0].nao_possui_celular : false,
+            nao_possui_email: retorno_api.detail.responsaveis[0].nao_possui_email ? retorno_api.detail.responsaveis[0].nao_possui_email : false,
         });
 
     }, [retorno_api]);
@@ -230,6 +233,7 @@ export const AlteracaoCadastral = (parametros) => {
             codigo_dre: "",
             nao_possui_celular:false,
             nao_possui_email:false,
+            email_responsavel_confirm:"",
         });
     }
 
@@ -294,39 +298,61 @@ export const AlteracaoCadastral = (parametros) => {
                                         </div>
 
                                         <input
-                                            placeholder="Digite um email válido"
+                                            placeholder={ !state.nao_possui_email ? (
+                                                "Digite um email válido"
+                                            ) : ""
+                                            }
+
                                             ref={(e) => {
                                                 register(e)
                                             }}
-                                            defaultValue={state.email_responsavel}
-                                            type="email"
+                                            value={
+                                                !state.nao_possui_email ? (
+                                                    state.email_responsavel
+                                                ) : ""
+                                            }
+                                            onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
                                             className="form-control"
                                             name="email_responsavel"
                                             id="email_responsavel"
                                             disabled={state.nao_possui_email}
                                         />
-                                        {errors.email_responsavel &&
-                                        <span className="text-danger mt-1">{errors.email_responsavel.message}</span>}
+                                        {
+                                            !state.nao_possui_email ? (
+                                            errors.email_responsavel && <span className="text-danger mt-1">{errors.email_responsavel.message}</span>
+                                            ) : null
+                                        }
                                     </div>
 
                                     <div className="col-12">
                                         <label className="mt-3" htmlFor="email_responsavel_confirm"><strong>Confirme seu
                                             email*</strong></label>
+
+
                                         <input
-                                            placeholder="Digite um email válido"
+                                            placeholder={ !state.nao_possui_email ? (
+                                                "Digite um email válido"
+                                            ) : ""
+                                            }
                                             ref={(e) => {
                                                 register(e)
                                             }}
-                                            defaultValue={state.email_responsavel_confirm}
-                                            type="email"
+                                            value={
+                                                !state.nao_possui_email ? (
+                                                    state.email_responsavel_confirm
+                                                ) : ""
+                                            }
                                             className="form-control"
                                             name="email_responsavel_confirm"
                                             id="email_responsavel_confirm"
                                             disabled={state.nao_possui_email}
+                                            onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
                                         />
-                                        {errors.email_responsavel_confirm &&
-                                        <span
-                                            className="text-danger mt-1">{errors.email_responsavel_confirm.message}</span>}
+                                        {
+                                            !state.nao_possui_email ? (
+                                                errors.email_responsavel_confirm && <span className="text-danger mt-1">{errors.email_responsavel_confirm.message}</span>
+                                            ) : null
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -356,36 +382,62 @@ export const AlteracaoCadastral = (parametros) => {
 
                                     </div>
                                     <div className="col-3">
-                                        <input
+                                        <InputMask
+                                            mask="99"
+                                            maskPlaceholder={null}
                                             ref={(e) => {
                                                 register(e)
                                             }}
-                                            maxLength={2}
-                                            defaultValue={state.cd_ddd_celular_responsavel}
+                                            value={
+                                                !state.nao_possui_celular ? (
+                                                    state.cd_ddd_celular_responsavel
+                                                ) : ""
+                                            }
                                             className="form-control"
                                             name="cd_ddd_celular_responsavel"
                                             id="cd_ddd_celular_responsavel"
                                             disabled={state.nao_possui_celular}
+                                            onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
+
                                         />
-                                        {errors.cd_ddd_celular_responsavel && <span
-                                            className="text-danger mt-1">{errors.cd_ddd_celular_responsavel.message}</span>}
+
+                                        {
+                                            !state.nao_possui_celular ? (
+                                                errors.cd_ddd_celular_responsavel && <span
+                                                    className="text-danger mt-1">{errors.cd_ddd_celular_responsavel.message}</span>
+                                                ) : ""
+
+                                        }
                                     </div>
                                     <div className="col-9 pl-1">
                                         <InputMask
-                                            placeholder="Somente números"
+                                            placeholder={
+                                                !state.nao_possui_celular ? (
+                                                    "Somente números"
+                                                ) : ""
+                                            }
+
                                             mask="9 9999 9999"
                                             maskPlaceholder={null}
                                             ref={(e) => {
                                                 register(e)
                                             }}
                                             onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
-                                            value={state.nr_celular_responsavel} type="tel" className="form-control"
+                                            value={
+                                                !state.nao_possui_celular ? (
+                                                    state.nr_celular_responsavel
+                                                ): ""
+                                            }
+                                            type="tel" className="form-control"
                                             name="nr_celular_responsavel"
                                             id="nr_celular_responsavel"
                                             disabled={state.nao_possui_celular}
                                         />
-                                        {errors.nr_celular_responsavel && <span
-                                            className="text-danger mt-1">{errors.nr_celular_responsavel.message}</span>}
+                                        {
+                                            !state.nao_possui_celular ? (
+                                                errors.nr_celular_responsavel && <span className="text-danger mt-1">{errors.nr_celular_responsavel.message}</span>
+                                            ) : null
+                                        }
                                     </div>
                                 </div>
                             </div>
