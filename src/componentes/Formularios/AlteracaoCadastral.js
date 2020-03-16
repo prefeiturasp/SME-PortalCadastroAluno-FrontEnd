@@ -44,8 +44,8 @@ export const AlteracaoCadastral = (parametros) => {
         tp_pessoa_responsavel: "",
         nome_mae: "",
         data_nascimento: "",
-        checkboxSemCelular:false,
-        checkboxSemEmail:false,
+        nao_possui_celular:false,
+        nao_possui_email:false,
     });
 
     useEffect(() => {
@@ -116,8 +116,8 @@ export const AlteracaoCadastral = (parametros) => {
     const handleBtnCancelar = (formEvent) => {
         setState({
             ...state,
-            checkboxSemCelular: false,
-            checkboxSemEmail: false
+            nao_possui_celular: false,
+            nao_possui_email: false
         });
         handleBtnCancelarAtualizacao(formEvent);
     }
@@ -128,14 +128,14 @@ export const AlteracaoCadastral = (parametros) => {
         // Removendo checkbox Você precisa declarar que as informações são verdadeiras
         delete data.checkboxDeclaro;
 
-        if (data.checkboxSemCelular){
+        if (data.nao_possui_celular){
             data.cd_ddd_celular_responsavel = null
             data.nr_celular_responsavel = null;
         }else {
             data.nr_celular_responsavel = data.nr_celular_responsavel.replace(/ /g, '');
         }
 
-        if (data.checkboxSemEmail){
+        if (data.nao_possui_email){
             data.email_responsavel = null
         }else {
             data.email_responsavel = data.email_responsavel.trimEnd().trimStart();
@@ -228,8 +228,8 @@ export const AlteracaoCadastral = (parametros) => {
             data_nascimento: "",
             codigo_escola: "",
             codigo_dre: "",
-            checkboxSemCelular:false,
-            checkboxSemEmail:false,
+            nao_possui_celular:false,
+            nao_possui_email:false,
         });
     }
 
@@ -276,16 +276,16 @@ export const AlteracaoCadastral = (parametros) => {
                                                     <input
                                                         className="form-check-input"
                                                         type="checkbox"
-                                                        name="checkboxSemEmail"
-                                                        id="checkboxSemEmail"
+                                                        name="nao_possui_email"
+                                                        id="nao_possui_email"
 
                                                         ref={(e) => {
                                                             register(e)
                                                         }}
-                                                        checked={state.checkboxSemEmail}
+                                                        checked={state.nao_possui_email}
                                                         onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.checked)}
                                                     />
-                                                    <label className="form-check-label" htmlFor="checkboxSemEmail">
+                                                    <label className="form-check-label" htmlFor="nao_possui_email">
                                                         Não possuo e-mail
                                                     </label>
                                                 </div>
@@ -303,7 +303,7 @@ export const AlteracaoCadastral = (parametros) => {
                                             className="form-control"
                                             name="email_responsavel"
                                             id="email_responsavel"
-                                            disabled={state.checkboxSemEmail}
+                                            disabled={state.nao_possui_email}
                                         />
                                         {errors.email_responsavel &&
                                         <span className="text-danger mt-1">{errors.email_responsavel.message}</span>}
@@ -322,7 +322,7 @@ export const AlteracaoCadastral = (parametros) => {
                                             className="form-control"
                                             name="email_responsavel_confirm"
                                             id="email_responsavel_confirm"
-                                            disabled={state.checkboxSemEmail}
+                                            disabled={state.nao_possui_email}
                                         />
                                         {errors.email_responsavel_confirm &&
                                         <span
@@ -340,16 +340,16 @@ export const AlteracaoCadastral = (parametros) => {
                                             <input
                                                 className="form-check-input"
                                                 type="checkbox"
-                                                name="checkboxSemCelular"
-                                                id="checkboxSemCelular"
+                                                name="nao_possui_celular"
+                                                id="nao_possui_celular"
                                                 //value={true}
                                                 ref={(e) => {
                                                     register(e)
                                                 }}
-                                                checked={state.checkboxSemCelular}
+                                                checked={state.nao_possui_celular}
                                                 onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.checked)}
                                             />
-                                            <label className="form-check-label" htmlFor="checkboxSemCelular">
+                                            <label className="form-check-label" htmlFor="nao_possui_celular">
                                                 Não possuo celular
                                             </label>
                                         </div>
@@ -365,7 +365,7 @@ export const AlteracaoCadastral = (parametros) => {
                                             className="form-control"
                                             name="cd_ddd_celular_responsavel"
                                             id="cd_ddd_celular_responsavel"
-                                            disabled={state.checkboxSemCelular}
+                                            disabled={state.nao_possui_celular}
                                         />
                                         {errors.cd_ddd_celular_responsavel && <span
                                             className="text-danger mt-1">{errors.cd_ddd_celular_responsavel.message}</span>}
@@ -382,7 +382,7 @@ export const AlteracaoCadastral = (parametros) => {
                                             value={state.nr_celular_responsavel} type="tel" className="form-control"
                                             name="nr_celular_responsavel"
                                             id="nr_celular_responsavel"
-                                            disabled={state.checkboxSemCelular}
+                                            disabled={state.nao_possui_celular}
                                         />
                                         {errors.nr_celular_responsavel && <span
                                             className="text-danger mt-1">{errors.nr_celular_responsavel.message}</span>}

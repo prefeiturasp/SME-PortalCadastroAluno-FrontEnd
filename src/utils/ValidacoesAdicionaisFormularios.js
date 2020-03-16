@@ -29,11 +29,11 @@ export const YupSignupSchemaCadastro = () => {
                     return retorno
                 }),
 
-            checkboxSemEmail: yup.boolean(),
+            nao_possui_email: yup.boolean(),
 
             email_responsavel: yup
             .string()
-            .when("checkboxSemEmail", {
+            .when("nao_possui_email", {
                 is: false,
                 then: yup.string().required("E-mail do responsável é obrigatório").email("Digite um email válido")
                 .test('test-name', 'Esse não parece ser um e-mail válido. Tente novamente',
@@ -44,7 +44,7 @@ export const YupSignupSchemaCadastro = () => {
 
             email_responsavel_confirm: yup
             .string()
-            .when("checkboxSemEmail", {
+            .when("nao_possui_email", {
                 is: false,
                 then: yup.string().required("Confirmação do e-mail é obrigatória").email("Digite um email válido")
                 .test('test-name', 'E-mail diferente',
@@ -54,11 +54,11 @@ export const YupSignupSchemaCadastro = () => {
                     }),
             }),
 
-            checkboxSemCelular: yup.boolean(),
+            nao_possui_celular: yup.boolean(),
 
             cd_ddd_celular_responsavel: yup
             .string()
-            .when("checkboxSemCelular", {
+            .when("nao_possui_celular", {
                 is: false,
                 then: yup.string().required("DDD é obrigatório")
                 .test('test-name', 'DDD deve conter 2 dígitos',
@@ -69,7 +69,7 @@ export const YupSignupSchemaCadastro = () => {
 
             nr_celular_responsavel: yup
             .string()
-            .when("checkboxSemCelular", {
+            .when("nao_possui_celular", {
                 is: false,
                 then: yup.string().required("Celular é obrigatório")
                 .test('test-name', 'Celular deve conter 9 números',
