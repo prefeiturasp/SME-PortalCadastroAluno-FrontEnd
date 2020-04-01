@@ -201,7 +201,8 @@ export const Login = () => {
                 <h2 className="text-white mb-xs-5">
                     Acesse o formulário para solicitar o uniforme escolar.{" "}
                 </h2>
-                <form
+                <h6 className="text-white pt-3">Cara(o) cidadã(o), nosso sistema se encontra em atualização com retorno previsto para o fim do dia de hoje após as 18hrs.</h6>
+                {/*<form
                     onSubmit={handleSubmit(onSubmitAbrirFormulario)}
                     name="abrirFormulario"
                     id="abrirFormulario"
@@ -258,7 +259,7 @@ export const Login = () => {
                             />
                         </div>
                     </div>
-                </form>
+                </form>*/}
                 {
                     loading ? (
                         <Loading
