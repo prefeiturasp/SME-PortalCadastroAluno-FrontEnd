@@ -101,6 +101,7 @@ export const Login = () => {
     const buscaDadosAluno = (inputCodigoEol, inputDtNascAluno, formEvent) => {
         buscaDadosAlunoResponsavel(inputCodigoEol, inputDtNascAluno)
         .then(retorno_api => {
+
             if (retorno_api.detail === "Data de nascimento invalida para o código eol informado" || retorno_api.detail === "API EOL com erro. Status: 404" || retorno_api.detail === "API EOL com erro. Status: 500" || retorno_api.detail === "Código EOL não existe") {
                 mensagem.setAbrirModal(true);
                 mensagem.setTituloModal("Dados inválidos, tente novamente");
@@ -119,6 +120,15 @@ export const Login = () => {
                 setCodEolBloqueio([...codEolBloqueio, inputCodigoEol]);
                 limpaFormulario(formEvent);
                 setLoading(false);
+            } else if (retorno_api.detail.responsaveis.length <= 0 ) {
+                mensagem.setAbrirModal(true);
+                mensagem.setTituloModal("Aluno com cadastro incompleto");
+                mensagem.setMsg("Código com cadastro incompleto. Por favor, vá à escola para cadastrar os dados do responsável pela criança no sistema Escola Online (EOL)");
+                setCollapse("");
+                setBtnDisable(false);
+                limpaFormulario(formEvent);
+                setLoading(false);
+
             } else {
                 setCollapse("show");
                 setBtnDisable(true);
@@ -191,7 +201,8 @@ export const Login = () => {
                 <h2 className="text-white mb-xs-5">
                     Acesse o formulário para solicitar o uniforme escolar.{" "}
                 </h2>
-                <form
+                <h6 className="text-white pt-3">Cara(o) cidadã(o), nosso sistema se encontra em atualização com retorno previsto para o fim do dia de hoje após as 18hrs.</h6>
+                {/*<form
                     onSubmit={handleSubmit(onSubmitAbrirFormulario)}
                     name="abrirFormulario"
                     id="abrirFormulario"
@@ -248,7 +259,7 @@ export const Login = () => {
                             />
                         </div>
                     </div>
-                </form>
+                </form>*/}
                 {
                     loading ? (
                         <Loading

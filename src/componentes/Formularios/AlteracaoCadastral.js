@@ -7,7 +7,11 @@ import InputMask from "react-input-mask";
 import "./formularios.scss"
 import {BtnCustomizado} from "../BtnCustomizado";
 import {atualizaCadastro} from "../../services/ConectarApi"
-import {validarDtNascResponsavel, validarDtNascEstudante,  YupSignupSchemaCadastro} from "../../utils/ValidacoesAdicionaisFormularios";
+import {
+    validarDtNascResponsavel,
+    validarDtNascEstudante,
+    YupSignupSchemaCadastro
+} from "../../utils/ValidacoesAdicionaisFormularios";
 import {NotificacaoContext} from "../../context/NotificacaoContext";
 import Loading from "../../utils/Loading";
 import DatePicker from "react-datepicker";
@@ -40,6 +44,9 @@ export const AlteracaoCadastral = (parametros) => {
         tp_pessoa_responsavel: "",
         nome_mae: "",
         data_nascimento: "",
+        nao_possui_celular:false,
+        nao_possui_email:false,
+        email_responsavel_confirm:"",
     });
 
     useEffect(() => {
@@ -68,6 +75,8 @@ export const AlteracaoCadastral = (parametros) => {
             nr_celular_responsavel: retorno_api.detail.responsaveis[0].nr_celular_responsavel ? retorno_api.detail.responsaveis[0].nr_celular_responsavel.trimEnd().trimStart() : '',
             tp_pessoa_responsavel: retorno_api.detail.responsaveis[0].tp_pessoa_responsavel ? String(parseInt(retorno_api.detail.responsaveis[0].tp_pessoa_responsavel)) : '',
             nome_mae: retorno_api.detail.responsaveis[0].nome_mae ? retorno_api.detail.responsaveis[0].nome_mae.trimEnd().trimStart() : '',
+            nao_possui_celular: retorno_api.detail.responsaveis[0].nao_possui_celular ? retorno_api.detail.responsaveis[0].nao_possui_celular : false,
+            nao_possui_email: retorno_api.detail.responsaveis[0].nao_possui_email ? retorno_api.detail.responsaveis[0].nao_possui_email : false,
         });
 
     }, [retorno_api]);
@@ -104,25 +113,45 @@ export const AlteracaoCadastral = (parametros) => {
     }
 
     const handleBtnSolicitarUniforme = () => {
-        return (sparErro);
+        return (sparErro || loading);
     };
+
+    const handleBtnCancelar = (formEvent) => {
+        setState({
+            ...state,
+            nao_possui_celular: false,
+            nao_possui_email: false
+        });
+        handleBtnCancelarAtualizacao(formEvent);
+    }
 
     const onSubmitAtualizacaoCadastral = (data, e) => {
         setLoading(true)
-        
+
         // Removendo checkbox Você precisa declarar que as informações são verdadeiras
         delete data.checkboxDeclaro;
 
-        data.nr_celular_responsavel = data.nr_celular_responsavel.replace(/ /g, '');
+        if (data.nao_possui_celular){
+            data.cd_ddd_celular_responsavel = null
+            data.nr_celular_responsavel = null;
+        }else {
+            data.nr_celular_responsavel = data.nr_celular_responsavel.replace(/ /g, '');
+        }
+
+        if (data.nao_possui_email){
+            data.email_responsavel = null
+        }else {
+            data.email_responsavel = data.email_responsavel.trimEnd().trimStart();
+        }
+
         data.cd_cpf_responsavel = data.cd_cpf_responsavel.replace(/-/g, "");
         data.cd_cpf_responsavel = data.cd_cpf_responsavel.replace(/\./g, '');
         data.codigo_eol_aluno = String(inputCodigoEol);
         data.nm_responsavel = data.nm_responsavel.trimEnd().trimStart();
-        data.email_responsavel = data.email_responsavel.trimEnd().trimStart();
         data.nome_mae = data.nome_mae.trimEnd().trimStart();
         data.data_nascimento = validarDtNascEstudante(dtNascResponsavel);
 
-        if (data.data_nascimento === undefined || data.data_nascimento === "Invalid date"){
+        if (data.data_nascimento === undefined || data.data_nascimento === "Invalid date") {
             setSpanErro(true);
             setLoading(false)
             return false
@@ -133,8 +162,7 @@ export const AlteracaoCadastral = (parametros) => {
             data_nascimento: inputDtNascAluno,
             responsavel: data
         };
-        atualizaCadastro(payload_atualizado)
-        .then(retorno_api => {
+        atualizaCadastro(payload_atualizado).then(retorno_api => {
 
             if (retorno_api === "Solicitação finalizada. Não pode atualizar os dados.") {
                 codigoEolRef.current.focus();
@@ -146,7 +174,7 @@ export const AlteracaoCadastral = (parametros) => {
                 e.target.reset();
                 limpaFormulario(formEvent);
                 setLoading(false);
-            }else if(retorno_api === "EOL Timeout"){
+            } else if (retorno_api === "EOL Timeout") {
                 codigoEolRef.current.focus();
                 mensagem.setAbrirModal(true)
                 mensagem.setTituloModal("Erro ao solicitar uniforme")
@@ -156,7 +184,7 @@ export const AlteracaoCadastral = (parametros) => {
                 e.target.reset();
                 limpaFormulario(formEvent);
                 setLoading(false);
-            }else {
+            } else {
                 // Caso sucesso seta o focus no input codigo EOL
                 codigoEolRef.current.focus();
                 mensagem.setAbrirModal(true)
@@ -189,6 +217,7 @@ export const AlteracaoCadastral = (parametros) => {
 
     const limpaFormulario = () => {
         formEvent.target.reset()
+
         setInputDtNascAluno('')
         setState({
             ...state,
@@ -202,6 +231,9 @@ export const AlteracaoCadastral = (parametros) => {
             data_nascimento: "",
             codigo_escola: "",
             codigo_dre: "",
+            nao_possui_celular:false,
+            nao_possui_email:false,
+            email_responsavel_confirm:"",
         });
     }
 
@@ -211,7 +243,8 @@ export const AlteracaoCadastral = (parametros) => {
                 <h2 className="text-white mb-4">Solicitação de uniforme escolar.</h2>
                 <div className='container-form-dados-responsável p-4 '>
                     <p className="mb-4">
-                        <strong>Responsável, confirme ou altere (se necessário) seus dados e complete os campos ainda não preenchidos.</strong>
+                        <strong>Responsável, confirme ou altere (se necessário) seus dados e complete os campos ainda
+                            não preenchidos.</strong>
                     </p>
                     <form name="atualizacaoCadastral" onSubmit={handleSubmit(onSubmitAtualizacaoCadastral)}>
                         <div className="row">
@@ -235,54 +268,176 @@ export const AlteracaoCadastral = (parametros) => {
                             </div>
 
                             <div className="col-12 col-md-8 mt-5">
-                                <label htmlFor="email_responsavel"><strong>E-mail do responsável*</strong></label>
-                                <input
-                                    placeholder="Digite um email válido"
-                                    ref={(e) => {
-                                        register(e)
-                                    }}
-                                    defaultValue={state.email_responsavel}
-                                    type="email"
-                                    className="form-control"
-                                    name="email_responsavel"
-                                    id="email_responsavel"
-                                />
-                                {errors.email_responsavel &&
-                                <span className="text-danger mt-1">{errors.email_responsavel.message}</span>}
+                                <div className="row">
+                                    <div className="col-12">
 
+                                        <label htmlFor="email_responsavel"><strong>E-mail do
+                                            responsável*</strong></label>
+
+                                        <div className="row">
+                                            <div className="col-12">
+                                                <div className="form-check form-check-inline">
+                                                    <input
+                                                        className="form-check-input"
+                                                        type="checkbox"
+                                                        name="nao_possui_email"
+                                                        id="nao_possui_email"
+
+                                                        ref={(e) => {
+                                                            register(e)
+                                                        }}
+                                                        checked={state.nao_possui_email}
+                                                        onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.checked)}
+                                                    />
+                                                    <label className="form-check-label" htmlFor="nao_possui_email">
+                                                        Não possuo e-mail
+                                                    </label>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <input
+                                            placeholder={ !state.nao_possui_email ? (
+                                                "Digite um email válido"
+                                            ) : ""
+                                            }
+
+                                            ref={(e) => {
+                                                register(e)
+                                            }}
+                                            value={
+                                                !state.nao_possui_email ? (
+                                                    state.email_responsavel
+                                                ) : ""
+                                            }
+                                            onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
+                                            className="form-control"
+                                            name="email_responsavel"
+                                            id="email_responsavel"
+                                            disabled={state.nao_possui_email}
+                                        />
+                                        {
+                                            !state.nao_possui_email ? (
+                                            errors.email_responsavel && <span className="text-danger mt-1">{errors.email_responsavel.message}</span>
+                                            ) : null
+                                        }
+                                    </div>
+
+                                    <div className="col-12">
+                                        <label className="mt-3" htmlFor="email_responsavel_confirm"><strong>Confirme seu
+                                            email*</strong></label>
+
+
+                                        <input
+                                            placeholder={ !state.nao_possui_email ? (
+                                                "Digite um email válido"
+                                            ) : ""
+                                            }
+                                            ref={(e) => {
+                                                register(e)
+                                            }}
+                                            value={
+                                                !state.nao_possui_email ? (
+                                                    state.email_responsavel_confirm
+                                                ) : ""
+                                            }
+                                            className="form-control"
+                                            name="email_responsavel_confirm"
+                                            id="email_responsavel_confirm"
+                                            disabled={state.nao_possui_email}
+                                            onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
+                                        />
+                                        {
+                                            !state.nao_possui_email ? (
+                                                errors.email_responsavel_confirm && <span className="text-danger mt-1">{errors.email_responsavel_confirm.message}</span>
+                                            ) : null
+                                        }
+                                    </div>
+                                </div>
                             </div>
                             <div className="col-12 col-md-4 mt-5">
                                 <div className="row">
                                     <div className="col-12">
                                         <label><strong>Telefone celular do responsável*</strong></label>
                                     </div>
+                                    <div className="col-12">
+                                        <div className="form-check form-check-inline">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                name="nao_possui_celular"
+                                                id="nao_possui_celular"
+                                                //value={true}
+                                                ref={(e) => {
+                                                    register(e)
+                                                }}
+                                                checked={state.nao_possui_celular}
+                                                onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.checked)}
+                                            />
+                                            <label className="form-check-label" htmlFor="nao_possui_celular">
+                                                Não possuo celular
+                                            </label>
+                                        </div>
+
+                                    </div>
                                     <div className="col-3">
-                                        <input
+                                        <InputMask
+                                            mask="99"
+                                            maskPlaceholder={null}
                                             ref={(e) => {
                                                 register(e)
                                             }}
-                                            maxLength={2}
-                                            defaultValue={state.cd_ddd_celular_responsavel}
+                                            value={
+                                                !state.nao_possui_celular ? (
+                                                    state.cd_ddd_celular_responsavel
+                                                ) : ""
+                                            }
                                             className="form-control"
                                             name="cd_ddd_celular_responsavel"
                                             id="cd_ddd_celular_responsavel"
+                                            disabled={state.nao_possui_celular}
+                                            onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
+
                                         />
-                                        {errors.cd_ddd_celular_responsavel && <span
-                                            className="text-danger mt-1">{errors.cd_ddd_celular_responsavel.message}</span>}
+
+                                        {
+                                            !state.nao_possui_celular ? (
+                                                errors.cd_ddd_celular_responsavel && <span
+                                                    className="text-danger mt-1">{errors.cd_ddd_celular_responsavel.message}</span>
+                                                ) : ""
+
+                                        }
                                     </div>
                                     <div className="col-9 pl-1">
                                         <InputMask
-                                            placeholder="Somente números"
+                                            placeholder={
+                                                !state.nao_possui_celular ? (
+                                                    "Somente números"
+                                                ) : ""
+                                            }
+
                                             mask="9 9999 9999"
                                             maskPlaceholder={null}
                                             ref={(e) => {
                                                 register(e)
                                             }}
                                             onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
-                                            value={state.nr_celular_responsavel} type="tel" className="form-control"
-                                            name="nr_celular_responsavel" id="nr_celular_responsavel"
+                                            value={
+                                                !state.nao_possui_celular ? (
+                                                    state.nr_celular_responsavel
+                                                ): ""
+                                            }
+                                            type="tel" className="form-control"
+                                            name="nr_celular_responsavel"
+                                            id="nr_celular_responsavel"
+                                            disabled={state.nao_possui_celular}
                                         />
-                                        {errors.nr_celular_responsavel && <span className="text-danger mt-1">{errors.nr_celular_responsavel.message}</span>}
+                                        {
+                                            !state.nao_possui_celular ? (
+                                                errors.nr_celular_responsavel && <span className="text-danger mt-1">{errors.nr_celular_responsavel.message}</span>
+                                            ) : null
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -333,7 +488,8 @@ export const AlteracaoCadastral = (parametros) => {
                                 </div>
                                 <div className='row'>
                                     <div className="col-12">
-                                        {errors.tp_pessoa_responsavel && <span className="text-danger mt-1">{errors.tp_pessoa_responsavel.message}</span>}
+                                        {errors.tp_pessoa_responsavel && <span
+                                            className="text-danger mt-1">{errors.tp_pessoa_responsavel.message}</span>}
                                     </div>
                                 </div>
                             </div>
@@ -341,6 +497,7 @@ export const AlteracaoCadastral = (parametros) => {
                                 <div className="row">
                                     <div className="col-12 col-md-8 mt-5">
                                         <div className="row">
+
                                             <div className='col-12 col-md-6'>
                                                 <label htmlFor="cd_cpf_responsavel"><strong>CPF do responsável*</strong></label>
                                                 <InputMask
@@ -381,14 +538,17 @@ export const AlteracaoCadastral = (parametros) => {
                                                         />
                                                     }
                                                 />
-                                                <span className="text-danger mt-1">{sparErro ? "Digite uma data válida" : null}</span>
+                                                <span
+                                                    className="text-danger mt-1">{sparErro ? "Digite uma data válida" : null}</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div className="col-12 mt-5">
-                                <label htmlFor="nome_mae"><strong>{` ${state.nm_responsavel ? 'Nome da mãe de ' + state.nm_responsavel : 'Digite o nome da mãe do responsável'} `}</strong> </label>
+                                <label
+                                    htmlFor="nome_mae"><strong>{` ${state.nm_responsavel ? 'Nome da mãe de ' + state.nm_responsavel : 'Digite o nome da mãe do responsável'} `}</strong>
+                                </label>
                                 <input
                                     placeholder="Escreva aqui o nome completo da sua mãe"
                                     defaultValue={state.nome_mae}
@@ -414,19 +574,22 @@ export const AlteracaoCadastral = (parametros) => {
                                         }}
 
                                     />
-                                    <label className="form-check-label" htmlFor="checkboxDeclaro">Declaro que as informações acima são verdadeiras</label>
+                                    <label className="form-check-label" htmlFor="checkboxDeclaro">Declaro que as
+                                        informações acima são verdadeiras</label>
                                 </div>
                             </div>
                         </div>
                         <div className="row">
                             <div className="col-12">
-                                {errors.checkboxDeclaro &&<span className="text-danger mt-1">{errors.checkboxDeclaro.message}</span>}
+                                {errors.checkboxDeclaro &&
+                                <span className="text-danger mt-1">{errors.checkboxDeclaro.message}</span>}
                             </div>
                         </div>
                         <div className="d-flex justify-content-end mt-4">
                             <div className='p-2'>
                                 <BtnCustomizado
-                                    onClick={() => handleBtnCancelarAtualizacao(formEvent)}
+                                    //onClick={() => handleBtnCancelarAtualizacao(formEvent)}
+                                    onClick={() => handleBtnCancelar(formEvent)}
                                     disable=""
                                     type="reset"
                                     classeCss="btn btn-outline-primary"
