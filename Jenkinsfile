@@ -17,7 +17,19 @@ pipeline {
           checkout scm	
         }
        }
-      
+       stage('Analise codigo') {
+	       when {
+           branch 'homolog'
+         }
+            steps {
+                sh 'sonar-scanner \
+                   -Dsonar.projectKey=SME-portalcadastroAluno-FrontEnd \
+                   -Dsonar.sources=. \
+                   -Dsonar.host.url=http://sonar.sme.prefeitura.sp.gov.br \
+                   -Dsonar.login=e791eb500694813c4fe8ffcb4c512aaa2c792e8e'
+            }
+       } 
+       
        stage('Deploy DEV') {
          when {
            branch 'develop'
@@ -73,7 +85,7 @@ pipeline {
         steps {
           timeout(time: 24, unit: "HOURS") {
           // telegramSend("${JOB_NAME}...O Build ${BUILD_DISPLAY_NAME} - Requer uma aprovação para deploy !!!\n Consulte o log para detalhes -> [Job logs](${env.BUILD_URL}console)\n")
-            input message: 'Deseja realizar o deploy?', ok: 'SIM', submitter: 'ebufaino, marcos_nastri, alessandro_fernandes'
+            input message: 'Deseja realizar o deploy?', ok: 'SIM', submitter: 'ebufaino, marcos_nastri, calvin_rossinhole, ollyver_ottoboni, kelwy_oliveira'
           }
          sh 'echo Deploying ambiente homologacao'
                 
@@ -125,7 +137,7 @@ pipeline {
         steps {
           timeout(time: 24, unit: "HOURS") {
           // telegramSend("${JOB_NAME}...O Build ${BUILD_DISPLAY_NAME} - Requer uma aprovação para deploy !!!\n Consulte o log para detalhes -> [Job logs](${env.BUILD_URL}console)\n")
-            input message: 'Deseja realizar o deploy?', ok: 'SIM', submitter: 'ebufaino, marcos_nastri, alessandro_fernandes'
+            input message: 'Deseja realizar o deploy?', ok: 'SIM', submitter: 'ebufaino, marcos_nastri, calvin_rossinhole, ollyver_ottoboni, kelwy_oliveira'
           }
             sh 'echo Build image docker Produção'
           // Start JOB para build das imagens Docker e push SME Registry
