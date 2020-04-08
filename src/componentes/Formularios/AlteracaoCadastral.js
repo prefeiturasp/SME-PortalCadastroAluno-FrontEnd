@@ -311,7 +311,7 @@ export const AlteracaoCadastral = (parametros) => {
                                                     state.email_responsavel
                                                 ) : ""
                                             }
-                                            onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
+                                            onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)}
                                             className="form-control"
                                             name="email_responsavel"
                                             id="email_responsavel"
@@ -346,7 +346,7 @@ export const AlteracaoCadastral = (parametros) => {
                                             name="email_responsavel_confirm"
                                             id="email_responsavel_confirm"
                                             disabled={state.nao_possui_email}
-                                            onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value.replace("_", ""))}
+                                            onChange={(e) => handleChangeAtualizacaoCadastral(e.target.name, e.target.value)}
                                         />
                                         {
                                             !state.nao_possui_email ? (
