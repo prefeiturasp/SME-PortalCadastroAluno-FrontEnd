@@ -42,7 +42,7 @@ export const login = async () => {
 
 const logout = () => {
   localStorage.removeItem(TOKEN_ALIAS);
-  window.location.href = "/login";
+  window.location.href = "/";
 };
 
 export const getToken = () => {
