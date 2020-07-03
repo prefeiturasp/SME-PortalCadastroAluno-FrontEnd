@@ -2,7 +2,7 @@ import React from "react";
 import logoPrefeitura from "../../assets/img/logo_sp.png";
 import "./rodape.scss";
 
-export const Rodape = () => {
+export const Rodape = props => {
 
     const selectHref = (value) => {
         window.location.href = value;
@@ -486,12 +486,15 @@ export const Rodape = () => {
                 </div>
             </div>
             <div className="endereco container">
-                <div className="row">
-                    <div className="col-lg-12 col-xs-12 text-center mt-2">
-                        SECRETARIA MUNICIPAL DE EDUCAÇÃO — Rua Borges Lagoa, 1230 — Vila
-                        Clementino — CEP: 04038-003
-                    </div>
+            <div className="row">
+                <div className="col-lg-10 col-xs-10 text-center mt-2">
+                    SECRETARIA MUNICIPAL DE EDUCAÇÃO — Rua Borges Lagoa, 1230 — Vila
+                    Clementino — CEP: 04038-003
                 </div>
+                <div className="col-lg-2 col-xs-2 text-center mt-2">
+                    {props['versao']}
+                </div>            
+            </div>
             </div>
         </div>
     );
