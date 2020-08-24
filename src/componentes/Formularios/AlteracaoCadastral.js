@@ -538,6 +538,7 @@ export const AlteracaoCadastral = (parametros) => {
                                                     onChangeRaw={(e) => handleChangeRaw(e)}
                                                     onSelect={(e) => handleSelect(e)}
                                                     maxDate={new Date(inputDtNascAluno)}
+                                                    minDate={new Date('1-01-1930')}
                                                     //onBlur={(e)=>handleBlur(e)}
                                                     dateFormat="dd/MM/yyyy"
                                                     locale="pt"
