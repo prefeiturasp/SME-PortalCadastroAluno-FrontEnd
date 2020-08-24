@@ -164,7 +164,17 @@ export const AlteracaoCadastral = (parametros) => {
         };
         atualizaCadastro(payload_atualizado).then(retorno_api => {
 
-            if (retorno_api === "Solicitação finalizada. Não pode atualizar os dados.") {
+            if (retorno_api === "Solicitação enviada para o mercado pago.") {
+                codigoEolRef.current.focus();
+                mensagem.setAbrirModal(true)
+                mensagem.setTituloModal("Erro ao solicitar uniforme")
+                mensagem.setMsg("Essa solicitação já foi finalizada e enviada para o Mercado Pago. No momento não é possivel realizar alterações.")
+                setCollapse('')
+                setBtnDisable(false);
+                e.target.reset();
+                limpaFormulario(formEvent);
+                setLoading(false);
+            } else if (retorno_api === "Solicitação finalizada. Não pode atualizar os dados.") {
                 codigoEolRef.current.focus();
                 mensagem.setAbrirModal(true)
                 mensagem.setTituloModal("Erro ao solicitar uniforme")
@@ -528,6 +538,7 @@ export const AlteracaoCadastral = (parametros) => {
                                                     onChangeRaw={(e) => handleChangeRaw(e)}
                                                     onSelect={(e) => handleSelect(e)}
                                                     maxDate={new Date(inputDtNascAluno)}
+                                                    minDate={new Date('1-01-1930')}
                                                     //onBlur={(e)=>handleBlur(e)}
                                                     dateFormat="dd/MM/yyyy"
                                                     locale="pt"
