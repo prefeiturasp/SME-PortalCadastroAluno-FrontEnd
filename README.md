@@ -1,3 +1,4 @@
+[![Build Status](http://jenkins.sme.prefeitura.sp.gov.br/buildStatus/icon?job=MB-SME-PortalCadastroAluno-FrontEnd%2Fmaster)](http://jenkins.sme.prefeitura.sp.gov.br/view/UNIFORMES/job/MB-SME-PortalCadastroAluno-FrontEnd/job/master/)
 # SME-PortalCadastroAluno-FrontEnd
 ========
 
