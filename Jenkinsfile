@@ -27,7 +27,7 @@ pipeline {
                    -Dsonar.projectKey=SME-portalcadastroAluno-FrontEnd \
                    -Dsonar.sources=. \
                    -Dsonar.host.url=http://sonar.sme.prefeitura.sp.gov.br \
-                   -Dsonar.login=e791eb500694813c4fe8ffcb4c512aaa2c792e8e'
+                   -Dsonar.login=c05220d80e8bc91c5404888824aad96cae048455'
             }
        } 
        
