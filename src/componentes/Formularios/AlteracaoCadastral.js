@@ -163,8 +163,17 @@ export const AlteracaoCadastral = (parametros) => {
             responsavel: data
         };
         atualizaCadastro(payload_atualizado).then(retorno_api => {
-
-            if (retorno_api === "Solicitação enviada para o mercado pago.") {
+            if (retorno_api === "Solicitação com inconsistência resolvida. Não pode atualizar os dados.") {
+                codigoEolRef.current.focus();
+                mensagem.setAbrirModal(true)
+                mensagem.setTituloModal("Erro ao solicitar uniforme")
+                mensagem.setMsg("Essa solicitação está em processo de solução de inconsistência. No momento não é possivel realizar alterações.")
+                setCollapse('')
+                setBtnDisable(false);
+                e.target.reset();
+                limpaFormulario(formEvent);
+                setLoading(false);
+            } else if (retorno_api === "Solicitação enviada para o mercado pago.") {
                 codigoEolRef.current.focus();
                 mensagem.setAbrirModal(true)
                 mensagem.setTituloModal("Erro ao solicitar uniforme")
