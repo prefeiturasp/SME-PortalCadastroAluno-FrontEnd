@@ -2,6 +2,7 @@
 /* eslint-disable */
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import HTTP_STATUS from "http-status-codes";
 import InputMask from "react-input-mask";
 
 import "./formularios.scss";
@@ -16,6 +17,8 @@ import { NotificacaoContext } from "../../context/NotificacaoContext";
 import Loading from "../../utils/Loading";
 import DatePicker from "react-datepicker";
 import * as moment from "moment";
+import { getError } from "../../utils/utils";
+import { ModalAceitaDivergencia } from "../ModalAceitaDivergencia";
 
 export const AlteracaoCadastral = (parametros) => {
   const nmResponsavelRef = useRef();
@@ -47,6 +50,7 @@ export const AlteracaoCadastral = (parametros) => {
   // Campos Formulário de Atualização
   const [state, setState] = useState({
     nm_responsavel: "",
+    nm_responsavel_eol: "",
     cd_cpf_responsavel: "",
     cd_ddd_celular_responsavel: "",
     nr_celular_responsavel: "",
@@ -57,6 +61,8 @@ export const AlteracaoCadastral = (parametros) => {
     nao_possui_celular: false,
     nao_possui_email: false,
     email_responsavel_confirm: "",
+    aceita_divergencia: false,
+    openModal: false,
   });
 
   useEffect(() => {
@@ -76,6 +82,11 @@ export const AlteracaoCadastral = (parametros) => {
     setState({
       ...state,
       nm_responsavel: retorno_api.detail.responsaveis[0].nm_responsavel
+        ? retorno_api.detail.responsaveis[0].nm_responsavel
+            .trimEnd()
+            .trimStart()
+        : "",
+      nm_responsavel_eol: retorno_api.detail.responsaveis[0].nm_responsavel
         ? retorno_api.detail.responsaveis[0].nm_responsavel
             .trimEnd()
             .trimStart()
@@ -212,61 +223,7 @@ export const AlteracaoCadastral = (parametros) => {
     };
     atualizaCadastro(payload_atualizado)
       .then((retorno_api) => {
-        if (
-          retorno_api ===
-          "Solicitação com inconsistência resolvida. Não pode atualizar os dados."
-        ) {
-          codigoEolRef.current.focus();
-          mensagem.setAbrirModal(true);
-          mensagem.setTituloModal("Erro ao solicitar uniforme");
-          mensagem.setMsg(
-            "Essa solicitação está em processo de solução de inconsistência. No momento não é possivel realizar alterações."
-          );
-          setCollapse("");
-          setBtnDisable(false);
-          e.target.reset();
-          limpaFormulario(formEvent);
-          setLoading(false);
-        } else if (retorno_api === "Solicitação enviada para o mercado pago.") {
-          codigoEolRef.current.focus();
-          mensagem.setAbrirModal(true);
-          mensagem.setTituloModal("Erro ao solicitar uniforme");
-          mensagem.setMsg(
-            "Essa solicitação já foi finalizada e enviada para o Mercado Pago. No momento não é possivel realizar alterações."
-          );
-          setCollapse("");
-          setBtnDisable(false);
-          e.target.reset();
-          limpaFormulario(formEvent);
-          setLoading(false);
-        } else if (
-          retorno_api === "Solicitação finalizada. Não pode atualizar os dados."
-        ) {
-          codigoEolRef.current.focus();
-          mensagem.setAbrirModal(true);
-          mensagem.setTituloModal("Erro ao solicitar uniforme");
-          mensagem.setMsg(
-            "Essa solicitação já foi finalizada pela escola. Caso necessite realizar alguma alteração, dirija-se a escola do aluno."
-          );
-          setCollapse("");
-          setBtnDisable(false);
-          e.target.reset();
-          limpaFormulario(formEvent);
-          setLoading(false);
-        } else if (retorno_api === "EOL Timeout") {
-          codigoEolRef.current.focus();
-          mensagem.setAbrirModal(true);
-          mensagem.setTituloModal("Erro ao solicitar uniforme");
-          mensagem.setMsg(
-            "Tente novamente inserir o código EOL e a data de nascimento"
-          );
-          setCollapse("");
-          setBtnDisable(false);
-          e.target.reset();
-          limpaFormulario(formEvent);
-          setLoading(false);
-        } else {
-          // Caso sucesso seta o focus no input codigo EOL
+        if (retorno_api.status === HTTP_STATUS.CREATED) {
           codigoEolRef.current.focus();
           mensagem.setAbrirModal(true);
           mensagem.setTituloModal("Obrigado por solicitar o uniforme escolar");
@@ -282,6 +239,71 @@ export const AlteracaoCadastral = (parametros) => {
           e.target.reset();
           limpaFormulario(formEvent);
           setLoading(false);
+        } else {
+          if (getError(retorno_api.data) === "deu ruim bro") {
+            setState({
+              ...state,
+              openModal: true,
+            });
+            console.log(state.nm_responsavel_eol);
+            console.log(state.nm_responsavel);
+          } else if (
+            retorno_api.data[0] ===
+            "Solicitação com inconsistência resolvida. Não pode atualizar os dados."
+          ) {
+            codigoEolRef.current.focus();
+            mensagem.setAbrirModal(true);
+            mensagem.setTituloModal("Erro ao solicitar uniforme");
+            mensagem.setMsg(
+              "Essa solicitação está em processo de solução de inconsistência. No momento não é possivel realizar alterações."
+            );
+            setCollapse("");
+            setBtnDisable(false);
+            e.target.reset();
+            limpaFormulario(formEvent);
+            setLoading(false);
+          } else if (
+            retorno_api.data[0] === "Solicitação enviada para o mercado pago."
+          ) {
+            codigoEolRef.current.focus();
+            mensagem.setAbrirModal(true);
+            mensagem.setTituloModal("Erro ao solicitar uniforme");
+            mensagem.setMsg(
+              "Essa solicitação já foi finalizada e enviada para o Mercado Pago. No momento não é possivel realizar alterações."
+            );
+            setCollapse("");
+            setBtnDisable(false);
+            e.target.reset();
+            limpaFormulario(formEvent);
+            setLoading(false);
+          } else if (
+            retorno_api.data[0] ===
+            "Solicitação finalizada. Não pode atualizar os dados."
+          ) {
+            codigoEolRef.current.focus();
+            mensagem.setAbrirModal(true);
+            mensagem.setTituloModal("Erro ao solicitar uniforme");
+            mensagem.setMsg(
+              "Essa solicitação já foi finalizada pela escola. Caso necessite realizar alguma alteração, dirija-se a escola do aluno."
+            );
+            setCollapse("");
+            setBtnDisable(false);
+            e.target.reset();
+            limpaFormulario(formEvent);
+            setLoading(false);
+          } else if (retorno_api.data[0] === "EOL Timeout") {
+            codigoEolRef.current.focus();
+            mensagem.setAbrirModal(true);
+            mensagem.setTituloModal("Erro ao solicitar uniforme");
+            mensagem.setMsg(
+              "Tente novamente inserir o código EOL e a data de nascimento"
+            );
+            setCollapse("");
+            setBtnDisable(false);
+            e.target.reset();
+            limpaFormulario(formEvent);
+            setLoading(false);
+          }
         }
       })
       .catch((error) => {
@@ -321,6 +343,12 @@ export const AlteracaoCadastral = (parametros) => {
 
   return (
     <>
+      <ModalAceitaDivergencia
+        showModal={state.openModal}
+        closeModal={() => setState({ ...state, openModal: false })}
+        nome_EOL={state.nm_responsavel_eol}
+        nome_fornecido={state.nm_responsavel}
+      />
       <div className={`collapse ${collapse}  pt-5`} id="">
         <h2 className="text-white mb-4">Solicitação de uniforme escolar.</h2>
         <div className="container-form-dados-responsável p-4 ">
