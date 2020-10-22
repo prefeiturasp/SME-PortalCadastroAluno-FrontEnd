@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Modal } from "react-bootstrap";
-import HTTP_STATUS from "http-status-codes";
 import Botao from "../Botao";
 import { BUTTON_STYLE, BUTTON_TYPE } from "../Botao/constants";
 
@@ -9,10 +8,9 @@ export class ModalAceitaDivergencia extends Component {
     const {
       showModal,
       closeModal,
-      justificativa,
-      uuid,
       nome_EOL,
       nome_fornecido,
+      onSubmit,
     } = this.props;
     return (
       <Modal
@@ -51,7 +49,7 @@ export class ModalAceitaDivergencia extends Component {
               <Botao
                 texto="Confirmar a alteração"
                 type={BUTTON_TYPE.BUTTON}
-                onClick={() => this.autorizarQuestionamento(uuid)}
+                onClick={onSubmit}
                 style={BUTTON_STYLE.BLUE}
                 className="ml-3"
               />

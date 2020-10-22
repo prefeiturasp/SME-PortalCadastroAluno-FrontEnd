@@ -131,6 +131,13 @@ export const AlteracaoCadastral = (parametros) => {
     });
   }, [retorno_api]);
 
+  const setAceitaDivergencia = (valor) => {
+    setState({
+      ...state,
+      aceita_divergencia: valor
+    })
+  }
+
   const handleChangeAtualizacaoCadastral = (name, value) => {
     setState({
       ...state,
@@ -183,7 +190,7 @@ export const AlteracaoCadastral = (parametros) => {
 
     // Removendo checkbox Você precisa declarar que as informações são verdadeiras
     delete data.checkboxDeclaro;
-
+    data.aceita_divergencia = state.aceita_divergencia;
     if (data.nao_possui_celular) {
       data.cd_ddd_celular_responsavel = null;
       data.nr_celular_responsavel = null;
@@ -243,10 +250,11 @@ export const AlteracaoCadastral = (parametros) => {
           if (getError(retorno_api.data) === "deu ruim bro") {
             setState({
               ...state,
+              aceita_divergencia: true,
               openModal: true,
             });
-            console.log(state.nm_responsavel_eol);
-            console.log(state.nm_responsavel);
+            setBtnDisable(false);
+            setLoading(false);
           } else if (
             retorno_api.data[0] ===
             "Solicitação com inconsistência resolvida. Não pode atualizar os dados."
@@ -338,6 +346,7 @@ export const AlteracaoCadastral = (parametros) => {
       nao_possui_celular: false,
       nao_possui_email: false,
       email_responsavel_confirm: "",
+      aceita_divergencia: false,
     });
   };
 
@@ -345,9 +354,10 @@ export const AlteracaoCadastral = (parametros) => {
     <>
       <ModalAceitaDivergencia
         showModal={state.openModal}
-        closeModal={() => setState({ ...state, openModal: false })}
+        closeModal={() => setState({ ...state, aceita_divergencia: false, openModal: false })}
         nome_EOL={state.nm_responsavel_eol}
         nome_fornecido={state.nm_responsavel}
+        onSubmit={handleSubmit(onSubmitAtualizacaoCadastral)}
       />
       <div className={`collapse ${collapse}  pt-5`} id="">
         <h2 className="text-white mb-4">Solicitação de uniforme escolar.</h2>
