@@ -247,7 +247,7 @@ export const AlteracaoCadastral = (parametros) => {
           limpaFormulario(formEvent);
           setLoading(false);
         } else {
-          if (getError(retorno_api.data) === "deu ruim bro") {
+          if (getError(retorno_api.data) === "Solicitação com inconsistência no nome.") {
             setState({
               ...state,
               aceita_divergencia: true,

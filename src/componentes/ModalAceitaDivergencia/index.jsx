@@ -33,6 +33,11 @@ export class ModalAceitaDivergencia extends Component {
               </p>
               <p>Nome no EOL: {nome_EOL}</p>
               <p>Nome fornecido: {nome_fornecido}</p>
+              <p>
+                Se não quiser fazer a mudança, feche este aviso e, no campo
+                "Nome do resposável", escreva novamente o nome que já estava lá
+                (ou seja, o "Nome no EOL")
+              </p>
             </div>
           </div>
         </Modal.Body>
@@ -40,7 +45,7 @@ export class ModalAceitaDivergencia extends Component {
           <div className="row mt-5">
             <div className="col-12">
               <Botao
-                texto="Cancelar a alteração"
+                texto="Fechar este aviso"
                 type={BUTTON_TYPE.BUTTON}
                 onClick={closeModal}
                 style={BUTTON_STYLE.BLUE_OUTLINE}
