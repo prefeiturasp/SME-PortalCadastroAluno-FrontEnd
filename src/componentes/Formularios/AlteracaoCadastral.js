@@ -243,9 +243,9 @@ export const AlteracaoCadastral = (parametros) => {
 
           setCollapse("");
           setBtnDisable(false);
-          e.target.reset();
           limpaFormulario(formEvent);
           setLoading(false);
+          setState({ ...state, openModal: false });
         } else {
           if (getError(retorno_api.data) === "Solicitação com inconsistência no nome.") {
             setState({
