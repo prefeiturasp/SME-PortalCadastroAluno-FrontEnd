@@ -58,6 +58,7 @@ export const getAPIVersion = async () => {
 };
 
 export async function atualizaCadastro(dados) {
+  let status = 0;
   const requestInfo = {
     method: "POST",
     body: JSON.stringify(dados),
@@ -69,13 +70,14 @@ export async function atualizaCadastro(dados) {
   };
 
   return await fetch(`${URL_API}/alunos/`, requestInfo)
-    .then((resposta) => {
-      return resposta;
+    .then((res) => {
+      status = res.status;
+      return res.json();
     })
-    .then((resposta_api) => {
-      return resposta_api.json();
+    .then((data) => {
+      return { data: data, status: status };
     })
-    .then((resposta_api) => {
-      return resposta_api[0];
+    .catch((error) => {
+      return error;
     });
 }
