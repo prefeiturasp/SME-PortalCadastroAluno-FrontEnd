@@ -360,7 +360,7 @@ export const AlteracaoCadastral = (parametros) => {
         onSubmit={handleSubmit(onSubmitAtualizacaoCadastral)}
       />
       <div className={`collapse ${collapse}  pt-5`} id="">
-        <h2 className="text-white mb-4">Solicitação de uniforme escolar.</h2>
+        <h2 className="text-white mb-4">Atualização cadastral.</h2>
         <div className="container-form-dados-responsável p-4 ">
           <p className="mb-4">
             <strong>
