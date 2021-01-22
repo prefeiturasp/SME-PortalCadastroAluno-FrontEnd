@@ -17,7 +17,7 @@ export const MenuPrincipal = () => {
             </a>
           </h1>
         </div>
-        <div
+        {/* <div
           id="menu-principal"
           className="col-lg-9 col-sm-12 links-menu d-flex flex-wrap  align-items-end justify-content-lg-end justify-content-start pr-lg-0 mb-xs-4"
         >
@@ -40,7 +40,7 @@ export const MenuPrincipal = () => {
               </a>
             </li>
           </ul>
-        </div>
+        </div> */}
       </div>
     </div>
   );

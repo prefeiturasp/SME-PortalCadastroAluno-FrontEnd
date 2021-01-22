@@ -199,7 +199,7 @@ export const Login = () => {
         <div className="w-100 formulario-inicial-home pt-5 pb-5 ">
             <div className="container">
                 <h2 className="text-white mb-xs-5">
-                    Acesse o formulário para solicitar o uniforme escolar.{" "}
+                Acesse o formulário para atualizar os dados da(o) responsável.{" "}
                 </h2>
                 <form
                     onSubmit={handleSubmit(onSubmitAbrirFormulario)}
