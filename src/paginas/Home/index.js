@@ -1,26 +1,29 @@
-import React from "react";
+import React, {Fragment} from "react";
+import "./home.scss"
+import {Login} from '../../componentes/Formularios/Login'
 
 export const Home = () => {
-  return (
-    <div className="row">
-      <div className="col-sm-6 col-10 offset-sm-3 offset-1">
-        <div className="card mb-5">
-          <div className="card-body">
-            No Programa Auxílio Uniforme Escolar, todos os estudantes
-            matriculados na Rede Municipal de Ensino (com exceção daqueles que
-            estão na creche, no Ensino Médio ou na Educação de Jovens e Adultos)
-            receberão o benefício, sem precisar realizar a solicitação.
-            <br />
-            <br />
-            Para saber mais, visite o Portal do Uniforme:
-            <br />
-            <br />
-            <a href="https://portaldeuniformes.sme.prefeitura.sp.gov.br/familia">
-              https://portaldeuniformes.sme.prefeitura.sp.gov.br/familia
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+    return (
+        <Fragment>
+            <div className="w-100 banner-home position-relative">
+                <div className="container">
+                    <div className="conteudo">
+                        <div className="col-lg-7 col-sm-12 col-xl-5">
+                            <h1 id="conteudo">
+                            Atualize seus dados cadastrais.
+                            </h1>
+                        </div>
+                        <div className="col-lg-6 col-sm-12 col-xl-5">
+                            <p>
+                            Digite o Código EOL da(o) estudante e a data de nascimento dela(e), para abrir o formulário e atualizar os dados de cadastro da(o) responsável. Essas informações precisam estar completas, para que a(o) estudante consiga ter acesso aos benefícios do Programa Auxílio Uniforme Escolar.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <Login/>
+        </Fragment>
+    )
+
+}
